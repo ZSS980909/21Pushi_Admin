@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,7 +26,7 @@ import java.util.List;
 @Api(value = "学习课堂", tags = {"学习课堂"})
 public class LearnController {
 
-    @Autowired
+    @Resource
     private LearnService service;
 
     /**
@@ -44,16 +45,6 @@ public class LearnController {
         }
     }
 
-    @PostMapping("/chapterInfo")
-    @ApiOperation(value = "查询课程章节信息",notes = "查询课程章节信息")
-    public AbstractBaseResult chapterInfo(@RequestBody RequestDTO request){
-        try{
-            return RespEnum.OK.result(service.chapterInfo(request.getCourseId(),request.getStudenterId()));
-        }catch (Exception e){
-            e.printStackTrace();
-            return RespEnum.ERROR.result("系统繁忙，请稍后再试");
-        }
-    }
     /**
      * 根据课程id查询出评论列表
      * @param request courseId 课程id studenterId 学生编号
@@ -185,24 +176,6 @@ public class LearnController {
                 return RespEnum.ERROR.result("提交失败！");
             }
             return RespEnum.OK.result("成功");
-        }catch (Exception e){
-            e.printStackTrace();
-            return RespEnum.ERROR.result("系统繁忙，请稍后再试");
-        }
-    }
-
-
-    /**
-     * 记录知识点内容学习时间
-     * @return
-     */
-    @PostMapping("/studyRecord")
-    @ApiOperation("记录知识点内容学习时间")
-    public AbstractBaseResult studyRecord(@RequestBody HashMap<String,List<StudyKnowledge>> request){
-        try{
-            //插入推送表
-            service.insertPushKnowledge(request.get("data"));
-            return RespEnum.OK.result(service.studyRecord(request.get("data")));
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙，请稍后再试");

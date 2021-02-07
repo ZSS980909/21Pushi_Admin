@@ -1,7 +1,6 @@
 package com.ershiyi.Utils;
 
 import com.ershiyi.domain.entity.Correct;
-import com.ershiyi.domain.entity.StudyKnowledge;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -221,20 +220,6 @@ public class DateUtils {
         calendar.setTime(now);
         calendar.add(Calendar.MILLISECOND,time.intValue());
         return sdf.format(calendar.getTime());
-    }
-
-    public static Long getUseTime(StudyKnowledge know) {
-        Long useTime = 0l;
-        try {
-            String startTime = know.getStartTime();
-            String endTime = know.getEndTime();
-            // 获取时间的差值
-            Long useTimes = sdf.parse(endTime).getTime()-sdf.parse(startTime).getTime();
-            useTime = useTimes/1000L;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return useTime;
     }
 
     public static String getEndTime(String startTime,Long useTime) {

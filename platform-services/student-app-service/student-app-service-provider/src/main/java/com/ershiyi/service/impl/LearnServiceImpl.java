@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import twenty.alp.TimeCalculate;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -26,7 +27,7 @@ import java.util.*;
 @Service
 public class LearnServiceImpl<T> implements LearnService {
 
-    @Autowired
+    @Resource
     private LearnMapper mapper;
 
     /**
@@ -46,31 +47,6 @@ public class LearnServiceImpl<T> implements LearnService {
     }
 
 
-    @Override
-    public CourseChapters chapterInfo(Integer courseId, String studenterId) {
-        // 将学生浏览该课程存入到历史记录中
-        mapper.addHistory(studenterId, courseId);
-        CourseChapters course = new CourseChapters();
-        // 根据课程查询出所有的章
-        List<ChapterInfo> chapter = mapper.findChapter(courseId);
-        course.setCourseId(courseId);
-        course.setChapters(chapter);
-        return course;
-    }
-
-    /**
-     * 记录学生课程学习结束位置
-     * @param request
-     * @return
-     */
-    @Override
-    public Integer addStudyRecord(RequestDTO request) {
-        // 先判断当前章节是否已经学习
-        List<Integer> knowIds = mapper.queryChapterIsStudy(request);
-        // 如果知识点已学习就不新增学习记录
-        return  knowIds.isEmpty() ? mapper.addStudyRecord(request.getCourseId(),request.getChapterId(),request.getStudenterId()):1;
-    }
-
 
     @Override
     public List<ChapterMenu> chapterMenu(RequestDTO request) {
@@ -89,54 +65,10 @@ public class LearnServiceImpl<T> implements LearnService {
         return results;
     }
 
-    /**
-     * 将学生已学习的知识点插入推送表
-     * @return
-     */
-    @Override
-    public void insertPushKnowledge(List<StudyKnowledge> data) {
-        // 获取下一次推送的时间
-        //Float correct = request.getCorrect();calculateNext
-        Float a = (float)0.0;
-        for(int i=0;i<data.size();i++){
-/*
-            String nextTime = DateUtils.addTime(TimeCalculate.calculateNext(data.get(i).getUseTime().intValue(),0,a,1));
-            mapper.insertPushKnowledge(data.get(i).getStudenterId(), nextTime, data.get(i).getKnowContentId(),data.get(i).getCourseId().toString(), data.get(i).getChapterId());
-*/
-        }
-
-    }
-
-    /**
-     * 记录知识点内容学习时间
-     * @param knows 学习时间
-     * @return
-     */
-    @Override
-    public Integer studyRecord(List<StudyKnowledge> knows) {
-        if(knows.isEmpty()){
-            return 1;
-        }
-        for (StudyKnowledge know : knows) {
-            if(know.getUseTime()>120&&know.getUseTime()<600){
-                // 代表对当前知识点学习有疑问
-                know.setIsQuery(2);
-                // 计算出多少时间后推送
-              //  know.setPlanTime(DateUtils.getAddDay("yyyy-MM-dd HH:mm:ss",1));
-            }
-            String startTime = know.getStartTime();
-            know.setStartTime(DateUtils.getTime(startTime));
-            know.setEndTime(DateUtils.getEndTime(startTime,know.getUseTime()));
-            know.setUseTime((long)Math.ceil((double)know.getUseTime()/1000));
-        }
-        return mapper.insertStudyRecord(knows);
-    }
-
     @Override
     public List<ChapterMenu> KnowList(RequestDTO request) {
         return mapper.nextKnow(request);
     }
-
 
     /**
      * 根据课程id查询出评论信息

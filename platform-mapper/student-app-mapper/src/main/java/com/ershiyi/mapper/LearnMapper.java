@@ -176,13 +176,6 @@ public interface LearnMapper{
     Integer insertDifficultyQuestion(Correct correct);
 
 
-    /**
-     * 记录知识点内容学习时间
-     * @param knows 学习时间
-     * @return
-     */
-    Integer insertStudyRecord(List<StudyKnowledge> knows);
-
 
     @Update("update common_Ipush_record set static =2 where plushContentId =#{knowContentId} and plushFrequency=#{plushFrequency} ")
     Integer updatepushstatic(Correct correct);

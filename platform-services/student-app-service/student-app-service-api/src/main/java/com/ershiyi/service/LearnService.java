@@ -23,7 +23,7 @@ public interface LearnService {
      * @param pageSize 每页展示的数量
      * @return
      */
-    public PageInfo<CoursePojo> courseList(String studentId, Integer pageNumber, Integer pageSize);
+    PageInfo<CoursePojo> courseList(String studentId, Integer pageNumber, Integer pageSize);
 
 
     /**
@@ -31,7 +31,7 @@ public interface LearnService {
      * @param courseId 课程id studentId 学生编号
      * @return
      */
-    public PageInfo<CommentInfo> commentInfo(Integer courseId, String guid, Integer pageNumber, Integer pageSize);
+    PageInfo<CommentInfo> commentInfo(Integer courseId, String guid, Integer pageNumber, Integer pageSize);
 
     /**
      * 对评论进行点赞
@@ -39,7 +39,7 @@ public interface LearnService {
      * @param guid 学生编号
      * @return 插入的结果 0为失败 其余数字为成功
      */
-    public int giveLike(Integer commentId, String guid);
+    int giveLike(Integer commentId, String guid);
 
     /**
      * 发表评论
@@ -47,7 +47,7 @@ public interface LearnService {
      * @param guid 学生编号
      * @return 插入成功返回当前评论的内容
      */
-    public CommentInfo publishComment(String message, String guid, Integer courseId);
+    CommentInfo publishComment(String message, String guid, Integer courseId);
 
     /**
      * 当前评论取消点赞
@@ -55,7 +55,7 @@ public interface LearnService {
      * @param studentId 学生编号
      * @return 插入的结果 0为失败 其余数字为成功
      */
-    public int  cancelLike(Integer discussId, String studentId);
+    int  cancelLike(Integer discussId, String studentId);
 
     /**
      * 根据节点id以及题目类型查询出所关联的题目
@@ -78,36 +78,12 @@ public interface LearnService {
 
     int submitQuestion(List<Correct> request);
 
-    CourseChapters chapterInfo(Integer courseId, String studenterId);
-
-    /**
-     * 记录学生课程学习结束位置
-     * @param request
-     * @return
-     */
-    Integer addStudyRecord(RequestDTO request);
-
     /**
      * 查询当前课程下的章节目录以及学习状态
      * @param request
      * @return
      */
     List<ChapterMenu> chapterMenu(RequestDTO request);
-
-    /**
-     * 将当前知识点插入推送表进行后续推送
-     * @param
-     * @return
-     */
-   // void insertPushKnowledge(RequestDTO request);
-    void insertPushKnowledge(List<StudyKnowledge> data);
-
-    /**
-     * 记录知识点内容学习时间
-     * @param knows 学习时间
-     * @return
-     */
-    Integer studyRecord(List<StudyKnowledge> knows);
 
 
     List<ChapterMenu> KnowList(RequestDTO request);
