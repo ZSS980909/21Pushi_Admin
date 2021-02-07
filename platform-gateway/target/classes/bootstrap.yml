@@ -1,0 +1,89 @@
+server:
+  port: 8888
+
+
+spring:
+  application:
+      name: platform-gateway
+  main:
+      allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+        server-addr: 192.168.3.56:8848
+        namespace: 
+        shared-configs:
+         - {dataId: db.yml, refresh: false}
+         - {dataId: jwt.yml, refresh: false}
+         - {dataId: redis.yml, refresh: false}
+      discovery:
+        namespace: 
+        server-addr: 192.168.3.56:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: sys-service
+          uri: lb://sys-service-provider
+          predicates:
+            Path=/api/sys/**
+          filters:
+             StripPrefix=2
+        - id: auto-service
+          uri: lb://auto-service-provider
+          predicates:
+            Path=/api/auth/**
+          filters:
+             StripPrefix=2
+        - id: student-app-service
+          uri: lb://student-app-service-provider
+          predicates:
+            Path=/api/student/**
+          filters:
+             StripPrefix=2
+        - id: pay-service
+          uri: lb://pay-service-provider
+          predicates:
+            Path=/api/pay/**
+          filters:
+             StripPrefix=2
+        - id: parent-web-service-provider
+          uri: lb://parent-web-service-provider
+          predicates:
+            Path=/api/father/**
+          filters:
+            StripPrefix=2
+        - id: issue-inspect-service-provider
+          uri: lb://issue-inspect-service-provider
+          predicates:
+            Path=/api/issue/**
+          filters:
+            StripPrefix=2
+platform:
+  security:
+    skipAuthUrls:
+       - /api/sys/systemLogin/allCity
+       - /api/sys/systemLogin/allCitybyName
+       - /**/v2/api-docs
+       - /api/student/center/checkUpdate
+       - /api/sys/systemLogin/getVerificationCode
+       - /api/sys/systemLogin/loginSysUser
+       - /api/sys/systemLogin/updateSysUser
+       - /api/sys/systemLogin/updateSysUser
+       - /api/auth/authlogin/account
+logging:
+  level:
+    com.ershiyi: error
+  file:
+    name: ./logs/platform-gateway.log
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 50000
+        readTimeout: 50000
+        loggerLevel: basic
+        requestInterceptors: com.leparts.config.FeignBasicAuthRequestInterceptor

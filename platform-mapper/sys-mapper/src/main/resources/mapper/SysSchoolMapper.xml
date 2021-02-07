@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.SysSchoolMapper">
+
+    <resultMap type="com.ershiyi.domain.School" id="SysSchoolResult">
+        <result property="school_id" column="SCHOOL_ID"/>
+        <result property="school_name" column="SCHOOL_NAME"/>
+        <result property="province" column="PROVINCE"/>
+        <result property="city" column="CITY"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="tel" column="TEL"/>
+        <result property="school_type" column="SCHOOL_TYPE"/>
+        <result property="organizersname" column="ORGANIZERSNAME"/>
+        <result property="school_profile" column="SCHOOL_PROFILE"/>
+    </resultMap>
+    <resultMap type="com.ershiyi.domain.School" id="SysSchoolResultExact">
+        <result property="id" column="ID"/>
+        <result property="school_id" column="SCHOOL_ID"/>
+        <result property="school_name" column="SCHOOL_NAME"/>
+    </resultMap>
+    <select id="allSchool"  resultMap="SysSchoolResultExact">
+         SELECT  id,school_id,school_name  from commom_school
+    </select>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.SysRoleMapper">
+
+    <resultMap type="com.ershiyi.domain.SysRole" id="SysRoleResult">
+        <result property="ifuse"    column="IFUSE"    />
+        <result property="guid"    column="GUID"    />
+        <result property="timestamp"    column="TIMESTAMP"    />
+        <result property="rolename"    column="ROLENAME"    />
+        <result property="prisonid"    column="PRISONID"    />
+        <result property="deleted"    column="DELETED"    />
+        <result property="post"    column="POST"    />
+    </resultMap>
+
+
+    <sql id="selectSysRole">
+        select IFUSE, GUID, TIMESTAMP, ROLENAME, PRISONID, DELETED, POST from SYS_ROLE
+    </sql>
+
+
+
+    <select id="selectSysRoleList" parameterType="com.ershiyi.domain.SysRole" resultMap="SysRoleResult">
+        <include refid="selectSysRole"/>
+        <where>
+            <if test="ifuse != null "> and ifuse = #{ifuse}</if>
+             <if test="guid != null  and guid != '' "> and guid = #{guid}</if>
+             <if test="rolename != null  and rolename != '' "> and ROLENAME = #{rolename}</if>
+             <if test="prisonid != null  and prisonid != '' "> and prisonid = #{prisonid}</if>
+             <if test="1!=0"> and deleted = 0</if>
+             <if test="post != null  and post != '' "> and post = #{post}</if>
+         </where>
+    </select>
+
+    <select id="selectSysRoleById" parameterType="java.lang.String" resultMap="SysRoleResult">
+        <include refid="selectSysRole"/>
+        where GUID = #{guid}
+    </select>
+
+    <insert id="insertSysRole" parameterType="com.ershiyi.domain.SysRole">
+        insert into SYS_ROLE
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="ifuse != null  ">ifuse,</if>
+			<if test="guid != null  and guid != ''  ">GUID,</if>
+            <if test="1!=0  ">timestamp,</if>
+			<if test="rolename != null  and rolename != ''  ">rolename,</if>
+			<if test="prisonid != null  and prisonid != ''  ">prisonid,</if>
+			<if test="deleted != null  ">deleted,</if>
+			<if test="post != null  and post != ''  ">post,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="ifuse != null  ">#{ifuse},</if>
+			<if test="guid != null  and guid != ''  ">#{guid},</if>
+            <if test="1!=0  ">pkg_fcommon.f_timestamp(),</if>
+			<if test="rolename != null  and rolename != ''  ">#{rolename},</if>
+			<if test="prisonid != null  and prisonid != ''  ">#{prisonid},</if>
+			<if test="deleted != null  ">#{deleted},</if>
+			<if test="post != null  and post != ''  ">#{post},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysRole" parameterType="com.ershiyi.domain.SysRole">
+        update SYS_ROLE
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ifuse != null   ">ifuse = #{ifuse},</if>
+            <if test=" 1!=0  ">timestamp = pkg_fcommon.f_timestamp(),</if>
+            <if test="rolename != null  and rolename != ''  ">rolename = #{rolename},</if>
+            <if test="prisonid != null  and prisonid != ''  ">prisonid = #{prisonid},</if>
+            <if test="deleted != null  ">deleted = #{deleted},</if>
+            <if test="post != null  and post != ''  ">post = #{post},</if>
+        </trim>
+        where GUID = #{guid}
+    </update>
+
+	<delete id="deleteSysRoleById" parameterType="java.lang.String">
+        delete from SYS_ROLE where GUID = #{guid}
+    </delete>
+
+    <delete id="deleteSysRoleByIds" parameterType="java.lang.String">
+        delete from SYS_ROLE where GUID in
+        <foreach item="guid" collection="array" open="(" separator="," close=")">
+            #{guid}
+        </foreach>
+    </delete>
+
+    <select id="getAllMenuByUnitId" parameterType="com.ershiyi.domain.SysRole" resultType="com.ershiyi.vo.SysMenuVo">
+        select MENUPID menupid, OPENTYPE opentype, IMGPATH imgpath, GUID guid, MENUNAME menuname, PATH path, BGCOLOR bgcolor from
+       SYS_MENU_UNIT a left join  SYS_MENU  b on a.MENUGUID = b.GUID where  a.prisonid  = #{prisonid} and b.deleted = 0
+    </select>
+
+    <select id="getMenusByRole" resultType="java.lang.String" parameterType="com.ershiyi.domain.SysRole">
+        select menuguid from sys_role_menu where roleguid  = #{guid}
+    </select>
+
+    <insert id="saveRoleMenu" parameterType="java.util.List">
+        INSERT INTO sys_role_menu(roleguid,menuguid)
+            select t.* from(
+                <foreach collection="roleMenus" item="item" index="index" separator="union all">
+                 (
+                    select
+                        #{item.roleguid,jdbcType=VARCHAR} roleguid ,
+                        #{item.menuguid,jdbcType=VARCHAR} menuguid
+                    from dual
+                )
+                </foreach>
+            )t
+    </insert>
+
+    <delete id="delRoleMenu" parameterType="com.ershiyi.vo.SysRoleMenu">
+        DELETE from sys_role_menu where roleguid  = #{roleguid}
+    </delete>
+
+
+</mapper>

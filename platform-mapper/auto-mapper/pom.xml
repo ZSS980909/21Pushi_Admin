@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>platform-mapper</artifactId>
+        <groupId>com.ershiyi</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>auto-mapper</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.ershiyi</groupId>
+            <artifactId>orm-starter</artifactId>
+            <version>${platform.orm.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ershiyi</groupId>
+            <artifactId>common-core</artifactId>
+            <version>${platform.common.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ershiyi</groupId>
+            <artifactId>auto-domain</artifactId>
+            <version>${platform.domain.auto.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ershiyi</groupId>
+            <artifactId>sys-domain</artifactId>
+            <version>${platform.domain.sys.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

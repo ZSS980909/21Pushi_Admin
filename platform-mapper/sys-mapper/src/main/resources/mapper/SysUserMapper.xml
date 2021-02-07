@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.SysUserMapper">
+
+    <resultMap type="com.ershiyi.domain.SysUser" id="SysUserResult">
+        <result property="ifuse"    column="IFUSE"    />
+        <result property="schoolId"    column="schoolId"    />
+        <result property="loginid"    column="LOGINID"    />
+        <result property="prisonid"    column="PRISONID"    />
+        <result property="deleted"    column="DELETED"    />
+        <result property="timestamp"    column="TIMESTAMP"    />
+        <result property="userid"    column="USERID"    />
+        <result property="pwd"    column="PWD"    />
+        <result property="usertypeid"    column="USERTYPEID"    />
+
+    </resultMap>
+
+    <sql id="selectSysUser">
+        select IFUSE, POLICEMANGUID, LOGINID, PRISONID, DELETED, TIMESTAMP, USERID from SYS_USER
+    </sql>
+
+
+    <select id="getUserMsgForLogin" parameterType="com.ershiyi.domain.SysUser" resultMap="SysUserResult">
+--         select POLICEMANGUID, LOGINID, PRISONID, USERID from SYS_USER
+--         where (LOGINID = #{userid} or USERID = #{userid} ) and PWD = #{pwd} and DELETED =0 and IFUSE =1
+SELECT  * from sys_user
+    </select>
+    <select id="getUserMsgForLogin2" parameterType="com.ershiyi.domain.SysUser" resultMap="SysUserResult">
+        select POLICEMANGUID, LOGINID, PRISONID, USERID from SYS_USER
+        where USERID = #{userid} and sfsc =0 and sfsy =1
+    </select>
+
+    <!--查询登录用户的菜单-->
+    <select id="getMenuByUser" parameterType="java.lang.String" resultType="com.ershiyi.vo.SysMenuVo">
+        SELECT distinct SM.GUID as guid, SM.menupid as menupid,SM.MENUNAME as menuname,SM.PATH as path,
+         SM.OPENTYPE as opentype,SM.IMGPATH as imgpath,SM.BGCOLOR as bgcolor,SM.SORT as sort,nvl2(des.userid,1,0) as sfxz
+         FROM SYS_MENU 				sm
+       INNER JOIN SYS_ROLE_MENU 	srm 	ON SM.GUID	=	SRM.MENUGUID
+       INNER JOIN SYS_ROLE 		sr 		ON SR.GUID	=	SRM.ROLEGUID
+       INNER JOIN SYS_USER_ROLE 	sur 	ON SUR.ROLEGUID	=	SR.GUID
+       INNER JOIN SYS_USER 		su 		ON SU.USERID	=	SUR.USERID
+        left join sys_menu_desktop des on  des.userid = su.userid and des.menuguid = sm.guid
+        WHERE SU.USERID= #{userid}
+    AND SU.IFUSE=1 and SM.IFUSE =1 and SM.DELETED =0
+    ORDER BY SM.SORT
+    </select>
+
+
+    <select id="selectSysUserList" parameterType="com.ershiyi.domain.SysUser" resultMap="SysUserResult">
+        <include refid="selectSysUser"/>
+        <where>
+            <if test="ifuse != null "> and ifuse = #{ifuse}</if>
+             <if test="policemanguid != null  and policemanguid != '' "> and policemanguid = #{policemanguid}</if>
+             <if test="loginid != null  and loginid != '' "> and loginid = #{loginid}</if>
+             <if test="prisonid != null  and prisonid != '' "> and prisonid = #{prisonid}</if>
+             <if test="timestamp != null "> and timestamp = #{timestamp}</if>
+             <if test="1!=0 "> and deleted = 0</if>
+             <if test="userid != null  and userid != '' "> and userid = #{userid}</if>
+             <if test="pwd != null  and pwd != '' "> and pwd = #{pwd}</if>
+         </where>
+    </select>
+
+    <select id="selectSysUserById" parameterType="java.lang.String" resultMap="SysUserResult">
+        <!--<include refid="selectSysUser"/>-->
+        <!--where USERID = #{userid}-->
+--         select * from sys_user
+    </select>
+
+    <insert id="insertSysUser" parameterType="com.ershiyi.domain.SysUser">
+        insert into SYS_USER
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="ifuse != null  ">ifuse,</if>
+			<if test="policemanguid != null  and policemanguid != ''  ">policemanguid,</if>
+			<if test="loginid != null  and loginid != ''  ">loginid,</if>
+			<if test="prisonid != null  and prisonid != ''  ">prisonid,</if>
+			<if test="1!=0  ">timestamp,</if>
+			<if test="deleted != null  ">deleted,</if>
+			<if test="userid != null  and userid != ''  ">userid,</if>
+			<if test="pwd != null  and pwd != ''  ">pwd,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="ifuse != null  ">#{ifuse},</if>
+			<if test="policemanguid != null  and policemanguid != ''  ">#{policemanguid},</if>
+			<if test="loginid != null  and loginid != ''  ">#{loginid},</if>
+			<if test="prisonid != null  and prisonid != ''  ">#{prisonid},</if>
+			<if test="1!=0  ">pkg_fcommon.f_timestamp(),</if>
+			<if test="deleted != null  ">#{deleted},</if>
+			<if test="userid != null  and userid != ''  ">#{userid},</if>
+			<if test="pwd != null  and pwd != ''  ">#{pwd},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysUser" parameterType="com.ershiyi.domain.SysUser">
+        update SYS_USER
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policemanguid != null  and policemanguid != ''  ">policemanguid = #{policemanguid},</if>
+            <if test="loginid != null  and loginid != ''  ">loginid = #{loginid},</if>
+            <if test="prisonid != null  and prisonid != ''  ">prisonid = #{prisonid},</if>
+            <if test=" 1!=0  ">timestamp = pkg_fcommon.f_timestamp(),</if>
+            <if test="deleted != null  ">deleted = #{deleted},</if>
+            <if test="ifuse != null    ">ifuse = #{ifuse},</if>
+            <if test="pwd != null  and pwd != ''  ">pwd = #{pwd},</if>
+        </trim>
+        where
+        userid = #{userid}
+    </update>
+
+	<delete id="deleteSysUserById" parameterType="java.lang.String">
+        delete from SYS_USER where  userid = #{userid}
+    </delete>
+
+    <delete id="deleteSysUserByIds" parameterType="java.lang.String">
+        delete from SYS_USER where userid in
+        <foreach item="userid" collection="array" open="(" separator="," close=")">
+            #{userid}
+        </foreach>
+    </delete>
+
+
+    <select id="getRoles" parameterType ="com.ershiyi.domain.SysRole" resultType="com.ershiyi.domain.SysRole">
+         select ifuse, guid, rolename , prisonid, deleted, post from SYS_ROLE where prisonid =#{prisonid} and deleted =0
+    </select>
+
+    <select id="getRolesByUserId" resultType="java.lang.String" parameterType="com.ershiyi.domain.SysUser">
+        select roleguid from sys_user_role where userid  = #{userid}
+    </select>
+
+
+    <insert id="saveUserRole" parameterType="java.util.List">
+        INSERT INTO SYS_USER_ROLE(USERID,ROLEGUID)
+            select t.* from(
+                <foreach collection="userRoles" item="item" index="index" separator="union all">
+                 (
+                    select
+                        #{item.userid,jdbcType=VARCHAR} userid ,
+                        #{item.roleguid,jdbcType=VARCHAR} roleguid
+                    from dual
+                )
+                </foreach>
+            )t
+    </insert>
+
+    <delete id="delUserRole" parameterType="com.ershiyi.vo.SysUserRole">
+        DELETE from sys_user_role where userid  = #{userid}
+    </delete>
+
+
+
+    <select id="getDeskMenuByUser" resultType="com.ershiyi.vo.SysMenuVo">
+        select a.MENUPID as menupid, a.OPENTYPE as opentype, a.SORT as sort, a.IMGPATH as imgpath, a.GUID as guid, a.MENUNAME as menuname, a.PATH as path, a.BGCOLOR as bgcolor,a.IFUSE as ifuse ,NVL(b.MENUNAME, '') as menupname from SYS_MENU a
+        left join SYS_MENU b on a.MENUPID = b.GUID left join SYS_MENU_DESKTOP c on a.guid =c.MENUGUID
+        where  a.DELETED =0 and a.IFUSE = 1 and c.USERID = #{userid} order by  a.sort
+    </select>
+
+    <delete id="delDeskMenu">
+        delete  from SYS_MENU_DESKTOP where USERID =#{userid}
+    </delete>
+
+    <insert id="saveDeskMenu" parameterType="java.util.List">
+        INSERT INTO SYS_MENU_DESKTOP(GUID,USERID,MENUGUID,SORT)
+        select t.*  from(
+        <foreach collection="deskMenu" item="item" index="index" separator="union all">
+            (
+            select
+            #{item.guid,jdbcType=VARCHAR} guid ,
+            #{item.userid,jdbcType=VARCHAR} userid ,
+            #{item.menuguid,jdbcType=VARCHAR} menuguid,
+            #{index} sort
+            from dual
+            )
+        </foreach>
+        ) t
+    </insert>
+
+
+    <select id="selectSysUserByLoginId" parameterType="java.lang.String" resultType="com.ershiyi.domain.SysUser">
+          select ifuse,schoolId,deleted,pwd,guid,loginid,userTypeId   FROM sys_user  WHERE loginid =#{loginid}
+    </select>
+
+    <insert id="InsertLogsByUser" parameterType="java.util.Map">
+        INSERT INTO common_logs_user(studenterId,loginid)
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studenterId != null  and studenterId != '' ">#{studenterId},</if>
+            <if test="loginid != null  and loginid != ''  ">#{loginid},</if>
+        </trim>
+    </insert>
+
+    <insert id="Logs" parameterType="java.lang.String">
+        INSERT  INTO sys_user_loginlogs(studenterid, devicecode,deviceType,loginType) values ((select studenterid from common_student_user  where  studentuserid =(select guid from sys_user where loginid=#{loginId} and deleted=0 and ifuse= 1) and  deleted=0 order by createdt limit  1),#{uniquecode},#{logincode},1);
+    </insert>
+
+    <insert id="Logsbyfather"  parameterType="java.lang.String">
+              INSERT  INTO sys_user_loginlogs(studenterid, devicecode,deviceType,loginType) values ((select parenterId from common_parent_user where  parentUserId =
+  (select guid from sys_user where loginid=#{loginId} and deleted=0 and ifuse= 1) and  deleted=0 order by createdt limit  1),#{uniquecode},#{logincode},3);
+    </insert>
+    <update id="UpdateCode" parameterType="java.lang.String">
+        update common_student_user set  uniquecode=#{uniquecode},updatedt=now() where studenterid =(select studenterid from (select studenterid from common_student_user  where  studentuserid =(select guid from sys_user where loginid=#{loginId} and deleted=0 and ifuse= 1) and  deleted=0 order by createdt limit  1) a)
+    </update>
+
+    <update id="UpdateCodebyfather" parameterType="java.lang.String">
+   update common_parent_user set  uniquecode=#{uniquecode},updatedt=now() where parenterId =(select a.parenterId from
+   (select parenterId from common_parent_user  where  parentUserId =(select guid from sys_user where loginid=#{loginId} and deleted=0 and ifuse= 1) and  deleted=0 order by createdt limit  1) a)
+
+</update>
+</mapper>

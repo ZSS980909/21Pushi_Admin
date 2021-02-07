@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.TutoringMapper">
+    <select id="TeacherInfo" resultType="com.ershiyi.entity.TeacherInfo">
+        select
+            a.id as teacherId,
+            realName,
+            userImage,
+            Biography,
+            sex,
+            age,
+            eamil,
+            telPhone,
+            qq,
+            campus,
+            views,
+            price,
+            (select ifnull((select count(*) from common_tutoring_comment a where teacherId = a.id and assess > 3),0)/ifnull(count(*),0) from common_tutoring_comment a where teacherId = a.id) as evaluate,
+            (select sum(classHour) from common_tutoring_purchase where teacherId = a.id and status = 1) as learnTime,
+            (select ifnull(avg(assess),5) from common_tutoring_comment where teacherId = a.id) as score,
+            (select count(DISTINCT studenterId) from common_tutoring_purchase where teacherId = a.id and status = 1) as learnNumber,
+            (select ifnull((select count(DISTINCT studenterId) from common_tutoring_purchase where  teacherId = a.id and status = 1 group by studenterId having count(*)>1 ),0)/ifnull(count(DISTINCT studenterId),0) from common_tutoring_purchase where teacherId = a.id and status = 1) as renew
+        from
+            common_tutoring_user a
+        where
+            deleted = 0
+        <if test="subjectId != 0 and period ==''">
+            and
+            a.id in
+            (select DISTINCT teacherId from common_tutoring_subject where subjectId = #{subjectId})
+        </if>
+        <if test="period !=null or period !='' and subjectId = 0">
+            and
+            a.id in
+            (select DISTINCT teacherId from common_tutoring_subject where period = #{period})
+        </if>
+        <if test="period!=null and period!='' and subjectId != 0">
+            and
+            a.id in
+            (select DISTINCT teacherId from common_tutoring_subject where period = #{period} and subjectId = #{subjectId})
+        </if>
+        <if test="sex!=0">
+            and
+              sex = #{sex}
+        </if>
+        <if test="isHot!=0">
+            order by views desc
+        </if>
+        <if test="isTime!=0">
+        order by
+            createdt desc
+        </if>
+    </select>
+    <select id="SearchTeacher" resultType="com.ershiyi.entity.TeacherInfo">
+        select
+            a.id as teacherId,
+            realName,
+            userImage,
+            Biography,
+            sex,
+            eamil,
+            telPhone,
+            qq,
+            age,
+            campus,
+            views,
+            price,
+            (select ifnull((select count(*) from common_tutoring_comment a where teacherId = a.id and assess > 3),0)/ifnull(count(*),0) from common_tutoring_comment a where teacherId = a.id) as evaluate,
+            (select sum(classHour) from common_tutoring_purchase where teacherId = a.id and status = 1) as learnTime,
+            (select ifnull(avg(assess),5) from common_tutoring_comment where teacherId = a.id) as score,
+            (select count(DISTINCT studenterId) from common_tutoring_purchase where teacherId = a.id and status = 1) as learnNumber,
+            (select ifnull((select count(DISTINCT studenterId) from common_tutoring_purchase where  teacherId = a.id and status = 1 group by studenterId having count(*)>1 ),0)/ifnull(count(DISTINCT studenterId),0) from common_tutoring_purchase where teacherId = a.id and status = 1) as renew
+        from
+            common_tutoring_user a
+        where
+            realName like #{realName}
+        and
+            deleted = 0
+        order by
+            createdt desc
+    </select>
+    <insert id="insertView">
+        insert into
+            common_tutoring_teacher_views(
+                 userId,
+                 teacherId
+            )
+            values(
+                 #{parenterId},
+                 #{teacherId}
+                  );
+        update
+            common_tutoring_user
+        set
+            views = views+1
+        where
+            id = #{teacherId}
+    </insert>
+    <select id="CommentInfo" resultType="com.ershiyi.entity.CommentInfo">
+        select
+            id as commentId,
+            message,
+            assess,
+            userType,
+            (select count(id) from common_tutoring_comment_thumbs where commentId = a.id and  userId = #{parenterId} and deleted = 0 limit 1 ) as isLike,
+            (select count(id) from common_tutoring_comment_thumbs where commentId = a.id) as likeNumber
+        from
+            common_tutoring_comment a
+        where
+            deleted = 0
+        and
+            teacherId = #{teacherId}
+        order by
+            id desc;
+    </select>
+</mapper>

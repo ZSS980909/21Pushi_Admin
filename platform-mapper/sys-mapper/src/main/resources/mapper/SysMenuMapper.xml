@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.SysMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.ershiyi.domain.SysMenu">
+        <id column="GUID" jdbcType="VARCHAR" property="guid" />
+        <result column="MENUPID" jdbcType="VARCHAR" property="menupid" />
+        <result column="OPENTYPE" jdbcType="DECIMAL" property="opentype" />
+        <result column="SORT" jdbcType="VARCHAR" property="sort" />
+        <result column="IMGPATH" jdbcType="VARCHAR" property="imgpath" />
+        <result column="MENUNAME" jdbcType="VARCHAR" property="menuname" />
+        <result column="PATH" jdbcType="VARCHAR" property="path" />
+        <result column="BGCOLOR" jdbcType="VARCHAR" property="bgcolor" />
+        <result column="IFUSE" jdbcType="DECIMAL" property="ifuse" />
+
+        <result column="DELETED" jdbcType="DECIMAL" property="deleted" />
+        <result column="CREATEDT" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="CREATORID" jdbcType="VARCHAR" property="creatorId" />
+        <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+        <result column="MODIFYDT" jdbcType="TIMESTAMP" property="modifyDate" />
+        <result column="MODIFIERID" jdbcType="VARCHAR" property="modifierid" />
+        <result column="MODIFIER" jdbcType="VARCHAR" property="modifier" />
+        <result column="TIMESTAMP" jdbcType="DECIMAL" property="timestamp" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        MENUPID, OPENTYPE, DELETED, SORT, CREATEDT, IMGPATH, CREATORID, MODIFIERID, MODIFIER, GUID, "TIMESTAMP", IFUSE, CREATOR, MENUNAME, PATH, BGCOLOR, MODIFYDT
+    </sql>
+
+
+
+
+    <resultMap type="com.ershiyi.domain.SysMenu" id="SysMenuResult">
+        <id column="GUID"  property="guid" />
+        <result column="MENUPID"  property="menupid" />
+        <result column="OPENTYPE"  property="opentype" />
+        <result column="SORT"  property="sort" />
+        <result column="IMGPATH"  property="imgpath" />
+        <result column="MENUNAME"  property="menuname" />
+        <result column="PATH"  property="path" />
+        <result column="BGCOLOR"  property="bgcolor" />
+        <result column="IFUSE"  property="ifuse" />
+
+        <result column="DELETED"  property="deleted" />
+        <result column="CREATEDT"  property="createDate" />
+        <result column="CREATORID"  property="creatorId" />
+        <result column="CREATOR"  property="creator" />
+        <result column="MODIFYDT"  property="modifyDate" />
+        <result column="MODIFIERID"  property="modifierid" />
+        <result column="MODIFIER"  property="modifier" />
+        <result column="TIMESTAMP"  property="timestamp" />
+    </resultMap>
+
+
+
+
+	<sql id="selectSysMenu">
+        select MENUPID, OPENTYPE, DELETED, SORT, CREATEDT, IMGPATH, CREATORID, MODIFIERID, MODIFIER, GUID, TIMESTAMP, IFUSE, CREATOR, MENUNAME, PATH, BGCOLOR, MODIFYDT from SYS_MENU
+    </sql>
+
+    <select id="selectSysMenuList" parameterType="com.ershiyi.domain.SysMenu" resultMap="SysMenuResult">
+        <include refid="selectSysMenu"/>
+        <where>
+            <if test="menupid != null  and menupid != '' "> and menupid = #{menupid}</if>
+             <if test="opentype != null "> and opentype = #{opentype}</if>
+             <if test="1!=0 "> and deleted = 0</if>
+             <if test="sort != null "> and SORT = #{sort}</if>
+             <if test="imgpath != null  and imgpath != '' "> and imgpath = #{imgpath}</if>
+             <if test="ifuse != null "> and ifuse = #{ifuse}</if>
+             <if test="menuname != null  and menuname != '' "> and menuname = #{menuname}</if>
+             <if test="path != null  and path != '' "> and PATH = #{path}</if>
+             <if test="bgcolor != null  and bgcolor != '' "> and bgcolor = #{bgcolor}</if>
+         </where>
+    </select>
+
+    <select id="selectSysMenuById" parameterType="String" resultMap="SysMenuResult">
+        <include refid="selectSysMenu"/>
+        where GUID = #{guid}
+    </select>
+
+    <insert id="insertSysMenu" parameterType="com.ershiyi.domain.SysMenu">
+        insert into SYS_MENU
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="menupid != null  and menupid != ''  ">menupid,</if>
+			<if test="opentype != null  ">opentype,</if>
+			<if test="deleted != null  ">deleted,</if>
+			<if test="sort != null  ">SORT,</if>
+			<if test="1!=0  ">createdt,</if>
+			<if test="imgpath != null  and imgpath != ''  ">imgpath,</if>
+			<if test="creatorId != null  and creatorId != ''  ">creatorid,</if>
+			<if test="modifierid != null  and modifierid != ''  ">modifierid,</if>
+			<if test="modifier != null  and modifier != ''  ">modifier,</if>
+			<if test="guid != null  and guid != ''  ">GUID,</if>
+			<if test="1!=0 ">timestamp,</if>
+			<if test="ifuse != null  ">ifuse,</if>
+			<if test="creator != null  and creator != ''  ">creator,</if>
+			<if test="menuname != null  and menuname != ''  ">menuname,</if>
+			<if test="path != null  and path != ''  ">PATH,</if>
+			<if test="bgcolor != null  and bgcolor != ''  ">bgcolor,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="menupid != null  and menupid != ''  ">#{menupid},</if>
+			<if test="opentype != null  ">#{opentype},</if>
+			<if test="deleted != null  ">#{deleted},</if>
+			<if test="sort != null  ">#{sort},</if>
+			<if test="1!=0  ">sysdate,</if>
+			<if test="imgpath != null  and imgpath != ''  ">#{imgpath},</if>
+			<if test="creatorId != null  and creatorId != ''  ">#{creatorId},</if>
+			<if test="modifierid != null  and modifierid != ''  ">#{modifierid},</if>
+			<if test="modifier != null  and modifier != ''  ">#{modifier},</if>
+			<if test="guid != null  and guid != ''  ">#{guid},</if>
+			<if test="1!=0  ">pkg_fcommon.f_timestamp(),</if>
+			<if test="ifuse != null  ">#{ifuse},</if>
+			<if test="creator != null  and creator != ''  ">#{creator},</if>
+			<if test="menuname != null  and menuname != ''  ">#{menuname},</if>
+			<if test="path != null  and path != ''  ">#{path},</if>
+			<if test="bgcolor != null  and bgcolor != ''  ">#{bgcolor},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysMenu" parameterType="com.ershiyi.domain.SysMenu">
+        update SYS_MENU
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="opentype != null  ">opentype = #{opentype},</if>
+            <if test="deleted != null  ">deleted = #{deleted},</if>
+            <if test="sort != null  ">SORT = #{sort},</if>
+            <if test="imgpath != null  and imgpath != ''  ">imgpath = #{imgpath},</if>
+            <if test="modifierid != null  and modifierid != ''  ">modifierid = #{modifierid},</if>
+            <if test="modifier != null  and modifier != ''  ">modifier = #{modifier},</if>
+            <if test="menupid != null  and menupid != ''  "> menupid = #{menupid},</if>
+            <if test="1!=0  ">timestamp = pkg_fcommon.f_timestamp(),</if>
+            <if test="ifuse != null  ">ifuse = #{ifuse},</if>
+            <if test="menuname != null  and menuname != ''  ">menuname = #{menuname},</if>
+            <if test="path != null  and path != ''  ">PATH = #{path},</if>
+            <if test="bgcolor != null  and bgcolor != ''  ">bgcolor = #{bgcolor},</if>
+            <if test="1!=0  ">modifydt = sysdate,</if>
+        </trim>
+        where GUID = #{guid}
+    </update>
+
+	<delete id="deleteSysMenuById" parameterType="String">
+        delete from SYS_MENU where GUID = #{guid}
+    </delete>
+
+    <delete id="deleteSysMenuByIds" parameterType="java.lang.String">
+        delete from SYS_MENU where GUID in
+        <foreach item="guid" collection="guids" open="(" separator="," close=")">
+            #{guid}
+        </foreach>
+    </delete>
+
+
+    <select id="allMenu" resultType="com.ershiyi.vo.SysMenuVo">
+ select a.MENUPID as menupid, a.OPENTYPE as opentype, a.SORT as sort, a.IMGPATH as imgpath, a.GUID as guid, a.MENUNAME as menuname, a.PATH as path, a.BGCOLOR as bgcolor,a.IFUSE as ifuse ,NVL(b.MENUNAME, '') as menupname from SYS_MENU a
+ left join SYS_MENU b on a.MENUPID = b.GUID
+where  a.DELETED =0 and a.IFUSE = 1 order by  a.sort
+    </select>
+
+    <select id="allMenuList" resultType="com.ershiyi.vo.SysMenuVo">
+ select a.MENUPID as menupid, a.OPENTYPE as opentype, a.SORT as sort, a.IMGPATH as imgpath, a.GUID as guid, a.MENUNAME as menuname, a.PATH as path, a.BGCOLOR as bgcolor,a.IFUSE as ifuse,NVL(b.MENUNAME, '') as menupname from SYS_MENU a
+  left join SYS_MENU b on a.MENUPID = b.GUID
+where  a.DELETED =0 order by  a.sort
+    </select>
+
+
+    <delete id="deleteMenuPrison" parameterType="java.lang.String">
+        delete from SYS_MENU_UNIT where prisonid  =#{prisonid}
+    </delete>
+
+
+    <insert id="insertMenuPrison" parameterType="java.util.List">
+        <!--INSERT INTO sys_menu_unit(prisonid,menuguid)-->
+        <!--　select t.* from(-->
+        <!--　　　　-->
+        <!--<foreach collection="menuprison" item="item" index="index" separator="union all">-->
+            <!--　　　　(-->
+            <!--　　　　　　select-->
+            <!--　　　　　　　　#{item.prisonid,jdbcType=VARCHAR} prisonid ,-->
+            <!--　　　　　　　　#{item.menuguid,jdbcType=VARCHAR} menuguid-->
+            <!--　　　　　　from dual-->
+            <!--　　　　)-->
+            <!--　　　　-->
+        <!--</foreach>-->
+        <!--　　)-->
+    </insert>
+
+    <select id="getMenusByPrisonid" resultType="java.lang.String">
+        select menuguid  from sys_menu_unit where prisonid =#{prisonid}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,43 @@
+server:
+  port: 8053
+
+spring:
+  application:
+    name: student-app-service-provider
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+        server-addr: 192.168.3.56:8848
+        namespace: 
+        shared-configs:
+          - {dataId: db.yml, refresh: true}
+          - {dataId: jwt.yml, refresh: true}
+          - {dataId: redis.yml, refresh: true}
+      discovery:
+        namespace: 
+        server-addr: 192.168.3.56:8848
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.ershiyi.domain
+
+feign:
+  sentinel:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+#showSql
+logging:
+  level:
+    com:
+      ershiyi:
+        mapper: debug

@@ -1,0 +1,43 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: pay-service-provider
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+        server-addr: ${config.server-addr}
+        namespace: ${config.namespace}
+        shared-configs:
+          - {dataId: db.yml, refresh: true}
+          - {dataId: jwt.yml, refresh: true}
+          - {dataId: redis.yml, refresh: true}
+      discovery:
+        namespace: ${config.namespace}
+        server-addr: ${discovery.server-addr}
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.ershiyi.domain
+
+feign:
+  sentinel:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+#showSql
+logging:
+  level:
+    com:
+      ershiyi:
+        mapper: debug

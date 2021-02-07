@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.ExamMapper">
+    <select id="SchapterByKnowledge" parameterType="com.ershiyi.dto.ExamDTO" resultType="com.ershiyi.dto.ExamDTO">
+        <foreach collection="list" index="index" item="item" separator="UNION ALL">
+            select * from  common_course_chapter    where   courseid=#{item.courseId} and id = #{item.chapterId}
+        </foreach>
+    </select>
+
+    <select id="SknowledgeByContentId" parameterType="com.ershiyi.dto.ExamDTO" resultType="com.ershiyi.dto.ExamDTO">
+        <if test="list!=null and list.size>0">
+            <foreach collection="list" index="index" item="item" separator="UNION ALL">
+                select  knowledgeContentId from common_course_knowledge where id =#{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="SchoiceByknowledge" resultType="com.ershiyi.domain.Common_Choice">
+        <!--<foreach collection="list" index="index" item="item" separator="UNION ALL">-->
+        select id as questionId, knowledgeid AS knowId,  choicea AS optionA, choiceb AS optionB, choicec AS optionC, choiced as optionD, rightaws as correctOption, resolving, title as question, isgb, schoolid, subjectid, questionImage,1 as type  from common_course_choice
+        where
+            knowledgeid in
+        <foreach collection="list" item="item" index="i" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY RAND() limit #{number}
+    <!--</foreach>-->
+    </select>
+
+    <select id="SjudgeByKnowledge" parameterType="java.util.List" resultType="com.ershiyi.domain.Common_Judge">
+      select
+             id as  questionId,
+             knowledgeid as knowId,
+             title as question,
+             resolving,
+             rightaws as correctOption,
+             isgb,
+             schoolid,
+             subjectid,
+             questionImage,
+             3 as type
+      from
+           common_course_judge
+      where
+            knowledgeid in
+          <foreach collection="list" item="item" index="i" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+        ORDER BY RAND() limit 5
+    </select>
+
+
+    <insert id="insertQuestion" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            insert  into common_course_knowledge_record (questionid, studenterid, correct, knowledgeid,
+            questiontype, courseId, answer, questionTypeByfunction,starttime,endtime)
+            values  (#{item.questionId},#{item.studenterId},#{item.correct},(select  knowledgeId from  common_knowledge_question  where knowledgeContentId =#{item.knowId} limit 1),#{item.type},
+            #{item.courseId},#{item.correctOption},1,now(),now())
+        </foreach>
+    </insert>
+
+    <select id="SchoiceByknowledgelimit1" parameterType="java.lang.String" resultType="com.ershiyi.domain.Common_Choice">
+      select id as questionId, knowledgeid AS knowId, choicea AS optionA, choiceb AS optionB, choicec AS optionC, choiced as optionD, rightaws as correctOption, resolving, title as question, isgb, schoolid, subjectid, questionImage,
+       1 as type from common_course_choice where id=(
+         select  questionId from common_knowledge_question where questionType=1 and knowledgeContentId =#{knowledge} limit 1
+  )
+
+    </select>
+    <select id="SjudgeByKnowledgelimit1" parameterType="java.lang.String" resultType="com.ershiyi.domain.Common_Judge">
+ select
+             id as  questionId,
+             knowledgeid as knowId,
+             title as question,
+             resolving,
+             rightaws as correctOption,
+             isgb,
+             schoolid,
+             subjectid,
+             questionImage,
+             3 as type
+        from
+           common_course_judge WHERE  id=( select  questionId from common_knowledge_question where questionType=3 and
+            knowledgeContentId =#{knowledge}  limit 1)
+    </select>
+
+    <!--<select id="SelectQuestionId" parameterType="java.util.List">-->
+        <!--<foreach collection="list" item="item"  separator="UNION ALL">-->
+            <!--select  * from common_knowledge_question  where knowledgeContentId=#{item} limit 1-->
+        <!--</foreach>-->
+    <!--</select>-->
+</mapper>

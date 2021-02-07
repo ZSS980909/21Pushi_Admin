@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.WechatMapper">
+    <!--插入订单信息-->
+    <insert id="insertorder" parameterType="com.ershiyi.dto.WechatPayInDTO">
+        insert into sys_user_integral_record(studenterid,changeintegral,rawintegral,integralvalue,status,schoolid
+        ,keyword,rechargeAmount,openid,orderId,paymentType) values
+        (#{studenterId},#{changeIntegral},#{rawIntegral},#{integralValue},0,#{schoolId},#{keyWord},#{rechargeAmount}
+        ,#{openId},#{orderId},#{paymentType})
+
+    </insert>
+    <select id="selectIntegral" parameterType="com.ershiyi.dto.WechatPayInDTO" resultType="java.lang.String">
+        SELECT integralvalue FROM sys_user_integral WHERE STUDENTERID=#{studenterId}
+    </select>
+    <update id="updateOrder" parameterType="java.util.Map">
+        UPDATE  sys_user_integral_record  set status =1,updatedt=#{updateTime} where orderId =#{outTradeNo};
+        UPDATE sys_user_integral set integralvalue=(select   integralvalue from  sys_user_integral_record where  status =1 and orderId=#{outTradeNo} order by createdt desc limit  1)
+        where studenterid =(SELECT studenterid FROM sys_user_integral_record WHERE orderId=#{outTradeNo} AND status=1 order by createdt desc limit  1)
+    </update>
+</mapper>

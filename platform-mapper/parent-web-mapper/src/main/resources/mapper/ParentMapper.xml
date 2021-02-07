@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.ParentMapper">
+    <!--获取对比昨天提升的学习知识点数量-->
+    <select id="getRiseKnow" resultType="java.lang.Integer">
+        select
+            ifnull(count(DISTINCT knowledgeid),0)-(select ifnull(count(DISTINCT knowledgeid),0) from common_course_studyknowledge_record  where TO_DAYS(now())-TO_DAYS(starttime) = 1 and studenterId = #{studenterId})
+        from
+             common_course_studyknowledge_record
+        where
+              TO_DAYS(now()) = TO_DAYS(starttime) and studenterId = #{studenterId}
+    </select>
+    <!--获取对比昨天提升的学习时长-->
+    <select id="getRiseStudyLength" resultType="java.lang.Integer">
+        select
+            ifnull(sum(usetime),0)-(select ifnull(sum(usetime),0) from study_length where TO_DAYS(NOW())-TO_DAYS(starttime)=1 and studenterId = #{studenterId})
+        from
+            study_length
+        where
+            TO_DAYS(NOW()) = TO_DAYS(starttime) and studenterId = #{studenterId}
+    </select>
+    <!--获取对比昨天提升的做题数量-->
+    <select id="getRiseQuestion" resultType="java.lang.Integer">
+        select
+            ifnull(count(*),0)-(select ifnull(count(*),0) from common_course_knowledge_record where TO_DAYS(NOW())-TO_DAYS(starttime)=1 and studenterId = #{studenterId})
+        from
+            common_course_knowledge_record
+        where
+            TO_DAYS(NOW()) = TO_DAYS(starttime) and studenterId = #{studenterId}
+    </select>
+    <select id="queryChoiceQuestion" resultType="com.ershiyi.entity.QuestionWrongChoice">
+        select
+            *
+        from
+            student_wrongChoice_Question
+        where
+            questionId in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="queryMultipleQuestion" resultType="com.ershiyi.entity.QuestionWrongChoice">
+        select
+            *
+        from
+            student_wrongMulti_Question
+        where
+            questionId in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="queryJudgeQuestion" resultType="com.ershiyi.entity.QuestionWrongJudge">
+        select
+             *
+        from
+            student_wrongJudge_Question
+        where
+            questionId in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="queryKnow" resultType="com.ershiyi.entity.KnowContent">
+        select
+            *
+        from
+            know_cont
+        where
+            knowContentId in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getHostCourse" resultType="com.ershiyi.entity.CoursePojo">
+        select
+        *
+        from
+        (
+            select
+                a.id as courseId,
+                a.curriculum as courseName,
+                a.author,
+                a.synopsis,
+                a.biography,
+                a.picture,
+                a.subjectid,
+                a.integral as score,
+                (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
+                (select count(*) from common_student_browsing_history where courseid = a.id) as views,
+                (select count(*) from common_course_knowledge where courseId = a.id) as knowNumber,
+                (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status =
+                1 limit 1) as isPay,
+                (select count(*) from common_collect_course where courseId=a.id and studenterId = #{parenterId} and deleted = 0
+                limit 1) as isCollection
+            from
+                common_course a
+            where
+                deleted = 0
+            <if test="subjectId!=null and subjectId!='' and subjectId!=0">
+                and
+                subjectId = #{subjectId}
+            </if> ) a
+        order by a.views desc
+    </select>
+    <select id="getCoursePOJO" resultType="com.ershiyi.entity.CoursePojo">
+        select
+            a.id as courseId,
+            a.curriculum as courseName,
+            a.author,
+            a.synopsis,
+            a.biography,
+            a.picture,
+            a.subjectid,
+            a.integral as score,
+            (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
+            (select count(*) from common_student_browsing_history where courseid = a.id) as views,
+            (select count(*) from common_course_knowledge where courseId = a.id) as knowNumber,
+            (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
+            (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection
+        from
+             common_course a
+        where
+            deleted = 0
+        <if test="subjectId!=null and subjectId!='' and subjectId!=0">
+            and
+            subjectId = #{subjectId}
+        </if>
+        <if test="isTime!=0">
+            ORDER BY createdt DESC
+        </if>
+    </select>
+    <select id="CourseInfo" resultType="com.ershiyi.entity.CoursePojo">
+        select
+            a.id as courseId,
+            a.curriculum as courseName,
+            a.author,
+            a.synopsis,
+            a.biography,
+            a.picture,
+            a.subjectid,
+            a.integral as score,
+            (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
+            (select count(*) from common_student_browsing_history where courseid = a.id) as views,
+            (select count(*) from common_course_knowledge where courseId = a.id) as knowNumber,
+            (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
+            (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{studenterId} and deleted = 0 limit 1) as isCollection
+        from
+            common_course a
+        where
+            id = #{id}
+        limit 1
+    </select>
+</mapper>

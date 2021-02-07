@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.JpushMapper">
+    <!--<select id="SelectQuestion" parameterType="com.ershiyi.dto.JpushPojo" resultType="java.lang.String">-->
+        <!--select  * from common_ipush_record where static=0 and nextPushDt >(select date_add(now(),interval -30 minute)) and  nextPushDt <= now()-->
+    <!--</select>-->
+
+
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.SysLoginMapper">
+
+    <resultMap type="com.ershiyi.domain.SysUser" id="SysLoginResult">
+        <result property="ifuse"    column="IFUSE"/>
+        <result property="loginid"    column="LOGINID"/>
+        <result property="pwd"    column="PWD"/>
+        <result property="usertypeid"    column="USERTYPEID"/>
+        <result property="email"    column="EMALI"/>
+        <result property="schoolId" column="schoolId"/>
+    </resultMap>
+
+    <insert id="loginSysUser" parameterType="com.ershiyi.domain.SysUser">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="guid != null  and guid != ''">guid,</if>
+            <if test="loginId != null  and loginId != ''">loginId,</if>
+            <if test="schoolId != null  and schoolId != ''">schoolId,</if>
+            timestamp,
+            <if test="userTypeId != null  and userTypeId != ''">userTypeId,</if>
+            <if test="pwd != null  and pwd != ''">pwd,</if>
+            <if test="sex != null  and sex != ''">sex,</if>
+            <if test="nickname != null  and nickname != ''">nickname,</if>
+            <if test="realName != null  and realName != ''">realName,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="guid != null  and guid != ''">#{guid},</if>
+            <if test="loginId != null  and loginId != ''">#{loginId},</if>
+            <if test="schoolId != null  and schoolId != ''">#{schoolId},</if>
+            current_timestamp(),
+            <if test="userTypeId != null  and userTypeId != ''">#{userTypeId},</if>
+            <if test="pwd != null  and pwd != ''">#{pwd},</if>
+            <if test="sex != null  and sex != ''">#{sex},</if>
+            <if test="nickname != null  and nickname != ''">#{nickname},</if>
+            <if test="realName != null  and realName != ''">#{realName},</if>
+        </trim>
+    </insert>
+    <insert id="UserByStudent" parameterType="com.ershiyi.domain.Student_User">
+        insert into common_student_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studenterId != null  and  studenterId!= ''">studenterId,</if>
+            <if test="studentUserId != null  and studentUserId != ''">studentUserId,</if>
+            <if test="schoolId != null  and schoolId != ''">schoolId,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studenterId != null  and  studenterId!= ''">#{studenterId},</if>
+            <if test="studentUserId != null  and studentUserId != ''">#{studentUserId},</if>
+            <if test="schoolId != null  and schoolId != ''">#{schoolId},</if>
+        </trim>
+    </insert>
+
+
+    <update id="updateSysUserByPhone" parameterType="com.ershiyi.domain.SysUser" >
+        update sys_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pwd != null  and pwd != ''  ">pwd = #{pwd},</if>
+        </trim>
+        where
+        loginid = #{loginid} and ifuse=1 and  deleted=0
+    </update>
+
+
+    <select id="userRegistered"  parameterType="com.ershiyi.domain.SysUser" resultType="java.lang.String">
+          select ifnull((select guid  from sys_user where loginid=#{loginId} and deleted=0 limit 1 ), 0)
+    </select>
+
+    <select  id="allCity" resultType="com.ershiyi.domain.City">
+          select id,cityname,sort from common_city
+    </select>
+
+    <select  id="allCitybyName" parameterType="com.ershiyi.domain.School" resultType="com.ershiyi.domain.School">
+         select id,school_name,school_id from common_school where 1=1 and  province=#{province}  and city=#{city} and  school_name like #{school_name}
+        <if test="area != null  and  area!= ''">
+            and area=#{area}
+        </if>
+    </select>
+    <select  id="selectpassword" parameterType="com.ershiyi.domain.SysUser" resultType="java.lang.String">
+       select pwd from sys_user where loginid=#{loginid} and ifuse=1 and  deleted=0
+    </select>
+</mapper>

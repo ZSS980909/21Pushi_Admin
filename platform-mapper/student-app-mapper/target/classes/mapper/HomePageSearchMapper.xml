@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.HomePageSearchMapper">
+
+    <!--<resultMap type="com.ershiyi.domain.HomePageSearch" id="HomePageSearchResult">-->
+        <!--<result property="curriculum"    column="CURRICULUM"/>-->
+        <!--<result property="author"    column="AUTHOR"/>-->
+        <!--<result property="picture"    column="PRCTURE"/>-->
+        <!--<result property="integral"    column="INTEGRAL"/>-->
+        <!--<result property="browse"    column="BROWSE"/>-->
+        <!--<result property="upvote"    column="UPVOTE"/>-->
+        <!--<result property="discussid"    column="DISCUSSID"/>-->
+    <!--</resultMap>
+         select  a.courseid, a.studenterId, a.createdt, a.deleted, a.status,b.curriculum,b.author,b.synopsis,b.picture,b.integral,b.browse,b.upvote,b.discussid from
+       common_course_integral_consumption  a
+        left join  common_course b on  a.courseid=b.id
+        where a.status=1 and deleted=0 and  a.studenterId =#{studenterId}
+        and b.curriculum like #{curriculum} and b.deleted =0-->
+    <select id="searchKnowledge" parameterType="com.ershiyi.domain.entity.A_KnowContent" resultType="com.ershiyi.domain.entity.A_KnowContent">
+          select id as knowContentId,knowledgetext as content from common_course_knowledge_content where knowledgetext like #{content}
+    </select>
+
+    <select id="waitcourse" parameterType="com.ershiyi.domain.HomePageSearch"  resultType="com.ershiyi.domain.PlanCourse">
+      select a.id as courseid, a.curriculum, a.author, a.synopsis, a.subjectid, a.picture, a.integral, a.browse, a.upvote, a.discussid,b.splandt,b.plandt from  (select id, curriculum, author, synopsis, subjectid, picture, integral, browse, upvote, discussid from common_course where  deleted =0 and   id in(select courseid  from common_course_plan where studenterId=#{studenterId} and deleted=0  and plantype=0 and splandt between  #{stime} and #{etime} || plandt between    #{stime} and #{etime})) a
+       left join common_course_plan  b on a.id=b.courseid
+       /* select  courseid,plandt,isremind from common_course_plan where studenterId=#{studenterId} and  plantype=0 and splandt between #{stime} and #{etime} || plandt between  #{stime} and #{etime}*/
+    </select>
+
+    <select id="SearchCourse" parameterType="java.lang.String" resultType="com.ershiyi.domain.HomePageSearch">
+        select curriculum,author,synopsis,picture,integral,(select count(*)  from common_course_chapter where  pid =#{courseid}) AS chaptnumber from common_course where  id =#{courseid} and  deleted =0
+    </select>
+
+    <select id="knowledgeByCourse" parameterType="com.ershiyi.domain.HomePageSearch" resultType="com.ershiyi.domain.Course_Select">
+    select *
+from (select a.curriculum,b.chaptername,a.id as courseid ,b.knowledgeid as chapterknowledgeid,a.picture from  common_course a  left join
+  common_course_chapter  b on a.id=b.pid where a.deleted=0 and b.deleted=0  and find_in_set(1,b.knowledgeid)) h
+left join
+  (select * from (select c.*,d.knowledgecontent from  ( select a.knowledgetext,a.knowledgeid,b.editionname from common_course_knowledge_content a  left join common_course_knowledge_edition b on a.editionid=b.id   where   a.id like #{id}  and a.deleted=0) c
+left join
+    common_course_knowledge d on c.knowledgeid=d.id where d.deleted=0) e) j on  find_in_set(j.knowledgeid,h.chapterknowledgeid)
+    </select>
+    <select id="knowledgeByBus" parameterType="java.lang.String" resultType="java.lang.Integer">
+         select ifnull(
+         (select id from sys_user_integral_record where studenterId =#{studenterId}    and keyword='PURCHASECOURSE'  and  courseid=#{courseid} and status =1  limit 1 ),
+          0)
+    </select>
+    <!--搜索课程-->
+    <select id="searchcourse" parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.Search">
+        select curriculum as conText,id from common_course  where deleted=0 and curriculum like  #{keyWord}
+    </select>
+    <!--搜索知识点-->
+    <select id="searchKnowledgeOne"  parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.Search">
+        select knowledgeName as conText,id,courseId from  common_course_knowledge_content where deleted=0 and knowledgetext like #{keyWord}
+    </select>
+    <!--搜索题库-->
+    <select id="searchQuestion" parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.Search">
+        select title as conText,id,questiontype from common_search_question where title like #{keyWord}
+    </select>
+    <!--根据课程id查询课程详情-->
+    <select id="searchContext" parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.CoursePojo">
+        SELECT  id as courseId,curriculum as courseName,synopsis,author,biography,picture,label,
+        (select COUNT(1) from  common_course_purchase where status =1 and
+        studenterid=#{studenterId}  AND courseid=#{id}) as isPay
+        FROM common_course where deleted =0 and id=#{id}
+    </select>
+    <!--搜索知识点详情-->
+    <select id="searchKnowledgedetails"  parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.SearchByKnowledge">
+        select (select count(*) FROM	common_collect_course where courseid =#{courseId}  and deleted = 0) as collectnumber,
+        (select	count(*)	from		common_student_browsing_history	where		courseid =#{courseId} )  as browsingnumber,
+       (SELECT		count(*)	FROM		common_course_discuss	WHERE		courseid = #{courseId}  and		deleted = 0) as discussnumber ,
+       (SELECT count(*) FROM  common_course_purchase where studenterid =#{studenterId}  and  status=1  and courseid= #{courseId} )
+       as ispay ,a.id,a.curriculum,b.knowledgetext,b.knowledgeName,b.knowledgetextUrl
+      from common_course a left join  common_course_knowledge_content b on  a.id=b.courseId where a.id=#{courseId} and b.id=#{id}
+    </select>
+    <!--主页搜索题目单选题-->
+    <select id="searchQuestiondetailsBychoice" parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.QuestionChoice">
+        SELECT choicea as optionA,choiceb as optionB,choicec as optionC,choiced as optionD,title as question,resolving,rightaws as correctOption from common_course_choice where id=#{id}
+    </select>
+    <!--主页搜索题目多选题-->
+    <select id="searchQuestiondetailsBymulti"  parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.QuestionChoice">
+        select choicea as optionA,choiceb as optionB,choicec as optionC,choiced as optionD,title as question,resolving,rightaws as correctOption from common_course_multi  where id=#{id}
+    </select>
+    <!--主页搜索题目判断题-->
+    <select id="searchQuestiondetailsByjudge"  parameterType="com.ershiyi.domain.entity.Search" resultType="com.ershiyi.domain.entity.QuestionJudge">
+select title as question,resolving,rightaws  as correctOption from common_course_judge where id=#{id}
+    </select>
+    <!--主页搜索题目填空-->
+    <select id="searchQuestiondetailsBycompletion">
+
+    </select>
+
+</mapper>

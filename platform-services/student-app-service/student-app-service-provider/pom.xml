@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>student-app-service</artifactId>
+		<groupId>com.ershiyi</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<groupId>com.ershiyi</groupId>
+	<artifactId>student-app-service-provider</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>student-app-service-provider</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.46</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ershiyi</groupId>
+			<artifactId>student-app-service-api</artifactId>
+			<version>${platform.api.student-app.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ershiyi</groupId>
+			<artifactId>common-core</artifactId>
+			<version>${platform.common.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ershiyi</groupId>
+			<artifactId>orm-starter</artifactId>
+			<version>${platform.orm.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ershiyi</groupId>
+			<artifactId>web-starter</artifactId>
+			<version>${platform.web.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ershiyi</groupId>
+			<artifactId>student-app-domain</artifactId>
+			<version>${platform.domain.student-app.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ershiyi</groupId>
+			<artifactId>student-app-mapper</artifactId>
+			<version>${platform.mapper.student-app.version}</version>
+		</dependency>
+
+		<!--算法jar包-->
+		<dependency>
+			<groupId>twenty</groupId>
+			<artifactId>alp</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!--支付宝SDK-->
+		<dependency>
+			<groupId>com.alipay.sdk</groupId>
+			<artifactId>alipay-sdk-java</artifactId>
+			<version>4.10.159.ALL</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<!-- 打包名称 -->
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>db</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
+				</configuration>
+			</plugin>
+
+			<!--maven deploy 忽略发布插件-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>${maven-deploy-plugin.version}</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${maven-docker-plugin.version}</version>
+				<!--将插件绑定在某个phase执行-->
+				<executions>
+					<execution>
+						<id>build-image</id>
+						<!--将插件绑定在package这个phase上。也就是说，用户只需执行mvn package ，就会自动执行mvn docker:build-->
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!--指定生成的镜像名-->
+					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+					<!--指定标签-->
+					<imageTags>
+						<imageTag>latest</imageTag>
+					</imageTags>
+					<!-- 指定 Dockerfile 路径 ${project.basedir}：项目根路径下-->
+					<dockerDirectory>${project.basedir}</dockerDirectory>
+					<!--指定远程 docker api地址-->
+					<dockerHost>${docker.host}</dockerHost>
+					<buildArgs>
+						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+					<!-- 这里是复制 jar 包到 docker 容器指定目录配置 -->
+					<resources>
+						<resource>
+							<targetPath>/ROOT</targetPath>
+							<!--jar 包所在的路径 此处配置的 即对应 target 目录-->
+							<directory>${project.build.directory}</directory>
+							<!-- 需要包含的 jar包 ，这里对应的是 Dockerfile中添加的文件名　-->
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+
+			</plugin>
+		</plugins>
+	</build>
+</project>

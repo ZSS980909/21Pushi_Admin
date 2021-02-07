@@ -1,0 +1,17 @@
+#version: '1.13.1'
+#networks:
+#  extnetwork:
+#    external:
+#      name: oracle_extnetwork
+#services:
+#  gateway:
+#    restart: always
+#    image: ershiyi/platform-gateway
+#    container_name: gateway
+#    ports:
+#      - 9999:8888
+#    volumes:
+#      - ./logs:/logs
+#    networks:
+#      extnetwork:
+#        ipv4_address: 129.211.168.37

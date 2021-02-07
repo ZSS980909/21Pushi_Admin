@@ -1,0 +1,51 @@
+package com.ershiyi.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import reactor.core.publisher.Mono;
+import springfox.documentation.swagger.web.*;
+
+import java.util.Optional;
+
+@Controller
+public class SwaggerHandler {
+
+    @Autowired(required = false)
+    private SecurityConfiguration securityConfiguration;
+
+    @Autowired(required = false)
+    private UiConfiguration uiConfiguration;
+
+    private final SwaggerResourcesProvider swaggerResources;
+
+    @Autowired
+    public SwaggerHandler(SwaggerResourcesProvider swaggerResources) {
+        this.swaggerResources = swaggerResources;
+    }
+
+
+
+    @GetMapping("/swagger-resources/configuration/security")
+    @ResponseBody
+    public Mono<ResponseEntity<SecurityConfiguration>> securityConfiguration() {
+        return Mono.just(new ResponseEntity<>(
+                Optional.ofNullable(securityConfiguration).orElse(SecurityConfigurationBuilder.builder().build()), HttpStatus.OK));
+    }
+
+    @GetMapping("/swagger-resources/configuration/ui")
+    @ResponseBody
+    public Mono<ResponseEntity<UiConfiguration>> uiConfiguration() {
+        return Mono.just(new ResponseEntity<>(
+                Optional.ofNullable(uiConfiguration).orElse(UiConfigurationBuilder.builder().build()), HttpStatus.OK));
+    }
+
+    @GetMapping("/swagger-resources")
+    @ResponseBody
+    public Mono<ResponseEntity> swaggerResources() {
+        return Mono.just((new ResponseEntity<>(swaggerResources.get(), HttpStatus.OK)));
+    }
+}

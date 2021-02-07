@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.PersonalCenterMapper">
+    <update id="updateInfo">
+        update
+            sys_user
+        set
+            ifuse = 1
+        <if test="name !=null and name !=''">
+            ,nickName = #{name}
+        </if>
+        <if test="sex !=null and sex !=''">
+            ,sex = #{sex}
+        </if>
+        <if test="birthday !=null and birthday !=''">
+            ,birthdaydt = #{birthday}
+        </if>
+        where
+            guid = #{guid}
+    </update>
+    <select id="getCourseInfo" resultType="com.ershiyi.domain.entity.CoursePojo">
+        select * from common_course_info where  studenterId = #{studenterId} and courseId in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

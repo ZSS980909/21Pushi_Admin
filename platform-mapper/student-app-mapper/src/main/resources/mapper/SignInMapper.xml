@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.SignInMapper">
+
+    <!--<resultMap type="com.ershiyi.domain.Integral_record" id="SignInIntegral">-->
+        <!--<result property="integralnameid"    column="INTEGRALNAMEID"/>-->
+        <!--<result property="changeintegral"    column="CHANGEINTEGRAL"/>-->
+        <!--<result property="rawintegral"    column="RAWINTEGRAL"/>-->
+        <!--<result property="integralvalue"    column="INTEGRALVALUE"/>-->
+    <!--</resultMap>-->
+   <!-- <resultMap type="com.ershiyi.domain.Integral" id="IntegralResult">
+        <result property="integralname"    column="INTEGRALNAME"/>
+        <result property="integraldescribe"    column="INTEGRALDESCRIBE"/>
+        <result property="integralvalue"    column="INTEGRALVALUE"/>
+        <result property="deleted"    column="DELETED"/>
+    </resultMap>-->
+
+    <!--修改积分值到总表-->
+    <update id="updateStatus"  parameterType="com.ershiyi.domain.entity.A_Integral">
+        update  sys_user_integral set integralvalue = integralvalue+#{integralvalue}
+        <if test="schoolId != null  and schoolId != ''">,schoolId = #{schoolId}</if>
+        where
+        studenterId = #{studenterId}
+    </update>
+    <!--插入积分值到总表-->
+    <insert id="insertStudent"  parameterType="com.ershiyi.domain.entity.A_Integral">
+        insert into  sys_user_integral
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="integralvalue != null  and integralvalue != ''">integralvalue,</if>
+            <if test="schoolId != null  and schoolId != ''">schoolId,</if>
+            <if test="studenterId != null  and studenterId != ''">studenterId</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="integralvalue != null  and integralvalue != ''">#{integralvalue},</if>
+            <if test="schoolId != null  and schoolId != ''">#{schoolId},</if>
+            <if test="studenterId != null  and studenterId != ''">#{studenterId}</if>
+        </trim>
+    </insert>
+    <!--签到-->
+    <insert id="signin"  parameterType="com.ershiyi.domain.entity.A_Integral_Record">
+         INSERT  INTO  sys_user_integral_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="integralnameid != null  and integralnameid != ''">IntegralId,</if>
+            <if test="studenterId != null  and studenterId != ''">studenterId,</if>
+            <if test="changeintegral != null  and changeintegral != ''">changeintegral,</if>
+            <if test="rawintegral != null  and rawintegral != ''">rawintegral,</if>
+            <if test="integralvalue != null  and integralvalue != ''">integralvalue,</if>
+            status,
+            <if test="schoolId != null  and schoolId != ''">schoolId,</if>
+            <if test="keyWord != null  and keyWord != ''">keyWord,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="integralnameid != null  and integralnameid != ''">#{integralnameid},</if>
+            <if test="studenterId != null  and studenterId != ''">#{studenterId},</if>
+            <if test="changeintegral != null  and changeintegral != ''">#{changeintegral},</if>
+            <if test="rawintegral != null  and rawintegral != ''">#{rawintegral},</if>
+            <if test="integralvalue != null  and integralvalue != ''">#{integralvalue},</if>
+            1,
+            <if test="schoolId != null  and schoolId != ''">#{schoolId},</if>
+            <if test="keyWord != null  and keyWord != ''">#{keyWord},</if>
+        </trim>
+    </insert>
+    <!--&lt;!&ndash;计算页面积分&ndash;&gt;-->
+    <select id="credit" parameterType="com.ershiyi.domain.entity.A_Integral_Common" resultType="com.ershiyi.domain.entity.A_Integral_Record">
+        select keyWord,date_format(createdt,'%Y-%m-%d') as createdt,changeintegral from sys_user_integral_record where  keyWord=#{keyWord} and  studenterId=#{studenterId} ORDER BY createdt DESC limit 1
+    </select>
+
+    <select id="qtype" parameterType="com.ershiyi.domain.entity.A_Integral_Common" resultType="com.ershiyi.domain.entity.A_SignInWork">
+          SELECT id,Integralname,Integraldescribe,Integralvalue,createdt,keyWord FROM  sys_user_integral_entry where keyWord=#{keyWord} and deleted=0
+    </select>
+    <select id="gathersignIn" parameterType="com.ershiyi.domain.entity.A_Integral_Record" resultType="com.ershiyi.domain.Integral_record">
+        select IntegralId as integralnameid, changeintegral, rawintegral, integralvalue from sys_user_integral_record where  studenterId=#{studenterId} and To_Days(createdt)=To_Days(NOW()) and status=1 and changeintegral != 0 order by  createdt
+    </select>
+
+    <!--查询学生积分-->
+    <select id="SSingnin"  resultType="java.lang.Integer">
+        select ifnull(integralvalue,0) from  sys_user_integral where studenterId=#{studenterId}
+    </select>
+
+    <select id="gethistory" parameterType="com.ershiyi.domain.entity.IntegralTask" resultType="com.ershiyi.domain.entity.IntegralTask">
+        select  changeintegral AS integralValue,studenterid,(select integralname from sys_user_integral_entry where keyWord =a.keyWord ) AS integralname,updatedt from  sys_user_integral_record a where status=1 and  studenterid =#{studenterId} and  updatedt >= #{updatedt}
+    </select>
+</mapper>

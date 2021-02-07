@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bowden.mapper.CommonMapper">
+
+    <resultMap type="com.bowden.domain.CommonPrison" id="CommonPrisonResult">
+        <result property="prisonname"    column="PRISONNAME"    />
+        <result property="prisonpid"    column="PRISONPID"    />
+        <result property="orglevel"    column="ORGLEVEL"    />
+        <result property="modifydt"    column="MODIFYDT"    />
+        <result property="modifier"    column="MODIFIER"    />
+        <result property="creator"    column="CREATOR"    />
+        <result property="timestamp"    column="TIMESTAMP"    />
+        <result property="sort"    column="SORT"    />
+        <result property="deleted"    column="DELETED"    />
+        <result property="guid"    column="GUID"    />
+        <result property="grademark"    column="GRADEMARK"    />
+        <result property="createdt"    column="CREATEDT"    />
+        <result property="modifierid"    column="MODIFIERID"    />
+        <result property="prisonid"    column="PRISONID"    />
+        <result property="prisonshortid"    column="PRISONSHORTID"    />
+        <result property="prisonshortname"    column="PRISONSHORTNAME"    />
+        <result property="creatorid"    column="CREATORID"    />
+    </resultMap>
+
+    <sql id="selectCommonPrison">
+        select PRISONNAME, PRISONPID, ORGLEVEL, MODIFYDT, MODIFIER, CREATOR, TIMESTAMP, SORT, DELETED, GUID, GRADEMARK, CREATEDT, MODIFIERID, PRISONID, PRISONSHORTID, PRISONSHORTNAME, CREATORID from COMMON_PRISON
+    </sql>
+
+
+
+    <select id="getPrison" parameterType="com.bowden.domain.CommonPrison" resultMap="CommonPrisonResult">
+        <include refid="selectCommonPrison"/>
+
+        START WITH prisonid = #{prisonid}  CONNECT BY prisonpid = PRIOR prisonid
+
+    </select>
+
+
+    <select id="getAllPrison" resultMap="CommonPrisonResult">
+        <include refid="selectCommonPrison"/>
+    </select>
+
+
+</mapper>

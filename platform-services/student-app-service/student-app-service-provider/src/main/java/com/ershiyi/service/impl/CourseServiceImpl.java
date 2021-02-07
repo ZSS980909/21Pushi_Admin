@@ -1,0 +1,769 @@
+package com.ershiyi.service.impl;
+
+import com.ershiyi.Utils.DateUtils;
+import com.ershiyi.domain.Chapter;
+import com.ershiyi.domain.*;
+import com.ershiyi.domain.Collect_Course;
+import com.ershiyi.domain.entity.*;
+import com.ershiyi.dto.JHZCourseDTO;
+import com.ershiyi.dto.RequestDTO;
+import com.ershiyi.mapper.CourseMapper;
+import com.ershiyi.service.CourseService;
+import com.ershiyi.utils.TimeCompute;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMapper> implements CourseService {
+    public static Log log = LogFactory.getLog(CourseServiceImpl.class);
+
+    @Override
+    public PageInfo<CoursePlan> JHZCourse(RequestDTO request) {
+        // 查询出学生所有可学的课程id
+        PageHelper.startPage(request.getPageNumber(),request.getPageSize());
+        String week = DateUtils.getWeek();
+        List<JHZCourseDTO> planCourse = mapper.queryCourse(request.getStudenterId(),week);
+        List<CoursePlan> jhzCourseDTO = new ArrayList<>();
+        // 开启分页
+        for (JHZCourseDTO courseDTO : planCourse) {
+           courseDTO.setPlandt(week);
+           CoursePlan jhzCourse = mapper.planCourse(courseDTO);
+           // 设置上课时间
+           String planTime = jhzCourse.getPlanTime();
+           if(planTime!=null&&planTime!=""){
+               jhzCourse.setPlanType(1);
+               jhzCourse.setPlanTime(planTime + "-" + DateUtils.getAddHour(planTime ,"HH:mm", 1));
+           }
+           jhzCourseDTO.add(jhzCourse);
+        }
+        return new PageInfo<>(jhzCourseDTO);
+    }
+
+    @Override
+    public Chapter CourseChapter(JHZCourseDTO course) {
+        return null;
+    }
+
+    /**
+     * 添加课程  搜索课程
+     * @param request
+     * @return
+     */
+    @Override
+    public PageInfo<CoursePojo> Obscure(RequestDTO request) {
+        // 开启分页
+        PageHelper.startPage(request.getPageNumber(),request.getPageSize());
+        request.setCourseName("%"+request.getCourseName()+"%");
+        List<Integer> courseIds =mapper.Obscure(request.getCourseName());
+        List<CoursePojo> courses = new ArrayList<>();
+        for (Integer courseId : courseIds) {
+            courses.add(mapper.searchCourseInfo(courseId,request.getStudenterId()));
+        }
+        return new PageInfo<>(courses);
+    }
+
+    @Override
+    public List<CourseSubject> title() {
+        return mapper.title();
+    }
+
+    /**
+     * RECOMMEND 推荐课堂
+     * STUDYAID  助学课堂
+     * NEWEST  最新课堂
+     * HOT  热门课堂
+     * @param billboard
+     * @return
+     */
+    @Override
+    public List<CoursePojo> billboard(Billboardtitle billboard) {
+        List<CoursePojo> course = new ArrayList<>();
+        if("RECOMMEND".equals(billboard.getBillboardkey())){
+            List<Integer> ids = mapper.billboardByRECOMMEND(billboard);
+            for (Integer id : ids) {
+                course.add(mapper.searchCourse(id));
+            }
+            return course;
+        }else if("STUDYAID".equals(billboard.getBillboardkey())){
+            List<Integer> ids = mapper.billboardbillboardBySTUDYAID(billboard);
+            for (Integer id : ids) {
+                course.add(mapper.searchCourse(id));
+            }
+            return course;
+        }else if("NEWEST".equals(billboard.getBillboardkey())){
+            List<Integer> ids = mapper.billboardbillboardByNEWEST(billboard);
+            for (Integer id : ids) {
+                course.add(mapper.searchCourse(id));
+            }
+            return course;
+        }else if("HOT".equals(billboard.getBillboardkey())){
+            List<Integer> ids = mapper.billboardbillboardByHOT();
+            for (Integer id : ids) {
+                course.add(mapper.searchCourse(id));
+            }
+            return course;
+        }
+        return  course;
+    }
+
+    @Override
+    public List<Chapter> chapterById(Course course) {
+        return mapper.chapterById(course);
+    }
+
+    @Override
+    public Integer courseByBrowse(int courseId,String studentId) {
+        return  mapper.courseByBrowse(courseId,studentId);
+    }
+
+    @Override
+    public List<CoursePojo> courseByCompetitiv() {
+        List<Integer> ids =  mapper.courseByCompetitiv();
+        List<CoursePojo> courses = new ArrayList<>();
+        for (Integer id : ids) {
+            courses.add(mapper.searchCourse(id));
+        }
+        return courses;
+    }
+
+    @Override
+    public <T> T courseByknowledge(Chapter chapter) {
+        /**
+         * 步骤一
+         * 循环查出该知识点复习资料
+         * 步骤二
+         * 判断是否有文字说明资料
+         * 步骤三
+         * 判断是否有视频说明资料  --暂时先不做
+         * 步骤四
+         * 取出文字说明资料返回
+         */
+        //Knowledge knowledge=null;
+//        String[] split = chapter.getKnowledgeid().split(",");
+//        if(!chapter.getKnowledgeid().contains(",")){
+//                knowledge = mapper.courseByknowledge(chapter.getKnowledgeid());
+//        }else{
+//            for(int i=0;i<split.length;i++){
+//                 knowledge = mapper.courseByknowledge(split[i]);
+//            }
+//        }
+        return null;
+    }
+
+    @Override
+    public CoursePojo courseById(Course course) {
+        return mapper.courseById(course.getCourseId());
+    }
+
+    /*@Override
+    public List<CommentInfo> courseByAppraise(Course course) {
+        // 查询出所有的课程评论信息
+        List<CommentInfo> comments = mapper.queryComment(course.getCourseId());
+        for (CommentInfo comment : comments) {
+            // 根据评论id查询出评论点赞数
+            List<String> studentIds = mapper.queryLikeInfo(comment.getCommentId());
+            comment.setLikes(studentIds.size());
+            // 查询出评论是否已经点赞
+            if(studentIds.contains(comment.getGuid())){
+                comment.setLikeFlag(1);
+            }else{
+                comment.setLikeFlag(0);
+            }
+        }
+        return comments;
+    }*/
+
+    @Override
+    public int appraiseByDiscuss(Thumbs thumbs) {
+        Integer result = mapper.appraiseByDiscuss(thumbs);
+        return result;
+    }
+
+    @Override
+    public Integer appraiseByDiscussStatus(Thumbs thumbs) {
+        return mapper.appraiseByDiscussStatus(thumbs);
+    }
+
+    @Override
+    public Integer courseByCollect(String studenterId, Integer courseId) {
+        return mapper.courseByCollect(studenterId, courseId);
+    }
+
+    @Override
+    public boolean courseByCollectIf(Collect_Course collect_course) {
+        Collect_Course collect_course1 = mapper.courseByCollectIf(collect_course);
+       if(collect_course1==null)
+           return true;
+       else
+            return false;
+    }
+
+    @Override
+    public List<Notice> courseByNotice(Notice notice) {
+        return mapper.courseByNotice(notice);
+    }
+
+    @Override
+    public List<Knowledge> courseByKnowledgeAll(Chapter chapter) {
+        String[] split = chapter.getKnowId().split(",");
+      //System.out.println(split);
+        List list=new ArrayList();
+        for(int i =0;i<split.length;i++){
+            Knowledge knowledge = mapper.courseByKnowledgeAll(split[i]);
+            list.add(knowledge);
+        }
+        return list;
+    }
+
+    @Override
+    public <T> T courseByStudy(QuestionContent questioncontent) {
+        /**
+         * 1.获取该知识点随机出的题型
+         *
+         */
+        return mapper.courseByStudy(questioncontent);
+    }
+
+    @Override
+    public List<KnowledgeContent> courseByKnowledgeContent(Knowledge knowledge) {
+        /**
+         *获取知识点的学习资料 ----文字
+         */
+        return mapper.courseByKnowledgeContent(knowledge);
+    }
+
+    @Override
+    public List<CoursePojo> searchByBusCourse(Common_Search search) {
+        List<Integer> ids = mapper.searchByBusCourseIds(search);
+        List<CoursePojo> courses = new ArrayList<>();
+        for (Integer id : ids) {
+            courses.add(mapper.searchCourse(id));
+        }
+        return courses;
+    }
+
+//    @Override
+//    public Object selectBySyllabus(Common_Search search) {
+//
+//
+//        return null;
+//    }
+
+    @Override
+    public List<CoursePojo> selectCourseBySubject(String studenterId,Integer subjectId) {
+        List<Integer> ids = mapper.selectCourseBySubject(studenterId, subjectId);
+        List<CoursePojo> courses = new ArrayList<>();
+        for (Integer id : ids) {
+            CoursePojo coursePojo = mapper.searchCourse(id);
+            // 查询当前课程是否已经收藏
+            coursePojo.setIsCollect(!mapper.queryIsCollect(studenterId,id).isEmpty() ? 0:1);
+            courses.add(coursePojo);
+        }
+        return courses;
+    }
+
+    @Override
+    public List<LZMDType> LZMDKnowledge(Common_Search search) {
+             List<LZMDType> lzmdtype =new ArrayList<>();
+            List<Common_Return> searchone =mapper.LZMDKnowledge(search); //1.查询已购买课程总共多少个知识点
+            List<Common_Return> searchtwo =mapper.CountKnowledge(search);//2.查询每个已购买的课程已完成多少个知识点
+            if(searchone.size()==0){
+                /**
+                 * 没有已经购买的课程
+                 */
+                return null;
+            }
+            /**
+             * 计算该学生的已购买课程的所有知识点个数
+             */
+             List list =new ArrayList();
+             for(int i=0;i<searchone.size();i++){
+                 list.add(searchone.get(i).getCourseId());
+                 list=(List) list.stream().distinct().collect(Collectors.toList());//去重
+             }
+             for(int c=0;c<list.size();c++){
+                 List listcountknowledge =new ArrayList();
+                 List liststudyknowledge =new ArrayList();
+                 LZMDType lzmd =new LZMDType();
+                 String countknowledge="";//已购买的某们课程所有知识点拼接集合
+                 String studyknowledge="";//已购买的学习过的课程知识点集合
+
+                 //算已购买的总课程
+                 for(int d=0;d<searchone.size();d++){
+                     if(list.get(c).equals(searchone.get(d).getCourseId())){
+                         if(d==searchone.size()-1){
+                             countknowledge+=searchone.get(d).getKnowId();
+                         }else{
+                             countknowledge+=searchone.get(d).getKnowId()+",";
+                         }
+                         lzmd.setSubjectId(searchone.get(d).getSubjectId());
+                         lzmd.setPicture(searchone.get(d).getPicture());
+                     }
+
+                 }
+                 //算出切割然后去重
+                 String[] split = countknowledge.split(",");
+                 for(int s=0;s<split.length;s++){
+                     listcountknowledge.add(split[s]);
+                 }
+                 List listQC= (List) listcountknowledge.stream().distinct().collect(Collectors.toList());//去重
+                 lzmd.setKnowledgeCountNumber(String.valueOf(listQC.size()));
+                 lzmd.setCourseId(list.get(c).toString());
+                 lzmd.setCountknowledgeId(listQC.toString());
+
+                 //算已学习的
+                for(int v=0;v<searchtwo.size();v++){
+                    if(list.get(c).equals(searchtwo.get(v).getCourseId())){
+                        //listknowledge.add(searchtwo.get(v).getKnowledgeid());
+                        studyknowledge+=searchtwo.get(v).getKnowId()+",";
+                        if(v==searchtwo.size()-1){
+                            studyknowledge+=searchtwo.get(v).getKnowId();
+                        }
+                    }
+                }
+                // System.out.println(studyknowledge);
+                 //算出切割然后去重
+                 String[] splits = studyknowledge.split(",");
+                 for(int s=0;s<splits.length;s++){
+                     liststudyknowledge.add(splits[s]);
+                 }
+                 List liststudyQC= (List) liststudyknowledge.stream().distinct().collect(Collectors.toList());//去重
+                 lzmd.setStudyknowledgeId(liststudyQC.toString());
+                 lzmd.setKnowledgeStudyNumber(String.valueOf(liststudyQC.size()));
+                 String baifenbi="";//接收百分比值
+                 double studytime =liststudyQC.size()*1.0;
+                 double counttime =listQC.size()*1.0;
+                 double fen = studytime / counttime;
+                 DecimalFormat df1 = new DecimalFormat("0.##");
+                 baifenbi = df1.format(fen);
+
+                 lzmd.setPercentage(baifenbi);
+                 for(int k=0;k<searchone.size();k++){
+                     if(searchone.get(k).getCourseId().equals(list.get(c))){
+                         lzmd.setCurriculum(searchone.get(k).getCourseName());
+                         lzmd.setSubjectId(searchone.get(k).getSubjectId());
+                     }
+                 }
+                 List al=new ArrayList();
+                 for(int s=0;s<searchtwo.size();s++){
+                        al.add(searchtwo.get(s).getCourseId());
+                 }
+                 if(!al.toString().contains(list.get(c).toString())){
+                     System.out.println("目前课程是"+list.get(c)+",未学习课程");
+                     for(int k=0;k<searchone.size();k++){
+                         if(searchone.get(k).getCourseId().equals(list.get(c))){
+                             lzmd.setCurriculum(searchone.get(k).getCourseName());
+                         }
+                     }
+                     lzmd.setPercentage("0");
+                     lzmd.setCourseId(list.get(c).toString());
+                     //String aq="";
+                     List aq=new ArrayList();
+                     for(int a=0;a<searchone.size();a++){
+                         if(searchone.get(a).getCourseId().equals(list.get(c).toString())){
+//                             if(a==searchone.size()-1){
+//                                 aq+=searchone.get(a).getKnowledgeid();
+//                             }else{
+//                                 aq+=searchone.get(a).getKnowledgeid()+",";
+//                             }
+                             aq.add(searchone.get(a).getKnowId());
+                         }
+                     }
+                     lzmd.setCountknowledgeId(aq.toString());
+                     lzmd.setStudyknowledgeId("0");
+                     lzmd.setKnowledgeCountNumber(String.valueOf(aq.toString().split(",").length));
+                     lzmd.setKnowledgeStudyNumber("0");
+                 }
+                 lzmdtype.add(lzmd);
+             }
+        return lzmdtype;
+    }
+
+    @Override
+    public List LZMDknowledgeByQuestion(LZMDType lzmdtype) {
+        /**
+         *        临阵磨刀出题
+         *     1. 随机出30个知识点
+         *     2.根据知识点随机选择题型出题
+         */
+        List questiontypes = mapper.SelectQuestionType();  //随机题型
+        Random rand = new Random();
+        //随机知识点
+        String studyknowledgeid = lzmdtype.getStudyknowledgeId();//学习知识点
+        String countknowledgeid = lzmdtype.getCountknowledgeId();  //课程总共知识点
+        List studylist=new ArrayList(); //学习集合
+        List countlist=new ArrayList(); //总共集合
+
+        List list =new ArrayList(); //筛选后的集合
+        String[] studysplit = studyknowledgeid.replace("[", "").replace("]", "").split(",");
+        String[] countsplit = countknowledgeid.replace("[", "").replace("]", "").split(",");
+
+        for(int i=0;i<studysplit.length;i++){
+            studylist.add(studysplit[i].trim());
+        }
+        for(int i=0;i<countsplit.length;i++){
+            countlist.add(countsplit[i].trim());
+        }
+        HashSet hs1 = new HashSet(studylist);
+        HashSet hs2 = new HashSet(countlist);
+        hs2.removeAll(hs1);
+        list.addAll(hs2);
+        /**
+         * 出题20选择题  5判断题
+         */
+        List Clist =new ArrayList();
+        for(int i=0;i<10;i++){
+            if(i<8){
+                String knowledge = list.get(rand.nextInt(list.size())).toString();
+                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
+                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
+                if(common_choice!=null){
+                    common_choice.setType(1);
+                    List Choicelist =new ArrayList();
+                    Choicelist.add("A."+common_choice.getOptionA());
+                    Choicelist.add("B."+common_choice.getOptionB());
+                    Choicelist.add("C."+common_choice.getOptionC());
+                    Choicelist.add("D."+common_choice.getOptionD());
+                    common_choice.setOptions(Choicelist);
+                    Clist.add(common_choice);
+                }else{
+                  log.info("未找到相关题目");
+                }
+            }else if(i>=8&i<10){
+                String knowledge = list.get(rand.nextInt(list.size())).toString();
+                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
+                Common_Judge common_judge = mapper.SelectQuestionBylimitone(questionId);
+                if (common_judge != null) {
+                    List Judgelist =new ArrayList();
+                    Judgelist.add("对");
+                    Judgelist.add("错");
+                    common_judge.setOptions(Judgelist);
+                    common_judge.setType(3);
+                    Clist.add(common_judge);
+                }
+
+            }
+
+        }
+        boolean bool=true;
+        while(bool) {
+            if (Clist.size() < 10) {
+                String knowledge = list.get(rand.nextInt(list.size())).toString();
+                String questionId = mapper.SelectKnowledgeBylimit(knowledge);
+                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
+                if (common_choice != null) {
+                    common_choice.setType(1);
+                    List Choicelist = new ArrayList();
+                    Choicelist.add("A." + common_choice.getOptionA());
+                    Choicelist.add("B." + common_choice.getOptionB());
+                    Choicelist.add("C." + common_choice.getOptionC());
+                    Choicelist.add("D." + common_choice.getOptionD());
+                    common_choice.setOptions(Choicelist);
+                    Clist.add(common_choice);
+                }
+
+            } else {
+                bool = false;
+            }
+
+        }
+        return Clist;
+    }
+
+    @Override
+    public Object LZMDQuestionBySubmit(Map<String, List<Common_StudyrateBy>> list) {
+       // log.info(list);
+        /**
+         * 1.先确定多少题目
+         * 2.判断题目答题时间是否属于正常范围  0-3s属于不认真答题,不记录题目,3-120属于正常,120-600以后属于超时,加入疑难题,600以后属于不认真答题,不记录题目
+         * 3.根据答题时间,题目内容分别插入正常答题表,错误答题表,疑难答题表
+         * 3.错题插入错题库
+         * 4.正确题目插入  common_lzmd_studyrate
+         */
+        List<Map> correctlist =new ArrayList<>();
+        List<Common_StudyrateBy> common_studyrateBIES = list.get("data");
+        for(int i=0;i<common_studyrateBIES.size();i++){
+                log.info(common_studyrateBIES.get(i).getQuestionId());
+                Long day = TimeCompute.getDay(common_studyrateBIES.get(i).getStartdt(), common_studyrateBIES.get(i).getEnddt());
+                log.info("使用时间为"+day);
+                common_studyrateBIES.get(i).setUserdt(day.toString());
+                if(day>=0&day<=3){
+                            //0-3s属于不认真答题,先不做处理
+                }else if(day>=3&day<=120) {
+                    //3-120s属于正常,记录答题表
+                    if(common_studyrateBIES.get(i).getAnswer().equals(common_studyrateBIES.get(i).getFillAnswer())){
+                        //正确
+                        common_studyrateBIES.get(i).setIsright(1);
+                    }else{
+                        //错误
+                        common_studyrateBIES.get(i).setIsright(0);
+                    }
+                    String knowId = common_studyrateBIES.get(i).getKnowId();
+                    if(knowId.contains(",")){
+                        String[] split = knowId.split(",");
+                        if("".equals(split[0])){
+                            String substring = knowId.substring(1);
+                            common_studyrateBIES.get(i).setKnowId(substring);
+                        }
+                    }
+
+                    mapper.ZSubmit(common_studyrateBIES.get(i));
+                }else if(day>=120&day<=600) {
+                    //120-600s属于疑难题,加入难题表
+                    mapper.NSubmit(common_studyrateBIES.get(i));
+                }else{
+                    //600属于不认真答题,先不做处理
+                }
+
+        }
+        return null;
+    }
+
+    /**
+     * 查询学生当前科目下未购买的课程
+     * @param subjectId 学科id
+     * @param pageNumber 页码
+     * @param pageSize 每页展示的数量
+     * @return
+     */
+    @Override
+    public PageInfo<CoursePojo> courseForSubject(String studentId,Integer subjectId, Integer pageNumber, Integer pageSize) {
+        // 开启分页
+        PageHelper.startPage(pageNumber,pageSize);
+
+        // 查询学生当前科目下所有未购买的课程
+        List<Integer> courseIds =null;
+        if(subjectId==0){
+            courseIds = mapper.courseForSubjectone(studentId);
+        }else{
+             courseIds = mapper.courseForSubject(studentId,subjectId);
+        }
+        // 根据课程id查询出课程信息
+        List<CoursePojo> courses = new ArrayList<>();
+        for (Integer courseId : courseIds) {
+            CoursePojo coursePojo = mapper.courseById(courseId);
+            // 查询当前课程是否已经收藏
+            coursePojo.setIsCollect(mapper.queryIsCollect(studentId,courseId).isEmpty() ? 0:1);
+            courses.add(coursePojo);
+        }
+        return new PageInfo<>(courses);
+    }
+
+    /**
+     * 查询作者名下的其他课程
+     * @param creatorId 作者id
+     * @param courseId 课程id
+     * @param pageNumber 页码
+     * @param pageSize 每页展示的数量
+     * @return
+     */
+    @Override
+    public PageInfo<CoursePojo> authorAbout(Integer creatorId, Integer courseId, Integer pageNumber, Integer pageSize) {
+        // 开启分页
+        PageHelper.startPage(pageNumber,pageSize);
+        List<Integer> courseIds = mapper.queryAboutCourse(creatorId,courseId);
+        List<CoursePojo> courses = new ArrayList<>();
+        // 查询出当前作者下的所有id 不包括当前课程
+        courseIds.forEach(id -> courses.add(mapper.courseById(id)) );
+        return new PageInfo<>(courses);
+    }
+
+    /**
+     * 学生发起请求购买当前课程
+     * @param courseId 课程id
+     * @param studentId 学生编号
+     * @return
+     */
+    @Override
+    // 当前注解表示发生错误数据就回滚
+    @Transactional(rollbackFor = Exception.class)
+    public Integer buyCourse(Integer courseId, String studentId) {
+        int result = 0;
+        // 先查询出学生积分
+        Integer studentIntegral = mapper.queryStudentIntegral(studentId);
+        if(studentIntegral==null){
+            studentIntegral = 0;
+        }
+        // 查询出课程所需的积分
+        Integer courseIntegral = mapper.courseById(courseId).getIntegral();
+        if(courseIntegral==null){
+            courseIntegral = 0;
+        }
+        // 判断当前课程是否已经购买
+        // 得到当前的时间
+        if(!mapper.queryCourseExists(studentId,courseId).isEmpty()){
+            // 当前课程已经购买
+            return  result = 203;
+        }
+        if(studentIntegral<courseIntegral){
+            // 学生积分不足以购买当前课程
+            return  result = 201;
+        }else{
+            // 学生积分足够购买课程
+            result = mapper.coursePaySuccess(studentId, courseIntegral);
+            if(result!=0){
+                // 插入成功
+                result = 200;
+            }else{
+                result = 202;
+            }
+        }
+        // 将购买的课程插入到表中
+        mapper.insertCoursePay(studentId,courseId,courseIntegral,result==200 ? 1:0);
+        // 将购买成功的课程插入到计划表中
+        if(result==200){
+            mapper.insertCoursePlan(courseId, studentId);
+            // 将学生购买情况插入到学生消费表中
+            mapper.insertRecord(studentId,courseId,courseIntegral*-1,studentIntegral,(studentIntegral-courseIntegral));
+        }
+        return result;
+    }
+
+    /**
+     * 查询学生当前日期的课程安排
+     * @param studenterId 学生编号
+     * @param date 日期
+     * @return
+     */
+    @Override
+    public List<CoursePlan> queryStudyPlan(String studenterId, String date) {
+        // 获取当前时间的星期
+        String week = DateUtils.getWeekDay(date);
+        // 根据当前星期和时间查询符合条件的课程id
+        List<Integer> courseIds = mapper.queryStudyPlan(studenterId,week);
+        ArrayList<CoursePlan> results = new ArrayList<>();
+        for (Integer courseId : courseIds) {
+            // 设置上课时间
+            CoursePlan course = mapper.queryCourseForWeek(studenterId, courseId, week);
+            String planTime = course.getPlanTime();
+            if(planTime!=null&&planTime!=""){
+                course.setPlanType(1);
+                course.setPlanTime(planTime + "-" + DateUtils.getAddHour(planTime ,"HH:mm", 1));
+            }
+            results.add(course);
+        }
+        return results;
+    }
+
+    /**
+     * 根据科目来查询错误题目
+     * @param request
+     * @return
+     */
+    @Override
+    public PageInfo<ResultWrongQuestion> wrongQuestion(RequestDTO request) {
+        // 开启分页
+        PageHelper.startPage(request.getPageNumber(),request.getPageSize());
+        List<QuestionType> ids = mapper.getWrongQuestionId(request);
+        List<ResultWrongQuestion> results = new ArrayList<>();
+        // 得到题目id和类型获取题目
+        List<Integer> choiceIds = new ArrayList<>();
+        List<Integer> multiples = new ArrayList<>();
+        List<Integer> judges =new ArrayList<>();
+        for (QuestionType id : ids) {
+            if(id.getQuestionType()==1){
+                // 题目为单选题
+                choiceIds.add(id.getQuestionId());
+            }else if(id.getQuestionType()==2){
+                // 题目为多选题
+                multiples.add(id.getQuestionId());
+            }else if(id.getQuestionType()==3){
+                // 题目为判断题
+                judges.add(id.getQuestionId());
+            }
+        }
+        // 如果选择题不为空，则查询选择题的错题信息
+        if(!choiceIds.isEmpty()){
+            results.addAll(QuestionSwitch(mapper.queryChoiceQuestion(choiceIds)));
+        }
+        // 如果多选题不为空，则查询选择题的错题信息
+        if(!multiples.isEmpty()){
+            results.addAll(QuestionSwitch(mapper.queryMultipleQuestion(multiples)));
+        }
+        // 如果判断题不为空，则查询选择题的错题信息
+        if(!judges.isEmpty()){
+            results.addAll(QuestionSwitch(mapper.queryJudgeQuestion(judges)));
+        }
+        return new PageInfo<>(results);
+    }
+
+    /**
+     * 首页课程推荐
+     * @param request
+     * @return
+     */
+    @Override
+    public List<CoursePojo> courseRecommend(RequestDTO request) {
+        // 得到所有的推荐课程id
+        List<Integer> ids = mapper.queryRecommendCourse(request.getStudenterId(),mapper.querySystemSettingSize(request.getKey()));
+        List<CoursePojo> results = new ArrayList<>();
+        for (Integer id : ids) {
+            results.add(mapper.searchCourse(id));
+        }
+        return results;
+    }
+
+    @Override
+    public List<Function_setting> Querytitle() {
+        return  mapper.Querytitle();
+    }
+
+    /**
+     * 选择题转换成返回类
+     * @param lists
+     * @return
+     */
+    public static List<ResultWrongQuestion> QuestionSwitch(ArrayList<WrongQuestionChoice> lists){
+        List<ResultWrongQuestion> results = new ArrayList<>();
+        for (WrongQuestionChoice list : lists) {
+            ResultWrongQuestion question = new ResultWrongQuestion();
+            question.setQuestion(list.getQuestion());
+            question.setCorrectOption(list.getCorrectOption());
+            question.setResolving(list.getResolving());
+            question.setType(list.getType());
+            question.setQuestionId(list.getQuestionId());
+            question.setCourseName(list.getCourseName());
+            question.setSubjectId(list.getSubjectId());
+            question.setFillAnswer(list.getFillAnswer());
+            question.setKnowName(list.getKnowName());
+            question.setStudyTime(list.getStudyTime());
+            question.setOptions(Arrays.asList("A."+list.getOptionA(),"B."+list.getOptionB(),"C."+list.getOptionC(),"D."+list.getOptionD()));
+            question.setSubjectImgUrl(list.getSubjectImgUrl());
+            question.setSubjectId(list.getSubjectId());
+            results.add(question);
+        }
+        return results;
+    }
+
+    /**
+     * 判断题转换成返回类
+     * @param lists
+     * @return
+     */
+    public static List<ResultWrongQuestion> QuestionSwitch(List<WrongQuestionJudge> lists){
+        List<ResultWrongQuestion> results = new ArrayList<>();
+        for (WrongQuestionJudge list : lists) {
+            ResultWrongQuestion question = new ResultWrongQuestion();
+            question.setQuestion(list.getQuestion());
+            question.setCorrectOption(list.getCorrectOption());
+            question.setResolving(list.getResolving());
+            question.setType(list.getType());
+            question.setCourseName(list.getCourseName());
+            question.setSubjectId(list.getSubjectId());
+            question.setQuestionId(list.getQuestionId());
+            question.setFillAnswer(list.getFillAnswer());
+            question.setKnowName(list.getKnowName());
+            question.setStudyTime(list.getStudyTime());
+            results.add(question);
+        }
+        return results;
+    }
+}

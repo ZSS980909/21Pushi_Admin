@@ -1,0 +1,45 @@
+server:
+  port: 8052
+
+spring:
+  application:
+    name: sys-service-provider
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+        server-addr: ${config.server-addr}
+        namespace: ${config.namespace}
+        shared-configs:
+          - {dataId: db.yml, refresh: true}
+          - {dataId: jwt.yml, refresh: true}
+          - {dataId: redis.yml, refresh: true}
+      discovery:
+        namespace: ${config.namespace}
+        server-addr: ${discovery.server-addr}
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.ershiyi.domain
+
+feign:
+  sentinel:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 50000
+        readTimeout: 50000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+logging:
+  level:
+    com.ershiyi: error
+  file:
+    name: sys-service.log

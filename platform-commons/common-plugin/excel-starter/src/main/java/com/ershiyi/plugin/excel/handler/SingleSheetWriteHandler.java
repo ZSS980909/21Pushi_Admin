@@ -1,0 +1,92 @@
+package com.ershiyi.plugin.excel.handler;
+
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.converters.Converter;
+import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.alibaba.excel.write.handler.WriteHandler;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.ershiyi.plugin.excel.annotation.ResponseExcel;
+import com.ershiyi.plugin.excel.config.ExcelConfigProperties;
+import com.ershiyi.plugin.excel.kit.ExcelException;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.springframework.util.StringUtils.hasText;
+
+@RequiredArgsConstructor
+@Configuration(proxyBeanMethods = false)
+public class SingleSheetWriteHandler extends AbstractSheetWriteHandler {
+    private final ExcelConfigProperties configProperties;
+
+    /**
+     * obj 是List 且元素不是是List 才返回true
+     *
+     * @param obj 返回对象
+     * @return
+     */
+    @Override
+    public boolean support(Object obj) {
+        if (obj instanceof List) {
+            List objList = (List) obj;
+            return !(objList.get(0) instanceof List);
+        } else {
+            throw new ExcelException("@ResponseExcel 返回值必须为List类型");
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public void write(Object obj, HttpServletResponse response, ResponseExcel responseExcel) {
+        List list = (List) obj;
+        ExcelWriterBuilder writerBuilder = EasyExcel.write(response.getOutputStream(), list.get(0)
+                .getClass()).autoCloseStream(true).excelType(responseExcel.suffix()).inMemory(responseExcel.inMemory());
+
+        WriteSheet sheet = EasyExcel.writerSheet(responseExcel.sheet()[0]).build();
+
+        if (hasText(responseExcel.password())) {
+            writerBuilder.password(responseExcel.password());
+        }
+
+        if (responseExcel.include().length != 0) {
+            writerBuilder.includeColumnFiledNames(Arrays.asList(responseExcel.include()));
+        }
+
+        if (responseExcel.exclude().length != 0) {
+            writerBuilder.excludeColumnFiledNames(Arrays.asList(responseExcel.include()));
+        }
+
+        if (responseExcel.writeHandler().length != 0) {
+            for (Class<? extends WriteHandler> clazz : responseExcel.writeHandler()) {
+                writerBuilder.registerWriteHandler(clazz.newInstance());
+            }
+        }
+
+        if (responseExcel.converter().length != 0) {
+            for (Class<? extends Converter> clazz : responseExcel.converter()) {
+                writerBuilder.registerConverter(clazz.newInstance());
+            }
+        }
+
+        if (hasText(responseExcel.template())) {
+            ClassPathResource classPathResource = new ClassPathResource(configProperties.getTemplatePath()
+                    + File.separator + responseExcel.template());
+            InputStream inputStream = classPathResource.getInputStream();
+            writerBuilder.withTemplate(inputStream);
+            sheet = EasyExcel.writerSheet().build();
+
+        }
+
+        ExcelWriter excelWriter = writerBuilder.build();
+        excelWriter.write(list, sheet);
+        excelWriter.finish();
+    }
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.KnowledgeMapper">
+    <select id="getKnowList" parameterType="java.util.List" resultType="com.ershiyi.domain.entity.KnowContent">
+        <foreach collection="list" index="index" item="item" separator="UNION ALL">
+            select * from know_cont where knowContentId = #{item}
+        </foreach>
+    </select>
+    <insert id="modifyQuestionStatus">
+        insert into
+            common_knowledge_question(
+                knowledgeId,
+                knowledgeContentId,
+                questionId,
+                questionType
+        ) values
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item},
+            select id from common_course_knowledge where knowledgeContentId in (#{item}),
+            #{questionId},
+            #{type}
+        </foreach>
+    </insert>
+</mapper>

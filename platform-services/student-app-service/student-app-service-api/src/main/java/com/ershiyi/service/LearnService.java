@@ -1,0 +1,114 @@
+package com.ershiyi.service;
+
+import com.ershiyi.common.dto.AbstractBaseResult;
+import com.ershiyi.domain.entity.*;
+import com.ershiyi.dto.RequestDTO;
+import com.github.pagehelper.PageInfo;
+
+import java.util.List;
+
+
+/**
+ * @Description: 学习课堂服务层接口
+ * @author: zss98
+ * @date: 2020-08-05 11:39
+ * @version: 1.0
+ */
+public interface LearnService {
+
+    /**
+     * 根据学生编号查询学生课程列表
+     * @param studentId 学生编号
+     * @param pageNumber 页码
+     * @param pageSize 每页展示的数量
+     * @return
+     */
+    public PageInfo<CoursePojo> courseList(String studentId, Integer pageNumber, Integer pageSize);
+
+
+    /**
+     * 根据课程id查询出评论信息
+     * @param courseId 课程id studentId 学生编号
+     * @return
+     */
+    public PageInfo<CommentInfo> commentInfo(Integer courseId, String guid, Integer pageNumber, Integer pageSize);
+
+    /**
+     * 对评论进行点赞
+     * @param commentId 评论id
+     * @param guid 学生编号
+     * @return 插入的结果 0为失败 其余数字为成功
+     */
+    public int giveLike(Integer commentId, String guid);
+
+    /**
+     * 发表评论
+     * @param message 评论内容
+     * @param guid 学生编号
+     * @return 插入成功返回当前评论的内容
+     */
+    public CommentInfo publishComment(String message, String guid, Integer courseId);
+
+    /**
+     * 当前评论取消点赞
+     * @param discussId 评论id
+     * @param studentId 学生编号
+     * @return 插入的结果 0为失败 其余数字为成功
+     */
+    public int  cancelLike(Integer discussId, String studentId);
+
+    /**
+     * 根据节点id以及题目类型查询出所关联的题目
+     * @param knowId
+     * @return 题目内容
+     */
+    List<ResultQuestion> knowQuestion(Integer knowId, int courseId);
+
+    /**
+     * 收藏当前知识点
+     * @param chapterId  章节id
+     * @param courseId  课程id
+     * @param studenterId 学生编号
+     * @param knowId    知识点id
+     * @param courseName 课程名称
+     * @param subjectId 科目id
+     * @return
+     */
+    int collectKnow(Integer courseId, Integer chapterId, String studenterId, Integer knowId, String courseName, Integer subjectId);
+
+    int submitQuestion(List<Correct> request);
+
+    CourseChapters chapterInfo(Integer courseId, String studenterId);
+
+    /**
+     * 记录学生课程学习结束位置
+     * @param request
+     * @return
+     */
+    Integer addStudyRecord(RequestDTO request);
+
+    /**
+     * 查询当前课程下的章节目录以及学习状态
+     * @param request
+     * @return
+     */
+    List<ChapterMenu> chapterMenu(RequestDTO request);
+
+    /**
+     * 将当前知识点插入推送表进行后续推送
+     * @param
+     * @return
+     */
+   // void insertPushKnowledge(RequestDTO request);
+    void insertPushKnowledge(List<StudyKnowledge> data);
+
+    /**
+     * 记录知识点内容学习时间
+     * @param knows 学习时间
+     * @return
+     */
+    Integer studyRecord(List<StudyKnowledge> knows);
+
+
+    List<ChapterMenu> KnowList(RequestDTO request);
+}
