@@ -4,6 +4,7 @@ import com.ershiyi.common.dto.AbstractBaseResult;
 import com.ershiyi.dist.RespEnum;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
+import com.ershiyi.dto.StudyRecordDTO;
 import com.ershiyi.service.LearnService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,6 +56,36 @@ public class LearnController {
     public AbstractBaseResult commentInfo(@RequestBody RequestDTO request){
         try{
             return RespEnum.OK.result(service.commentInfo(request.getCourseId(),request.getGuid(),request.getPageNumber(),request.getPageSize()));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙，请稍后再试");
+        }
+    }
+
+    /**
+     * 记录知识点学习记录
+     * @param record
+     * @return
+     */
+    @PostMapping("/addStudyRecord")
+    public AbstractBaseResult addStudyRecord(@RequestBody StudyRecordDTO record){
+        try{
+            return RespEnum.OK.result(service.addStudyRecord(record));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙，请稍后再试");
+        }
+    }
+
+    /**
+     * 自动学习下一个知识点
+     * @param request
+     * @return
+     */
+    @PostMapping("/nextKnow")
+    public AbstractBaseResult nextKnow(@RequestBody RequestDTO request){
+        try{
+            return RespEnum.OK.result(service.nextKnow(request));
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙，请稍后再试");

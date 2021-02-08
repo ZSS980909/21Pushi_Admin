@@ -211,6 +211,23 @@ public class DateUtils {
     }
 
     /**
+     * 获取题目所用时间
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return
+     */
+    public static Long getUseTime(long startTime,long endTime){
+        Long useTime = 0l;
+        try {
+            // 获取时间的差值
+            Long useTimes = endTime-startTime;
+            useTime = useTimes/1000L;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return useTime;
+    }
+    /**
      * 多少毫秒后的时间
      * @param time
      * @return

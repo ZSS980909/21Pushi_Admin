@@ -374,23 +374,6 @@ public class PersonalCenterController {
     }
 
     /**
-     * 根据学生编号查询学生所有未完成的课程
-     * @param request 前端请求集合实体类
-     * @return
-     */
-    @PostMapping("/notFinishCourse")
-    @ApiOperation(value = "查询学生还未完成的课程", notes = "查询学生还未完成的课程")
-    public AbstractBaseResult notFinishCourse(@RequestBody RequestDTO request) {
-        try {
-            return RespEnum.OK.result(centerService.queryNoFinish(request.getStudenterId(), request.getPageNumber(), request.getPageSize()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return RespEnum.ERROR.result("查询失败，系统异常，请稍后重试！");
-        }
-
-    }
-
-    /**
      * 意见反馈
      * @return
      */

@@ -47,7 +47,7 @@
     </select>
 
 
-    <select id="title"  resultType="com.ershiyi.domain.entity.CourseSubject">
+    <select id="title"  resultType="com.ershiyi.domain.entity.subjectInfo">
         select id as subjectId,subjectName,deleted,ifuser from  common_course_subject where  deleted=0 and ifuser=1
     </select>
 

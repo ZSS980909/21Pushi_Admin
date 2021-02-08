@@ -71,7 +71,7 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
     }
 
     @Override
-    public List<CourseSubject> title() {
+    public List<subjectInfo> title() {
         return mapper.title();
     }
 

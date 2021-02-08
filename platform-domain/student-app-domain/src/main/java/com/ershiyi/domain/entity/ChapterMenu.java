@@ -14,9 +14,11 @@ public class ChapterMenu {
     private String chapterName = "";
     private String knowContent = "";
     private int pid;
-    private int isStudy;
+    private int isStudy = 0;
     private int subjectId;
     private int courseId;
     private int isLast;
     private int level;
+    private int leftValue;
+    private int rightValue;
 }

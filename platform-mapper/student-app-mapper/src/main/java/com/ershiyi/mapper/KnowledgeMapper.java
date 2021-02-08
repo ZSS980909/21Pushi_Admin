@@ -34,9 +34,9 @@ public interface KnowledgeMapper {
      * @return
      */
     @Select("select id as questionId,choiceA as optionA,choiceB as optionB,1 as type,choiceC as optionC,choiceD as optionD, rightaws as correctOption,title as question,resolving " +
-            " from common_course_choice where deleted = 0 and  isRelevanceFinish = 0 and id not in (select questionId from common_course_question where studenterId = #{studenterId} and questionTypeId = 1) " +
-            "and subjectId = #{subjectId} ORDER BY id desc limit 1")
-    public QuestionChoice getChoiceQuestion(RequestDTO request);
+            " from know_copy.common_course_choice where deleted = 0 and  isRelevanceFinish = 0 and " +
+            " subjectId = #{subjectId} ORDER BY id desc limit 1")
+    QuestionChoice getChoiceQuestion(RequestDTO request);
 
     /**
      *

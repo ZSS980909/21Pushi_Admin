@@ -5,7 +5,6 @@ import com.ershiyi.Utils.DateUtils;
 import com.ershiyi.Utils.DecimalUtils;
 import com.ershiyi.Utils.StrUtils;
 import com.ershiyi.domain.entity.*;
-import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.mapper.StudyDataMapper;
 import com.ershiyi.service.StudyDataService;
 import com.ershiyi.utils.RedisUtils;
@@ -14,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +77,7 @@ public class StudyDataServiceImpl implements StudyDataService {
     @Override
     public List<QuestionResult> generateToDayQuestionChart(String studenterId) {
         // 查询所有的学科信息
-        List<CourseSubject> subjects = studyDataMapper.findAllSubject();
+        List<subjectInfo> subjects = studyDataMapper.findAllSubject();
         List<QuestionsAccuracy> questionsToDay = studyDataMapper.findToDayQuestion(studenterId);
         List<QuestionResult> results = new ArrayList<>();
         subjects.forEach(subject ->
@@ -98,7 +96,7 @@ public class StudyDataServiceImpl implements StudyDataService {
     @Override
     public List<QuestionResult> generateWeekQuestionChart(String studenterId) {
         // 查询所有的学科信息
-        List<CourseSubject> subjects = studyDataMapper.findAllSubject();
+        List<subjectInfo> subjects = studyDataMapper.findAllSubject();
         List<QuestionsAccuracy> questionsWeek = studyDataMapper.findWeekQuestion(studenterId);
         List<QuestionResult> results = new ArrayList<>();
         subjects.forEach(subject ->
@@ -117,7 +115,7 @@ public class StudyDataServiceImpl implements StudyDataService {
     @Override
     public List<QuestionResult> generateMonthQuestionChart(String studenterId) {
         // 查询所有的学科信息
-        List<CourseSubject> subjects = studyDataMapper.findAllSubject();
+        List<subjectInfo> subjects = studyDataMapper.findAllSubject();
         List<QuestionsAccuracy> questionsMonth = studyDataMapper.findMonthQuestion(studenterId);
         List<QuestionResult> results = new ArrayList<>();
         subjects.forEach(subject ->
@@ -246,9 +244,9 @@ public class StudyDataServiceImpl implements StudyDataService {
     /**
      * 根据科目查询出对应的学科ID
      */
-    private static int getSujectId(List<CourseSubject> subjects,String subjectName){
+    private static int getSujectId(List<subjectInfo> subjects, String subjectName){
         int subjectId = 0;
-        for (CourseSubject subject : subjects) {
+        for (subjectInfo subject : subjects) {
             if(subject.getSubjectName().equals(subjectName)){
                 subjectId = subject.getSubjectId();
             }

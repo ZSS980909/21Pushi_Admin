@@ -2,6 +2,7 @@ package com.ershiyi.service.impl;
 
 import com.ershiyi.Utils.IdsUtils;
 import com.ershiyi.Utils.StringReplaceUtil;
+import com.ershiyi.Utils.SwitchQuestionUtils;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.mapper.KnowledgeMapper;
@@ -48,7 +49,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         if(choiceQuestion==null){
             result = null;
         }else {
-            result = switchQuestion(choiceQuestion,result);
+            result = SwitchQuestionUtils.choiceQuestion(choiceQuestion);
         }
         return result;
     }
@@ -69,16 +70,6 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         List<String> ids = IdsUtils.getListString(knowContentId);
         // 根据节点id查询所有的知识点信息
         return mapper.getKnowList(ids);
-    }
-
-    /**
-     * 查看当前知识点详细信息
-     * @param request
-     * @return
-     */
-    @Override
-    public KnowContent getKnowContent(RequestDTO request) {
-        return null;
     }
 
     /**
@@ -163,42 +154,6 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         return result;
     }
 
-
-    /**
-     * 将选择题转换成通用返回的题目类型
-     * @param question
-     * @param result
-     * @return
-     */
-    public static ResultQuestion switchQuestion(QuestionChoice question,ResultQuestion result){
-        List<String> options = new ArrayList<>();
-        result.setCorrectOption(question.getCorrectOption());
-        result.setQuestionId(question.getQuestionId());
-        result.setResolving( question.getResolving());
-        result.setQuestion( question.getQuestion());
-        options.add("A." +  question.getOptionA());
-        options.add("B." +  question.getOptionB());
-        options.add("C." +  question.getOptionC());
-        options.add("D." +  question.getOptionD());
-        result.setOptions(options);
-        result.setType(question.getType());
-        return result;
-    }
-
-    /**
-     * 将判断题包装成通用返回题目类
-     * @param question
-     * @param result
-     * @return
-     */
-    public static ResultQuestion switchQuestion(QuestionJudge question, ResultQuestion result){
-        result.setCorrectOption(question.getCorrectOption());
-        result.setQuestionId(question.getQuestionId());
-        result.setResolving(question.getResolving());
-        result.setQuestion(question.getQuestion());
-        result.setType(3);
-        return result;
-    }
 
     /**
      * 根据获取到的最大值获取键

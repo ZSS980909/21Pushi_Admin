@@ -5,6 +5,7 @@ import com.ershiyi.Utils.IdsUtils;
 import com.ershiyi.Utils.SwitchQuestionUtils;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
+import com.ershiyi.dto.StudyRecordDTO;
 import com.ershiyi.mapper.LearnMapper;
 import com.ershiyi.mapper.PersonalCenterMapper;
 import com.ershiyi.service.LearnService;
@@ -30,6 +31,10 @@ public class LearnServiceImpl<T> implements LearnService {
     @Resource
     private LearnMapper mapper;
 
+    @Resource
+    private LearnServiceImpl service;
+
+
     /**
      * 根据学生编号查询学生课程列表
      * @param studenterId 学生编号
@@ -52,22 +57,73 @@ public class LearnServiceImpl<T> implements LearnService {
     public List<ChapterMenu> chapterMenu(RequestDTO request) {
         // 将学生浏览该课程存入到历史记录中
         mapper.addHistory(request.getStudenterId(), request.getCourseId());
-        // 查询出学生所有学习过的章节id
-        List<Integer> studyChapter = mapper.getStudyChapter(request);
-        List<ChapterMenu> results = mapper.knowledgeMenu(request);
-        for (ChapterMenu result : results) {
-            for (Integer chapterId : studyChapter) {
-                if(chapterId==result.getChapterId()){
-                    result.setIsStudy(1);
-                }
-            }
-        }
-        return results;
+        return service.getStudyStatus(request.getStudenterId(),mapper.knowledgeMenu(request));
     }
 
+    /**
+     * 学习下一个知识点
+     * @param request
+     * @return
+     */
+    @Override
+    public int[] nextKnow(RequestDTO request) {
+        // 获取当前课程最后一个学习的知识点
+        StudyRecordDTO lastStudy = mapper.getLastStudy(request);
+        if(lastStudy==null){
+            // 当前课程未学习，返回第一个知识点
+            return new int[0];
+        }else {
+            // 当前课程已学习，返回下一个知识点
+            StudyRecordDTO know = mapper.getNextKnow(lastStudy.getLeftValue(), request.getCourseId());
+            int[] result = new int[know.getLevel() - 1];
+            for (int i = 0; i < know.getLevel() - 2; i++) {
+                result[i] = mapper.getUpLevelId(know.getLeftValue(), know.getRightValue(), i + 2, request.getCourseId());
+            }
+            result[result.length - 1] = know.getKnowId();
+            return result;
+        }
+    }
+
+    /**
+     * 记录章节学习情况
+     * @param record
+     * @return
+     */
+    @Override
+    public int addStudyRecord(StudyRecordDTO record) {
+        // 判断是否为首次插入
+        record.setFlag(mapper.isFirstStudy(record.getKnowId(),record.getStudenterId()).isEmpty() ? 1:0);
+        // 计算学习时间
+        record.setUseTime(DateUtils.getUseTime(record.getStartTime(),record.getEndTime()));
+        return mapper.insertStudyRecord(record);
+    }
+
+    /**
+     * 获取学习状态
+     * @param studenterId 学生编号
+     * @param chapters 章节信息
+     * @return
+     */
+    public List<ChapterMenu> getStudyStatus(String studenterId,List<ChapterMenu> chapters){
+        for (ChapterMenu chapter : chapters) {
+            // 获取当前章节下所有知识点内容的数量
+            int allNumber = mapper.getKnowContentNumber(chapter);
+            // 获取学生当前章节下做完的数量
+            int completeNumber = mapper.getCompleteKnow(studenterId, chapter.getCourseId(), chapter.getLeftValue(), chapter.getRightValue());
+            if (completeNumber >= allNumber) {
+                chapter.setIsStudy(1);
+            }
+        }
+        return chapters;
+    }
+    /**
+     * 获取下一级的章节信息
+     * @param request
+     * @return
+     */
     @Override
     public List<ChapterMenu> KnowList(RequestDTO request) {
-        return mapper.nextKnow(request);
+        return service.getStudyStatus(request.getStudenterId(), mapper.nextKnow(request));
     }
 
     /**

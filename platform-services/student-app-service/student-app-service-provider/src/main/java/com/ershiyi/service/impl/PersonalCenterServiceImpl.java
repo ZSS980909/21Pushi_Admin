@@ -103,9 +103,9 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
      * @return
      */
     @Override
-    public List<CourseSubject> getAllSubject() {
-        List<CourseSubject> subjects = new ArrayList<>();
-        subjects.add(new CourseSubject(0,"全部"));
+    public List<subjectInfo> getAllSubject() {
+        List<subjectInfo> subjects = new ArrayList<>();
+        subjects.add(new subjectInfo(0,"全部"));
         subjects.addAll(studyDataMapper.findAllSubject());
         return subjects;
     }
@@ -224,24 +224,7 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
         }
         return new PageInfo<>(messageInfos);
     }
-    /**
-     * 查询未完成的课程
-     * @param studenterId 学生编号
-     * @param pageNumber 页码
-     * @param pageSize    每页展示的数量
-     * @return
-     */
-    @Override
-    public PageInfo<CoursePojo> queryNoFinish(String studenterId, int pageNumber, int pageSize) {
-        // 开启分页
-        PageHelper.startPage(pageNumber,pageSize);
-        List<CoursePojo> results = mapper.queryNotFinishCourse(studenterId);
-        // 设置上课时间
-        for (CoursePojo course : results) {
-            course.setCourseTime(getStudyTime(mapper.queryStudyTime(course.getCourseId(),studenterId)));
-        }
-        return new PageInfo<>(results);
-    }
+
     /**
      * 查询已完成的课程
      * @param studenterId 学生编号
@@ -394,15 +377,4 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
         return results;
     }
 
-
-    public static List<ClassTime> getStudyTime(List<ClassTime> classTimes){
-        try {
-            for (ClassTime classTime : classTimes) {
-                classTime.setTime(classTime.getTime() + "-" + DateUtils.getAddHour(classTime.getTime(), "HH:mm", 1));
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return classTimes;
-    }
 }

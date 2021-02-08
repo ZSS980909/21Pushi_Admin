@@ -86,7 +86,7 @@ public interface StudyDataMapper {
      * @return
      */
     @Select("select id as subjectId,subjectName,deleted,ifuser from common_course_subject")
-    public List<CourseSubject> findAllSubject();
+    public List<subjectInfo> findAllSubject();
 
     /**
      * 得到正确率

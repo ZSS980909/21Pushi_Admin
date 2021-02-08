@@ -3,9 +3,7 @@ package com.ershiyi.service;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
 import com.github.pagehelper.PageInfo;
-import io.swagger.models.auth.In;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,7 +68,7 @@ public interface PersonalCenterService {
      * 获取所有的课程编号
      * @return
      */
-     public List<CourseSubject> getAllSubject();
+     public List<subjectInfo> getAllSubject();
 
     /**
      * 根据学生编号和学科编号查询到所有的知识点
@@ -135,15 +133,6 @@ public interface PersonalCenterService {
      * @return
      */
     public PageInfo<MessageInfo> queryMessage(String studenterId,int pageNumber,int pageSize);
-
-    /**
-     * 查询未完成的课程
-     * @param studenterId 学生编号
-     * @param pageNumber 页码
-     * @param pageSize    每页展示的数量
-     * @return
-     */
-    public PageInfo<CoursePojo> queryNoFinish(String studenterId,int pageNumber,int pageSize);
 
     /**
      * 查询已完成的课程

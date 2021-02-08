@@ -3,6 +3,7 @@ package com.ershiyi.service;
 import com.ershiyi.common.dto.AbstractBaseResult;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
+import com.ershiyi.dto.StudyRecordDTO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -86,5 +87,24 @@ public interface LearnService {
     List<ChapterMenu> chapterMenu(RequestDTO request);
 
 
+    /**
+     * 获取下一级的知识点列表
+     * @param request
+     * @return
+     */
     List<ChapterMenu> KnowList(RequestDTO request);
+
+    /**
+     * 添加学习记录
+     * @param record
+     * @return
+     */
+    int addStudyRecord(StudyRecordDTO record);
+
+    /**
+     * 学习下一个知识点
+     * @param request
+     * @return
+     */
+    int[] nextKnow(RequestDTO request);
 }

@@ -17,7 +17,7 @@ public interface CourseService extends BaseService<JHZCourseDTO> {
 
     public PageInfo<CoursePojo> Obscure(RequestDTO request);
 
-    public List<CourseSubject> title();
+    public List<subjectInfo> title();
 
     public List<CoursePojo> billboard(Billboardtitle billboard);
 

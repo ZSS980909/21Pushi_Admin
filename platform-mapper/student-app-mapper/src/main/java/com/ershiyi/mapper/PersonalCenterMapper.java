@@ -172,14 +172,6 @@ public interface PersonalCenterMapper {
     public List<CoursePojo> queryFinishCourse(@Param("studentId")String studentId);
 
     /**
-     * 根据课程id查询出计划时间
-     * @param courseId 课程id
-     * @return
-     */
-    @Select("select id as curriculumId,courseweek as week,coursetimedt as time from common_course_timetable where studenterId = #{studentId} and courseId = #{courseId} and deleted = 0 ")
-    public List<ClassTime> queryStudyTime(@Param("courseId") Integer courseId,@Param("studentId")String studentId);
-
-    /**
      * 获取用户密码
      * @param guid 用户id
      * @return

@@ -34,12 +34,6 @@ public interface KnowledgeService {
      */
    public List<KnowContent> getKnowList(RequestDTO request);
 
-    /**
-     * 查看当前知识点详细信息
-     * @param request
-     * @return
-     */
-   public KnowContent getKnowContent(RequestDTO request);
 
     /**
      * 学生提交关联结果

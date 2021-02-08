@@ -7,7 +7,6 @@ import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.JHZCourseDTO;
 
 import com.ershiyi.dto.RequestDTO;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -36,7 +35,7 @@ public interface CourseMapper extends AbstractMapper<JHZCourseDTO> {
     List<JHZCourseDTO> queryNotPlanCourse(@Param("studenterId") String studenterId);
     List<Integer> Obscure(String courseName);
 
-    List<CourseSubject> title();  //select billboardname,billboardkey,billboartype from  common_billboard_title
+    List<subjectInfo> title();  //select billboardname,billboardkey,billboartype from  common_billboard_title
         //热门
     List<Integer> billboardbillboardByHOT();
         //推荐

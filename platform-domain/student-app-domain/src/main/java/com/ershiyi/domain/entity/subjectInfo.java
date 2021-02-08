@@ -6,13 +6,13 @@ import lombok.Data;
  * 科目实体类
  */
 @Data
-public class CourseSubject {
+public class subjectInfo {
     private int subjectId;    // 科目id
     private String subjectName = "";  // 科目名称
     private int deleted;    // 是否删除
     private int ifUser;    // 是否使用
 
-    public CourseSubject() {
+    public subjectInfo() {
     }
 
     @Override
@@ -56,14 +56,14 @@ public class CourseSubject {
     public void setIfUser(int ifUser) {
         this.ifUser = ifUser;
     }
-    public CourseSubject(int subjectId, String subjectName) {
+    public subjectInfo(int subjectId, String subjectName) {
         this.subjectId = subjectId;
         this.subjectName = subjectName;
         this.deleted = 0;
         this.ifUser = 1;
     }
 
-    public CourseSubject(int subjectId, String subjectName, int deleted, int ifUser) {
+    public subjectInfo(int subjectId, String subjectName, int deleted, int ifUser) {
         this.subjectId = subjectId;
         this.subjectName = subjectName;
         this.deleted = deleted;
