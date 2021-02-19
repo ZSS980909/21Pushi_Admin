@@ -108,17 +108,4 @@ public class KnowledgeController {
         }
     }
 
-    /**
-     * 展示知识点名称和内容
-     */
-    @PostMapping("/getKnowContent")
-    @ApiOperation("获取知识点内容")
-    public AbstractBaseResult getKnowContent(@RequestBody RequestDTO request){
-        try{
-            return RespEnum.OK.result(service.getKnowContent(request));
-        }catch (Exception e){
-            e.printStackTrace();
-            return  RespEnum.ERROR.result("系统繁忙！");
-        }
-    }
 }

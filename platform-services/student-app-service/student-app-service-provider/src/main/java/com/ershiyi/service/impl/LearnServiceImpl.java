@@ -60,6 +60,21 @@ public class LearnServiceImpl<T> implements LearnService {
         return service.getStudyStatus(request.getStudenterId(),mapper.knowledgeMenu(request));
     }
 
+    @Override
+    public List<ChapterMenu> nextMenu(RequestDTO request) {
+        return mapper.nextKnow(request);
+    }
+
+    /**
+     * 获取当前课程章节信息
+     * @param request
+     * @return
+     */
+    @Override
+    public List<ChapterMenu> firstMenu(RequestDTO request) {
+        return mapper.firstKnowMenu(request);
+    }
+
     /**
      * 学习下一个知识点
      * @param request

@@ -235,8 +235,28 @@ public class LearnController {
             return RespEnum.OK.result(service.KnowList(request));
         }catch (Exception e){
             e.printStackTrace();
-            return RespEnum.ERROR.result("服务器繁忙");
+            return RespEnum.ERROR.result("系统繁忙，请稍后再试");
         }
     }
 
+
+    @RequestMapping("/firstMenu")
+    public AbstractBaseResult firstMenu(@RequestBody RequestDTO request){
+        try{
+            return RespEnum.OK.result(service.firstMenu(request));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙，请稍后再试！");
+        }
+    }
+
+    @RequestMapping("/nextMenu")
+    public AbstractBaseResult nextMenu(@RequestBody RequestDTO request){
+        try{
+            return RespEnum.OK.result(service.nextMenu(request));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙，请稍后再试！");
+        }
+    }
 }

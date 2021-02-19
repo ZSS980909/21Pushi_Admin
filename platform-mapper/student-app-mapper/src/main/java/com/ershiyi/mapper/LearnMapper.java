@@ -266,5 +266,8 @@ public interface LearnMapper{
      */
     @Select("select id from know_copy.common_course_knowledge where left_value < #{leftValue} and right_Value > #{rightValue} and level = #{level} and courseId = #{courseId}")
     int getUpLevelId(@Param("leftValue") int leftValue,@Param("rightValue") int rightValue,@Param("level") int level,@Param("courseId")int courseId);
+
+    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from know_copy.common_course_knowledge where courseId = #{courseId} and level = 2")
+    List<ChapterMenu> firstKnowMenu(RequestDTO request);
 }
 

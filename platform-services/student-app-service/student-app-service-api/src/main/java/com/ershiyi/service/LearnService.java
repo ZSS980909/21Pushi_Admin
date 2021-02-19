@@ -1,6 +1,7 @@
 package com.ershiyi.service;
 
 import com.ershiyi.common.dto.AbstractBaseResult;
+import com.ershiyi.domain.Knowledge;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.dto.StudyRecordDTO;
@@ -107,4 +108,18 @@ public interface LearnService {
      * @return
      */
     int[] nextKnow(RequestDTO request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    List<ChapterMenu> firstMenu(RequestDTO request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    List<ChapterMenu> nextMenu(RequestDTO request);
 }
