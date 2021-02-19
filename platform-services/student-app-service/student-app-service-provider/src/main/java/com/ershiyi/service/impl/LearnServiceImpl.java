@@ -222,6 +222,7 @@ public class LearnServiceImpl<T> implements LearnService {
         List<QuestionType> ids = mapper.getQuestionId(knowId,count);
         if(ids.size()<count){
             // 如果题目不够就随机出两道当前科目的题目
+            System.out.println(knowId);
             ids.addAll(mapper.getRandom(knowId,(count-ids.size())));
         }
         for (QuestionType id : ids) {

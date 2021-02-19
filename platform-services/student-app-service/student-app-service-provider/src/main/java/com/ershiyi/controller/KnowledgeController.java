@@ -43,11 +43,6 @@ public class KnowledgeController {
     @ApiOperation(value = "学生提交题目关联的知识点")
     public AbstractBaseResult submitRelation(@RequestBody RequestDTO request){
         try {
-            String knowIds = request.getIds();
-            if(knowIds.substring(0,1).equals(",")){
-                knowIds=knowIds.substring(1,knowIds.length()-1);
-            }
-            request.setIds(knowIds);
             Integer result = service.submitRelation(request);
             if(result==0){
                 return RespEnum.SYS_ERROR.result("关联失败！");

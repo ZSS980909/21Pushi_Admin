@@ -40,7 +40,7 @@ public interface KnowledgeService {
      * @param request
      * @return
      */
-   public Integer submitRelation(RequestDTO request);
+    Integer submitRelation(RequestDTO request);
 
     /**
      * 用户刷新题目

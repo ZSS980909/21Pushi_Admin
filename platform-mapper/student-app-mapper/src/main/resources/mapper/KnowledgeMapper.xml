@@ -6,19 +6,23 @@
             select * from know_cont where knowContentId = #{item}
         </foreach>
     </select>
-    <insert id="modifyQuestionStatus">
+    <insert id="insertQuestionRelated">
         insert into
-            common_knowledge_question(
+            know_copy.common_knowledge_question(
                 knowledgeId,
-                knowledgeContentId,
+                knowledgeName,
                 questionId,
-                questionType
+                questionType,
+                isRandom
         ) values
-        <foreach collection="list" item="item" separator="," open="(" close=")">
-            #{item},
-            select id from common_course_knowledge where knowledgeContentId in (#{item}),
-            #{questionId},
-            #{type}
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item},
+                (select knowledgeName from know_copy.common_course_knowledge where id = #{item}),
+                #{questionId},
+                #{type},
+                0
+            )
         </foreach>
     </insert>
 </mapper>

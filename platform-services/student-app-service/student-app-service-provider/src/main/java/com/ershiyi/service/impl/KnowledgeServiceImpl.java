@@ -81,13 +81,9 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     public Integer submitRelation(RequestDTO request) {
         // 将学生关联的结果插入到表内
         Integer result = mapper.insertRelation(request);
-        // 如果返回的结果为0,代表插入失败,不继续进行下一步
-        if(result==0){
-            return result;
-        }
         List<String> list = mapper.getRelationInfo(request);
         // 插入成功，判断当前题目插入的数量是否达到了30
-        if(list.size()>=2){
+        if(list.size()>=3){
             // 获取所有的题目关联到的所有知识点
             List<List<String>> knowList = new ArrayList<>();
             list.forEach(str -> {
@@ -122,8 +118,10 @@ public class KnowledgeServiceImpl implements KnowledgeService {
             List<String> knowIds = getMaxKey(map,maxValue);
             // 根据知识点内容id获取知识点id
             // 去掉前后的括号就是知识点集合
-            // 将关联的知识点id插入到题目表,并且修改题目关联状态
-            mapper.modifyQuestionStatus(request.getQuestionId(),knowIds,request.getType());
+            // 将关联的知识点id插入到题目表
+            mapper.insertQuestionRelated(request.getQuestionId(),knowIds,request.getType());
+            // 修改题目为已关联
+            mapper.modifyQuestionStatus(request.getQuestionId());
         }
         return result;
     }
