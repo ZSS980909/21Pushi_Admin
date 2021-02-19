@@ -229,6 +229,11 @@ public class LearnController {
         }
     }
 
+    /**
+     * 获取下一级的章节信息
+     * @param request
+     * @return
+     */
     @RequestMapping("/knowList")
     public AbstractBaseResult knowList(@RequestBody RequestDTO request){
         try{
@@ -239,7 +244,11 @@ public class LearnController {
         }
     }
 
-
+    /**
+     * 第一层的章节信息
+     * @param request
+     * @return
+     */
     @RequestMapping("/firstMenu")
     public AbstractBaseResult firstMenu(@RequestBody RequestDTO request){
         try{
@@ -250,6 +259,11 @@ public class LearnController {
         }
     }
 
+    /**
+     * 下一层的章节信息
+     * @param request
+     * @return
+     */
     @RequestMapping("/nextMenu")
     public AbstractBaseResult nextMenu(@RequestBody RequestDTO request){
         try{

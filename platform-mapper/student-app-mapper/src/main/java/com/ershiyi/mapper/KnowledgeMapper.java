@@ -26,15 +26,15 @@ public interface KnowledgeMapper {
      * @return
      */
     @Select("select id as courseId,curriculum as courseName,subjectId,picture from common_course where deleted = 0")
-    public List<CoursePojo> courseList();
+    List<CoursePojo> courseList();
 
     /**
      * 获取一条当前科目最近的题目
      * @param request
      * @return
      */
-    @Select("select id as questionId,choiceA as optionA,choiceB as optionB,1 as type,choiceC as optionC,choiceD as optionD, rightaws as correctOption,title as question,resolving " +
-            " from know_copy.common_course_choice where deleted = 0 and  isRelevanceFinish = 0 and " +
+    @Select("select id as questionId,optionA,optionB,1 as type,optionC,optionD, answer as correctOption,question,resolving " +
+            " from know_copy.common_course_choice where deleted = 0 and isRelevanceFinish = 0 and " +
             " subjectId = #{subjectId} ORDER BY id desc limit 1")
     QuestionChoice getChoiceQuestion(RequestDTO request);
 

@@ -192,11 +192,11 @@ public interface LearnMapper{
 
     /**
      * 随机获取当前科目的题目
-     * @param courseId
+     * @param knowId
      * @param number
      * @return
      */
-    List<QuestionChoice> getRandom(@Param("courseId") int courseId,@Param("number") int number);
+    List<QuestionType> getRandom(@Param("knowId") int knowId,@Param("number") int number);
 
     /**
      * 判断是否为首次插入

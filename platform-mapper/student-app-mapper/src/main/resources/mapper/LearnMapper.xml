@@ -110,27 +110,20 @@
         and
             deleted = 0
     </select>
-    <select id="getRandom" resultType="com.ershiyi.domain.entity.QuestionChoice">
-        select
-            id as questionId,
-            optionA,
-            optionB,
-            optionC,
-            optionD,
-            answer as correctOption,
-            resolving,
-            question,
-            0 as knowId,
-            '' as knowName,
-            1 as type
-        from
-            know_copy.common_course_choice
+    <select id="getRandom" resultType="com.ershiyi.domain.entity.QuestionType">
+        SELECT
+            distinct questionId,
+                     knowledgeId as knowId,
+                     knowledgeName as knowName,
+                     questionType
+        FROM
+            know_copy.common_knowledge_question
         WHERE
-            subjectId = (select subjectId from common_course where id = #{courseId})
-        and
-            deleted = 0
+            knowledgeId = #{knowId}
+          and
+            isRandom = 1
         ORDER BY RAND()
-        limit #{number}
+            LIMIT #{number}
     </select>
     <select id="getQuestionId" resultType="com.ershiyi.domain.entity.QuestionType">
         SELECT
@@ -142,6 +135,8 @@
              know_copy.common_knowledge_question
         WHERE
               knowledgeId = #{knowId}
+        and
+              isRandom = 0
         ORDER BY RAND()
         LIMIT #{number}
     </select>
