@@ -16,12 +16,21 @@ public class Node {
     private String name;
     // 节点状态 是否已经学习
     private Integer category;
+    // 是否最后一级
+    private Integer isLast = 0;
     // 节点等级
     private Integer symbolSize;
 
     public Node(Integer id,String name,Integer category,Integer symbolSize){
         this.id = id;
         this.name = name;
+        this.category = category;
+        this.symbolSize = symbolSize;
+    }
+    public Node(Integer id,String name,Integer category,Integer isLast,Integer symbolSize){
+        this.id = id;
+        this.name = name;
+        this.isLast = isLast;
         this.category = category;
         this.symbolSize = symbolSize;
     }

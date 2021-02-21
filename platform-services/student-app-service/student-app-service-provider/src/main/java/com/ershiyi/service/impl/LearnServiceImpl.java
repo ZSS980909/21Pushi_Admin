@@ -1,7 +1,9 @@
 package com.ershiyi.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.ershiyi.Utils.DateUtils;
 import com.ershiyi.Utils.IdsUtils;
+import com.ershiyi.Utils.SizeUtils;
 import com.ershiyi.Utils.SwitchQuestionUtils;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
@@ -9,6 +11,7 @@ import com.ershiyi.dto.StudyRecordDTO;
 import com.ershiyi.mapper.LearnMapper;
 import com.ershiyi.mapper.PersonalCenterMapper;
 import com.ershiyi.service.LearnService;
+import com.ershiyi.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +63,68 @@ public class LearnServiceImpl<T> implements LearnService {
         return service.getStudyStatus(request.getStudenterId(),mapper.knowledgeMenu(request));
     }
 
+
+    /**
+     * 知识星球第一层层结构
+     * @param request
+     * @return
+     */
+    @Override
+    public KnowledgeStatus knowFirstTree(RequestDTO request) {
+        // 获取学生编号
+        String studentId = mapper.getStudentId(request.getGuid());
+        KnowledgeStatus result = new KnowledgeStatus();
+        List nodes = new ArrayList();
+        List links = new ArrayList();
+        // 先添加父级
+        nodes.add(new Node(0,mapper.getCourseName(request.getCourseId()),0,40));
+        // 在获取当前所有的章节
+        List<ChapterMenu> chapters = service.getStudyStatus(studentId,mapper.knowledgeMenu(request));
+        for (ChapterMenu chapter : chapters) {
+            nodes.add(new Node(chapter.getChapterId(),chapter.getChapterName(),chapter.getIsStudy(),chapter.getIsLast(),35));
+            links.add(new Link(0,chapter.getChapterId()));
+        }
+        result.setLinks(links);
+        result.setNodes(nodes);
+        // 将结果存入redis，每天0点刷新
+        RedisUtils.set(request.getGuid()+request.getCourseId(),JSON.toJSONString(result),DateUtils.daySurplusTime());
+        return result;
+    }
+
+    /**
+     * 知识星球下一层层结构
+     * @param request
+     * @return
+     */
+    @Override
+    public KnowledgeStatus knowNextTree(RequestDTO request) {
+        // 获取学生编号
+        request.setStudenterId(mapper.getStudentId(request.getGuid()));
+        KnowledgeStatus result = new KnowledgeStatus();
+        // 查询出当前节点下的所有章节信息
+        List<ChapterMenu> knows = service.KnowList(request);
+        List nodes = new ArrayList();
+        List links = new ArrayList();
+        int size = 0;
+        if(!knows.isEmpty()){
+            size = SizeUtils.getSymbolSize(knows.get(0).getLevel());
+        }
+        for (ChapterMenu know : knows) {
+            nodes.add(new Node(know.getChapterId(),know.getChapterName(),know.getIsStudy(),know.getIsLast(),size));
+            links.add(new Link(request.getChapterId(),know.getChapterId()));
+        }
+        result.setNodes(nodes);
+        result.setLinks(links);
+        // 将结果存入redis,每天24点刷新
+        RedisUtils.set("chapter"+request.getGuid()+request.getChapterId(), JSON.toJSONString(result),DateUtils.daySurplusTime());
+        return result;
+    }
+
+    /**
+     * 获取当前章节的下一级信息
+     * @param request
+     * @return
+     */
     @Override
     public List<ChapterMenu> nextMenu(RequestDTO request) {
         return mapper.nextKnow(request);

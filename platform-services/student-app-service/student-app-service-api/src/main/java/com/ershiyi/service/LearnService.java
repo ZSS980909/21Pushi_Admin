@@ -122,4 +122,18 @@ public interface LearnService {
      * @return
      */
     List<ChapterMenu> nextMenu(RequestDTO request);
+
+    /**
+     * 知识星球第一层结构
+     * @param request
+     * @return
+     */
+    KnowledgeStatus knowFirstTree(RequestDTO request);
+
+    /**
+     * 知识星球下一层层结构
+     * @param request
+     * @return
+     */
+    KnowledgeStatus knowNextTree(RequestDTO request);
 }

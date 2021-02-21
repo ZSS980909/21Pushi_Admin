@@ -267,7 +267,28 @@ public interface LearnMapper{
     @Select("select id from know_copy.common_course_knowledge where left_value < #{leftValue} and right_Value > #{rightValue} and level = #{level} and courseId = #{courseId}")
     int getUpLevelId(@Param("leftValue") int leftValue,@Param("rightValue") int rightValue,@Param("level") int level,@Param("courseId")int courseId);
 
+    /**
+     * 获取第一层的章节信息
+     * @param request
+     * @return
+     */
     @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from know_copy.common_course_knowledge where courseId = #{courseId} and level = 2")
     List<ChapterMenu> firstKnowMenu(RequestDTO request);
+
+    /**
+     * 获取学生编号
+     * @param guid
+     * @return
+     */
+    @Select("select studenterId from common_student_user where studentUserId =#{guid}")
+    String getStudentId(String guid);
+
+    /**
+     * 获取课程名称
+     * @param courseId
+     * @return
+     */
+    @Select("select curriculum from common_course where id = #{courseId}")
+    String getCourseName(Integer courseId);
 }
 

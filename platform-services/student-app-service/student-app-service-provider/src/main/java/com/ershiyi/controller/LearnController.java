@@ -1,14 +1,17 @@
 package com.ershiyi.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.ershiyi.common.dto.AbstractBaseResult;
 import com.ershiyi.dist.RespEnum;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.dto.StudyRecordDTO;
 import com.ershiyi.service.LearnService;
+import com.ershiyi.utils.RedisUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -271,6 +274,49 @@ public class LearnController {
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙，请稍后再试！");
+        }
+    }
+
+    /**
+     * 知识星球第一层结构
+     * @param request
+     * @return
+     */
+    @PostMapping("/knowFirstTree")
+    public AbstractBaseResult knowFirstTree(@RequestBody RequestDTO request){
+        try{
+            KnowledgeStatus data = new KnowledgeStatus();
+            if(RedisUtils.hasKey(request.getGuid()+request.getCourseId())){
+                data = JSON.parseObject(RedisUtils.get(request.getGuid()+request.getCourseId()),KnowledgeStatus.class);
+            }else{
+                data = service.knowFirstTree(request);
+            }
+            return RespEnum.OK.result(data);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  RespEnum.ERROR.result("系统繁忙！");
+        }
+    }
+
+    /**
+     * 知识星球下一层层结构
+     * @param request
+     * @return
+     */
+    @PostMapping("/knowNextTree")
+    public AbstractBaseResult knowNextTree(@RequestBody RequestDTO request){
+        try{
+            KnowledgeStatus data = new KnowledgeStatus();
+            // 先查询是否已经缓存
+            if(RedisUtils.hasKey(request.getGuid()+request.getChapterId())){
+                data = JSON.parseObject(RedisUtils.get("chapter"+request.getGuid()+request.getChapterId()),KnowledgeStatus.class);
+            }else{
+                data = service.knowNextTree(request);
+            }
+            return RespEnum.OK.result(data);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  RespEnum.ERROR.result("系统繁忙！");
         }
     }
 }
