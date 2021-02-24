@@ -48,11 +48,21 @@ public class ParentServiceImpl implements ParentService {
         return mapper.relationStudent(request);
     }
 
+    /**
+     * 家长个人信息
+     * @param request
+     * @return
+     */
     @Override
     public ParentInfo parentInfo(RequestDTO request) {
         return mapper.parentInfo(request);
     }
 
+    /**
+     * 获取家长关联的学生列表
+     * @param requestDTO
+     * @return
+     */
     @Override
     public List<StudentInfo> associateStudents(RequestDTO requestDTO) {
         // 获取所有的学生信息
@@ -114,7 +124,7 @@ public class ParentServiceImpl implements ParentService {
         gloryScore.setNumberOfQuestions(mapper.getQuestions(request.getStudenterId()));
         // 正确率四舍五入保留两位小数
         gloryScore.setAccuracy(DecimalUtils.div(mapper.getRightQuestion(request.getStudenterId()),gloryScore.getNumberOfQuestions(),2));
-        gloryScore.setStudyLength((int)DecimalUtils.div(mapper.getStudyLength(request),mapper.getStudyDays(request).size()));
+        gloryScore.setStudyLength(DecimalUtils.div(mapper.getStudyLength(request),mapper.getStudyDays(request).size()).intValue());
         gloryScore.setRiseFinishKnow(mapper.getRiseKnow(request));
         gloryScore.setRiseStudyLength(mapper.getRiseStudyLength(request));
         // 获取当天的正确率
@@ -170,12 +180,8 @@ public class ParentServiceImpl implements ParentService {
      * @return
      */
     @Override
-    public List<KnowContent> parentLearn(RequestDTO request) {
-        List<String> ids = ParentUtils.getListString(mapper.getKnowledgeIds(request));
-        if(ids==null||ids.isEmpty()){
-            return new ArrayList<>();
-        }
-        return mapper.queryKnow(ids);
+    public KnowContent parentLearn(RequestDTO request) {
+        return mapper.queryKnow(request.getKnowId());
     }
 
     /**
@@ -191,28 +197,14 @@ public class ParentServiceImpl implements ParentService {
         // 获取当前课程完成的知识点数量
         courseInfo.setFinishKnows(mapper.getFinishKnow(request.getCourseId(),request.getStudenterId()));
         // 获取当前课程的学习时长
-        courseInfo.setStudyLength(mapper.getCourseStudyLength(request));
+        courseInfo.setStudyLength(mapper.getNowStudyLength(request));
         // 获取完成的题目数量
         courseInfo.setFinishQuestions(mapper.getCourseQuestions(request));
         // 获取当前题目的错误数量
         courseInfo.setWrongQuestions(mapper.getCourseWrongQuestions(request));
         // 获取今天学习的知识点
-        courseInfo.setKnows(mapper.getKnowInfo(request));
+        courseInfo.setKnows(mapper.nowStudyKnow(request));
         return courseInfo;
-    }
-
-    /**
-     * 学习情况折线图
-     * @param request
-     * @return
-     */
-    @Override
-    public StudyData studyData(RequestDTO request) {
-        StudyData data = new StudyData();
-        data.setStudyData(mapper.studyData(request));
-        data.setAllStudyLength(mapper.getCourseStudyLength(request));
-        data.setNowStudyLength(mapper.getNowStudyLength(request));
-        return data;
     }
 
     /**
@@ -291,7 +283,7 @@ public class ParentServiceImpl implements ParentService {
         // 获取当前题目的错误数量
         courseInfo.setWrongQuestions(mapper.getCourseWrongQuestions(request));
         // 获取该课程知识点学习情况
-        courseInfo.setKnows(mapper.queryKnowStatus(request));
+        courseInfo.setKnows(mapper.allStudyKnow(request));
         return courseInfo;
     }
 

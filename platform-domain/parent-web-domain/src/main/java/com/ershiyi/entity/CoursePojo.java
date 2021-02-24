@@ -20,7 +20,7 @@ public class CoursePojo {
     private String subjectName;  // 科目名称
     private int score;  // 课程所需积分
     private int knowNumber;  // 知识点数量
-    private int Views;  // 浏览量
+    private int pageViews;  // 浏览量
     private int isPay;  // 是否购买
     private int isCollection;  // 是否收藏
 }

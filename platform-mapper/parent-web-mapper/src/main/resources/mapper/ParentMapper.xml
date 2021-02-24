@@ -4,18 +4,18 @@
     <!--获取对比昨天提升的学习知识点数量-->
     <select id="getRiseKnow" resultType="java.lang.Integer">
         select
-            ifnull(count(DISTINCT knowledgeid),0)-(select ifnull(count(DISTINCT knowledgeid),0) from common_course_studyknowledge_record  where TO_DAYS(now())-TO_DAYS(starttime) = 1 and studenterId = #{studenterId})
+            ifnull(count(DISTINCT knowledgeid),0)-(select ifnull(count(DISTINCT knowledgeid),0) from know_copy.common_study_record  where TO_DAYS(now())-TO_DAYS(createTime) = 1 and studenterId = #{studenterId})
         from
-             common_course_studyknowledge_record
+            know_copy.common_study_record
         where
-              TO_DAYS(now()) = TO_DAYS(starttime) and studenterId = #{studenterId}
+            TO_DAYS(now()) = TO_DAYS(createTime) and studenterId = #{studenterId}
     </select>
     <!--获取对比昨天提升的学习时长-->
     <select id="getRiseStudyLength" resultType="java.lang.Integer">
         select
             ifnull(sum(usetime),0)-(select ifnull(sum(usetime),0) from study_length where TO_DAYS(NOW())-TO_DAYS(starttime)=1 and studenterId = #{studenterId})
         from
-            study_length
+            know_copy.study_length
         where
             TO_DAYS(NOW()) = TO_DAYS(starttime) and studenterId = #{studenterId}
     </select>
@@ -63,14 +63,14 @@
     </select>
     <select id="queryKnow" resultType="com.ershiyi.entity.KnowContent">
         select
-            *
+           id as knowContentId,
+           knowledgeContent as content,
+           knowledgeName as knowContentName,
+           knowledgeVideoUrl as knowledgeTextUrl
         from
-            know_cont
+            know_copy.common_course_knowledge
         where
-            knowContentId in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+            id = #{knowId}
     </select>
     <select id="getHostCourse" resultType="com.ershiyi.entity.CoursePojo">
         select
@@ -87,8 +87,8 @@
                 a.subjectid,
                 a.integral as score,
                 (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
-                (select count(*) from common_student_browsing_history where courseid = a.id) as views,
-                (select count(*) from common_course_knowledge where courseId = a.id) as knowNumber,
+                (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
+                (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
                 (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status =
                 1 limit 1) as isPay,
                 (select count(*) from common_collect_course where courseId=a.id and studenterId = #{parenterId} and deleted = 0
@@ -101,7 +101,7 @@
                 and
                 subjectId = #{subjectId}
             </if> ) a
-        order by a.views desc
+        order by a.pageViews desc
     </select>
     <select id="getCoursePOJO" resultType="com.ershiyi.entity.CoursePojo">
         select
@@ -114,8 +114,8 @@
             a.subjectid,
             a.integral as score,
             (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
-            (select count(*) from common_student_browsing_history where courseid = a.id) as views,
-            (select count(*) from common_course_knowledge where courseId = a.id) as knowNumber,
+            (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
+            (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
             (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
             (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection
         from
@@ -141,8 +141,8 @@
             a.subjectid,
             a.integral as score,
             (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
-            (select count(*) from common_student_browsing_history where courseid = a.id) as views,
-            (select count(*) from common_course_knowledge where courseId = a.id) as knowNumber,
+            (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
+            (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
             (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
             (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{studenterId} and deleted = 0 limit 1) as isCollection
         from

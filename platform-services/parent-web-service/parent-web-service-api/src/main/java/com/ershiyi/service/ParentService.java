@@ -61,7 +61,7 @@ public interface ParentService {
      * @param request
      * @return
      */
-    List<KnowContent> parentLearn(RequestDTO request);
+    KnowContent parentLearn(RequestDTO request);
 
     /**
      * 学生当前课程学习情况
@@ -70,12 +70,6 @@ public interface ParentService {
      */
     CourseInfo CourseInfo(RequestDTO request);
 
-    /**
-     * 学习情况折线图
-     * @param request
-     * @return
-     */
-    StudyData studyData(RequestDTO request);
 
     /**
      * 所有课程

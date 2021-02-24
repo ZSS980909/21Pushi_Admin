@@ -14,3 +14,5 @@ public class Know {
     private String knowName;  // 知识点名称
     private int status = 1;  // 知识点掌握状态 1为已掌握
 }
+
+

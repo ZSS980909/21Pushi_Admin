@@ -57,7 +57,7 @@ public interface ParentMapper {
      * @param studenterId 学生编号
      * @return
      */
-    @Select("select id as courseId,curriculum as courseName,picture,(select count(id) from common_course_knowledge where courseId = a.id ) as countKnow,(select count(DISTINCT courseId) from common_course_studyknowledge_record where studenterId = #{studenterId} and courseId = a.id) as finishKnow from common_course a where id in ( select DISTINCT courseId from common_course_studyknowledge_record where studenterId = #{studenterId} ) ")
+    @Select("select id as courseId,curriculum as courseName,picture,(select count(id) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as countKnow,(select count(DISTINCT knowledgeId) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = a.id) as finishKnow from common_course a where id in ( select DISTINCT courseId from common_course_purchase where studenterId = #{studenterId} and status = 1 ) and deleted = 0 ")
     List<CourseStudy> awaitCourse(@Param("studenterId") String studenterId);
 
     /**
@@ -66,24 +66,15 @@ public interface ParentMapper {
      * @param studenterId
      * @return
      */
-    @Select("select ifnull(count(knowledgeId),0) from common_study_record where studenterId = #{studenterId} and courseId = #{courseId}")
+    @Select("select ifnull(count(knowledgeId),0) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1")
     int getFinishKnow(@Param("courseId") int courseId,@Param("studenterId") String studenterId);
-
-
-    /**
-     * 获取当前课程所有的知识点数量
-     * @param course
-     * @return
-     */
-    @Select("select ifnull(count(*),0) from common_course_knowledge where courseId = #{courseId}")
-    int getCountKnow(CourseStudy course);
 
     /**
      * 获取学生所有学的知识点
      * @param request
      * @return
      */
-    @Select("select ifnull(count(*),0) from common_study_record where studenterId = #{studenterId}")
+    @Select("select ifnull(count(knowledgeId),0) from know_copy.common_study_record where studenterId = #{studenterId} and isFirst = 1")
     int queryStudentAllKnows(RequestDTO request);
 
     /**
@@ -103,11 +94,11 @@ public interface ParentMapper {
     int getRightQuestion(@Param("studenterId") String studenterId);
 
     /**
-     * 获取学生所有的错题数量
+     * 获取学生所有的学习时间
      * @param request
      * @return
      */
-    @Select("select ifnull(sum(useTime),0) from study_length where studenterId=#{studenterId}")
+    @Select("select ifnull(sum(useTime),0) from know_copy.study_length where studenterId=#{studenterId}")
     int getStudyLength(RequestDTO request);
 
     /**
@@ -163,19 +154,11 @@ public interface ParentMapper {
     List<QuestionWrongJudge> queryJudgeQuestion(List<String> judges);
 
     /**
-     * 获取知识点内容id
-     * @param request
-     * @return
-     */
-    @Select("select knowledgeContentId from common_course_knowledge where id = #{knowId}")
-    String getKnowledgeIds(RequestDTO request);
-
-    /**
      * 获取知识点内容
-     * @param list
+     * @param
      * @return
      */
-    List<KnowContent> queryKnow(List<String> list);
+    KnowContent queryKnow(String knowId);
 
     /**
      * 获取课程名称
@@ -191,22 +174,15 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select ifnull(sum(useTime),0) from study_length where studenterId = #{studenterId} and courseId = #{courseId} and TO_DAYS(startTime)=TO_DAYS(NOW())")
+    @Select("select ifnull(sum(useTime),0) from know_copy.study_length where studenterId = #{studenterId} and courseId = #{courseId} and TO_DAYS(startTime)=TO_DAYS(NOW())")
     Long getNowStudyLength(RequestDTO request);
-    /**
-     * 获取当前课程当天学习时间
-     * @param request
-     * @return
-     */
-    @Select("select ifnull(sum(useTime),0) from study_length where studenterId = #{studenterId} and courseId = #{courseId} and TO_DAYS(NOW()) = TO_DAYS(startTime)")
-    Long getCourseStudyLength(RequestDTO request);
 
     /**
      * 获取当前课程学习时间
      * @param request
      * @return
      */
-    @Select("select ifnull(sum(useTime),0) from study_length where studenterId = #{studenterId} and courseId = #{courseId}")
+    @Select("select ifnull(sum(useTime),0) from know_copy.study_length where studenterId = #{studenterId} and courseId = #{courseId}")
     Long historyStudyLength(RequestDTO request);
 
     /**
@@ -230,16 +206,8 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select * from nowstudy where studenterId=#{studenterId} and courseId = #{courseId}")
-    List<Know> getKnowInfo(RequestDTO request);
-
-    /**
-     * 获取指定月份的学习情况
-     * @param request
-     * @return
-     */
-    @Select("select sum(usetime) as studyLength,DATE_FORMAT(starttime,'%e') as day from study_length where studenterId = #{studenterId} and YEAR(starttime)= #{year} and MONTH(starttime) = #{month} GROUP BY TO_DAYS(starttime)")
-    List<MonthsToDay> studyData(RequestDTO request);
+    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime)")
+    List<Know> nowStudyKnow(RequestDTO request);
 
     /**
      * 获取课程详细信息
@@ -277,7 +245,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select id as chapterId,chapterName from common_course_chapter where courseId =#{courseId}")
+    @Select("select id as chapterId,knowledgeName as chapterName from know_copy.common_course_knowledge where courseId =#{courseId} and level = 2")
     List<chapterInfo> queryChapterInfo(RequestDTO request);
 
     /**
@@ -294,7 +262,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select a.id as courseId,a.curriculum as courseName,a.author,a.synopsis,a.biography,a.picture,a.subjectid,(select subjectName from common_course_subject where id = a.subjectId) as subjectName,(select count(*) from common_student_browsing_history where courseid = a.id) as views,(select count(*) from common_course_knowledge where courseId = a.id) as knowNumber,(select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,(select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection from common_course a where a.curriculum like #{name} ")
+    @Select("select a.id as courseId,a.curriculum as courseName,a.author,a.synopsis,a.biography,a.picture,a.subjectid,(select subjectName from common_course_subject where id = a.subjectId) as subjectName,(select count(*) from common_student_browsing_history where courseid = a.id) as views,(select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,(select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,(select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection from common_course a where a.curriculum like #{name} ")
     List<CoursePojo> searchCourse(RequestDTO request);
 
     /**
@@ -302,8 +270,8 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select * from allstudy where studenterId = #{studenterId} and courseId = #{courseId}")
-    List<Know> queryKnowStatus(RequestDTO request);
+    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId}")
+    List<Know> allStudyKnow(RequestDTO request);
 
     /**
      * 按照热度排序
@@ -339,6 +307,6 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select startTime from study_length where studenterId = #{studenterId} GROUP BY day(starttime)")
+    @Select("select startTime from know_copy.study_length where studenterId = #{studenterId} GROUP BY day(starttime)")
     List<String> getStudyDays(RequestDTO request);
 }

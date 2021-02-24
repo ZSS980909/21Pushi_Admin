@@ -197,21 +197,6 @@ public class ParentController {
     }
 
     /**
-     * 今日学习
-     * @param request
-     * @return
-     */
-    @RequestMapping("/studyData")
-    public AbstractBaseResult studyData(@RequestBody RequestDTO request){
-        try{
-            return RespEnum.OK.result(service.studyData(request));
-        }catch (Exception e){
-            e.printStackTrace();
-            return RespEnum.ERROR.result("系统繁忙,请稍后再试！");
-        }
-    }
-
-    /**
      * allCourse
      * @param request
      * @return

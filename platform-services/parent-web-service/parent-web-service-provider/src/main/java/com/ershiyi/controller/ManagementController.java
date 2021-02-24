@@ -1,3 +1,4 @@
+/*
 package com.ershiyi.controller;
 
 
@@ -19,10 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class ManagementController {
     @Autowired
     private JpushFeign jupshfeign;
+
     public static Log log = LogFactory.getLog(ManagementController.class);
-    /**
+    */
+/**
      * 家长锁屏
-     */
+     *//*
+
     @PostMapping("/screen")
     @ResponseBody
     @ApiOperation(value = "家长锁屏", notes = "家长锁屏",httpMethod = "POST")
@@ -38,3 +42,4 @@ public class ManagementController {
         //return RespEnum.OK.result();
     }
 }
+*/

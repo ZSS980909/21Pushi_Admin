@@ -64,7 +64,7 @@ public class DecimalUtils {
      * @param v2 除数
      * @return 两个参数的商
      */
-    public static double div(double v1, double v2) {
+    public static Double div(double v1, double v2) {
         return div(v1, v2, DEF_DIV_SCALE);
     }
 
@@ -78,9 +78,13 @@ public class DecimalUtils {
      * @return 两个参数的商
      */
     public static double div(double v1, double v2, int scale) {
-        BigDecimal b1 = new BigDecimal(Double.toString(v1));
-        BigDecimal b2 = new BigDecimal(Double.toString(v2));
-        return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+        try {
+            BigDecimal b1 = new BigDecimal(Double.toString(v1));
+            BigDecimal b2 = new BigDecimal(Double.toString(v2));
+            return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }catch (Exception e){
+            return 0;
+        }
     }
 
     /**
