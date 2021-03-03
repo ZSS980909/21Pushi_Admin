@@ -9,7 +9,7 @@ import lombok.Data;
  * @version: 1.0
  */
 @Data
-public class ChapterMenu {
+public class  ChapterMenu {
     private int chapterId;
     private String chapterName = "";
     private String knowContent = "";

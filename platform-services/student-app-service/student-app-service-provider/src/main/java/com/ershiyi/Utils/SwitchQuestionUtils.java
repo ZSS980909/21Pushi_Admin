@@ -31,7 +31,7 @@ public class SwitchQuestionUtils {
             result.setResolving(choice.getResolving());
             result.setType(choice.getType());
             result.setQuestion(choice.getQuestion());
-            result.setQuestionId(choice.getQuestionId());
+            result.setQuestionId(Integer.parseInt(choice.getQuestionId()));
             result.setCorrectOption(choice.getCorrectOption());
             result.setKnowName(choice.getKnowName());
             result.setKnowId(choice.getKnowId());
@@ -90,7 +90,7 @@ public class SwitchQuestionUtils {
     public static void main(String[] args) {
         QuestionChoice question = new QuestionChoice();
         question.setQuestion("sadadad");
-        question.setQuestionId(15);
+        question.setQuestionId("15");
         question.setKnowName("hello");
         System.out.println(judgeQuestion(question));
     }

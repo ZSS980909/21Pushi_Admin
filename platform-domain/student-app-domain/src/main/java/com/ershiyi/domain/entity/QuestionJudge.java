@@ -25,4 +25,52 @@ public class QuestionJudge {
     public void setResolving(String resolving) {
         this.resolving = resolving;
     }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Integer getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getCorrectOption() {
+        return correctOption;
+    }
+
+    public void setCorrectOption(String correctOption) {
+        this.correctOption = correctOption;
+    }
+
+    public String getKnowId() {
+        return knowId;
+    }
+
+    public void setKnowId(String knowId) {
+        this.knowId = knowId;
+    }
+
+    public String getKnowName() {
+        return knowName;
+    }
+
+    public void setKnowName(String knowName) {
+        this.knowName = knowName;
+    }
 }

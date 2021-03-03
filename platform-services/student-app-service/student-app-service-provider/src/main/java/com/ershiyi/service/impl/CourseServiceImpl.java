@@ -420,8 +420,8 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
          * 出题20选择题  5判断题
          */
         List Clist =new ArrayList();
-        for(int i=0;i<10;i++){
-            if(i<8){
+        for(int i=0;i<15;i++){
+           // if(i<8){
                 String knowledge = list.get(rand.nextInt(list.size())).toString();
                 String questionId=mapper.SelectKnowledgeBylimit(knowledge);
                 Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
@@ -437,25 +437,25 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
                 }else{
                   log.info("未找到相关题目");
                 }
-            }else if(i>=8&i<10){
-                String knowledge = list.get(rand.nextInt(list.size())).toString();
-                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
-                Common_Judge common_judge = mapper.SelectQuestionBylimitone(questionId);
-                if (common_judge != null) {
-                    List Judgelist =new ArrayList();
-                    Judgelist.add("对");
-                    Judgelist.add("错");
-                    common_judge.setOptions(Judgelist);
-                    common_judge.setType(3);
-                    Clist.add(common_judge);
-                }
-
-            }
+//            }else if(i>=8&i<10){
+//                String knowledge = list.get(rand.nextInt(list.size())).toString();
+//                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
+//                Common_Judge common_judge = mapper.SelectQuestionBylimitone(questionId);
+//                if (common_judge != null) {
+//                    List Judgelist =new ArrayList();
+//                    Judgelist.add("对");
+//                    Judgelist.add("错");
+//                    common_judge.setOptions(Judgelist);
+//                    common_judge.setType(3);
+//                    Clist.add(common_judge);
+//                }
+//
+//            }
 
         }
         boolean bool=true;
         while(bool) {
-            if (Clist.size() < 10) {
+            if (Clist.size() < 15) {
                 String knowledge = list.get(rand.nextInt(list.size())).toString();
                 String questionId = mapper.SelectKnowledgeBylimit(knowledge);
                 Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
@@ -729,7 +729,7 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
             question.setCorrectOption(list.getCorrectOption());
             question.setResolving(list.getResolving());
             question.setType(list.getType());
-            question.setQuestionId(list.getQuestionId());
+            question.setQuestionId(Integer.parseInt(list.getQuestionId()));
             question.setCourseName(list.getCourseName());
             question.setSubjectId(list.getSubjectId());
             question.setFillAnswer(list.getFillAnswer());

@@ -284,8 +284,7 @@ public interface ParentMapper {
      * 获取学生端各平台app下载链接
      * @return
      */
-    @Select("select appType, url as downUrl,size  from sys_application_version as a \n" +
-            "where version = (select max(version) from sys_application_version where a.appType=appType) and appPlatform = 1")
+    @Select("select appType, url as downUrl,size  from sys_application_version as a where version = (select max(version) from sys_application_version where a.appType=appType) and appPlatform = 1")
     List<ApplicationVersion> getDownUrl();
 
     /**

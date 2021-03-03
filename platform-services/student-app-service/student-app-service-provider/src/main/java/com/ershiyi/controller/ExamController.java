@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +30,15 @@ public class ExamController {
     @PostMapping("/randomExam")
     @ResponseBody
     @ApiOperation(value = "考试根据章节出题", notes = "考试根据章节出题")
-    public AbstractBaseResult JHZCourse(@RequestBody ExamDTO examdto) {
-        return RespEnum.OK.result(examseservice.randomExam(examdto));
+    public AbstractBaseResult JHZCourse(@RequestBody HashMap<String,List<ExamDTO>> request) {
+        try{
+
+            return RespEnum.OK.result(examseservice.randomExam(request.get("data")));
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙，请稍后再试");
+        }
     }
     /**
      * 获取考试结果,提交数据

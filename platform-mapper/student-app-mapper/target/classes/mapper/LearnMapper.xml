@@ -1,136 +1,60 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ershiyi.mapper.LearnMapper">
-        <select id="findKnows" parameterType="java.util.List" resultType="com.ershiyi.domain.entity.KnowInfo">
-                <foreach collection="list" index="index" item="item" separator="UNION ALL">
-                        select id as knowId,knowledgecontent as knowName from common_course_knowledge where id = #{item}
-                </foreach>
-        </select>
-        <insert id="submitQuestion">
-                insert into
-                    common_course_knowledge_record
+    <select id="knowledgeMenu" resultType="com.ershiyi.domain.entity.ChapterMenu">
+        select
+            id as chapterId,
+            knowledgeName as chapterName,
+            isLast,
+            subjectId,
+            courseId,
+            level,
+            left_value as leftValue,
+            right_value as rightValue
+        from
+            know_copy.common_course_knowledge a
+        where
+            courseId = #{courseId}
+          and
+            level = 2
+    </select>
+    <insert id="submitQuestion">
+            insert into
+                common_course_knowledge_record
+                (
+                   questionId,
+                   studenterId,
+                   correct,
+                   knowledgeId,
+                   questionType,
+                   startTime,
+                   endTime,
+                   useTime,
+                   courseId,
+                   isQuery,
+                   answer,
+                   chapterId,
+                  questionTypeByfunction
+                )
+            values
+            <foreach collection="list" item="item" index="index" separator=",">
                     (
-                       questionId,
-                       studenterId,
-                       correct,
-                       knowledgeId,
-                       questionType,
-                       startTime,
-                       endTime,
-                       useTime,
-                       courseId,
-                       isQuery,
-                       answer,
-                       chapterId,
-                      questionTypeByfunction
-                    )
-                values
-                <foreach collection="list" item="item" index="index" separator=",">
-                        (
-                        #{item.questionId},
-                        #{item.studenterId},
-                        #{item.correct},
-                        #{item.knowContentId},
-                        #{item.questionType},
-                        #{item.startdt},
-                        #{item.enddt},
-                        #{item.useTime},
-                        #{item.courseId},
-                        #{item.isQuery},
-                        #{item.answer},
-                        #{item.chapterId},
-                        2)
-                </foreach>
-        </insert>
-        <insert id="insertStudyRecord">
-             insert into
-                common_course_studyknowledge_record(
-                    studenterId,
-
-                    startTime,
-                    endTime,
-                    useTime,
-                    isQuery,
-                    knowledgeContentId,
-                    knowledgeId,
-                    chapterId,
-                    courseId,
-                    subjectId
-                    )
-             values
-             <foreach collection="list" item="item" index="index" separator=",">
-                     (
-                     #{item.studenterId},
-
-                     #{item.startTime},
-                     #{item.endTime},
-                     #{item.useTime},
-                     #{item.isQuery},
-                     #{item.knowContentId},
-                     #{item.knowId},
-                     #{item.chapterId},
-                     #{item.courseId},
-                     #{item.subjectId}
-                     )
-             </foreach>
-        </insert>
-        <select id="choiceSQuestion" resultType="com.ershiyi.domain.entity.QuestionChoice">
-            select
-                id as questionId,
-                optionA,
-                optionB,
-                optionC,
-                optionD,
-                answer as correctOption,
-                resolving,
-                question,
-                #{knowId} as knowId,
-                #{knowName} as knowName,
-                #{questionType} as type
-            from
-                know_copy.common_course_choice
-            where
-                id = #{questionId}
-            and
-                deleted = 0
-        </select>
-        <select id="choiceMQuestion" resultType="com.ershiyi.domain.entity.QuestionChoice">
-            select
-                id as questionId,
-                optionA,
-                optionB,
-                optionC,
-                optionD,
-                answer as correctOption,
-                resolving,
-                question,
-                #{knowId} as knowId,
-                #{knowName} as knowName,
-                #{questionType} as type
-            from
-                know_copy.common_course_multi
-            where
-                id = #{questionId}
-            and
-                deleted = 0
-        </select>
-        <select id="judgeQuestion" resultType="com.ershiyi.domain.entity.QuestionJudge">
-            select
-                id as questionId,
-                answer as correctOption,
-                resolving,
-                question,
-                #{knowId} as knowId,
-                #{knowName} as knowName,
-                #{questionType} as type
-            from
-                know_copy.common_course_judge
-            where
-                id = #{questionId}
-            and
-                deleted = 0
-        </select>
-    <select id="getRandom" resultType="com.ershiyi.domain.entity.QuestionChoice">
+                    #{item.questionId},
+                    #{item.studenterId},
+                    #{item.correct},
+                    #{item.knowContentId},
+                    #{item.questionType},
+                    #{item.startdt},
+                    #{item.enddt},
+                    #{item.useTime},
+                    #{item.courseId},
+                    #{item.isQuery},
+                    #{item.answer},
+                    #{item.chapterId},
+                    2)
+            </foreach>
+    </insert>
+    <select id="choiceSQuestion" resultType="com.ershiyi.domain.entity.QuestionChoice">
         select
             id as questionId,
             optionA,
@@ -140,17 +64,66 @@
             answer as correctOption,
             resolving,
             question,
-            0 as knowId,
-            '' as knowName,
-            1 as type
+            #{knowId} as knowId,
+            #{knowName} as knowName,
+            #{questionType} as type
         from
             know_copy.common_course_choice
-        WHERE
-            subjectId = (select subjectId from common_course where id = #{courseId})
+        where
+            id = #{questionId}
         and
             deleted = 0
+    </select>
+    <select id="choiceMQuestion" resultType="com.ershiyi.domain.entity.QuestionChoice">
+        select
+            id as questionId,
+            optionA,
+            optionB,
+            optionC,
+            optionD,
+            answer as correctOption,
+            resolving,
+            question,
+            #{knowId} as knowId,
+            #{knowName} as knowName,
+            #{questionType} as type
+        from
+            know_copy.common_course_multi
+        where
+            id = #{questionId}
+        and
+            deleted = 0
+    </select>
+    <select id="judgeQuestion" resultType="com.ershiyi.domain.entity.QuestionJudge">
+        select
+            id as questionId,
+            answer as correctOption,
+            resolving,
+            question,
+            #{knowId} as knowId,
+            #{knowName} as knowName,
+            #{questionType} as type
+        from
+            know_copy.common_course_judge
+        where
+            id = #{questionId}
+        and
+            deleted = 0
+    </select>
+    <select id="getRandom" resultType="com.ershiyi.domain.entity.QuestionType">
+        SELECT
+            distinct questionId,
+                     knowledgeId as knowId,
+                     knowledgeName as knowName,
+                     questionType
+        FROM
+            know_copy.common_knowledge_question
+        WHERE
+            knowledgeId = #{knowId}
+          and
+            isRandom = 1
         ORDER BY RAND()
-        limit #{number}
+            LIMIT #{number}
     </select>
     <select id="getQuestionId" resultType="com.ershiyi.domain.entity.QuestionType">
         SELECT
@@ -162,7 +135,32 @@
              know_copy.common_knowledge_question
         WHERE
               knowledgeId = #{knowId}
+        and
+              isRandom = 0
         ORDER BY RAND()
         LIMIT #{number}
     </select>
+    <insert id="insertStudyRecord">
+        insert into
+            know_copy.common_study_record(
+                                courseId,
+                                knowledgeId,
+                                studenterId,
+                                left_value,
+                                right_value,
+                                useTime,
+                                isFirst,
+                                level
+        )
+                        values(
+                                #{courseId},
+                                #{knowId},
+                                #{studenterId},
+                                #{leftValue},
+                                #{rightValue},
+                                #{useTime},
+                                #{flag},
+                               (select level from know_copy.common_course_knowledge where id = #{knowId})
+        )
+    </insert>
 </mapper>

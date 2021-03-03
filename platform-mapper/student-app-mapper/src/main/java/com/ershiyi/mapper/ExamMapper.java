@@ -28,4 +28,12 @@ public interface ExamMapper extends AbstractMapper<ExamDTO> {
     Common_Judge SjudgeByKnowledgelimit1(@Param("knowledge")String knowledge);
 
     List SelectQuestionId(@Param("list")List listRandombyChoice);
+
+    List SelectValue(ExamDTO examdto);
+
+    List SelectKnowledgeWithQuestion(@Param("knowledgeId")String knowledgeId);
+
+    Common_Choice SelectQuestion(@Param("questionId")String questionId);
+
+    Common_Choice SelectQuestion1(@Param("questionId")String questionId);
 }

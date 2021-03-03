@@ -132,12 +132,14 @@ select courseid,curriculum,author,synopsis,picture,browse,upvote,discussid,bill,
     </select>
 
     <select id="LZMDKnowledge" parameterType="com.ershiyi.domain.Common_Search"  resultType="com.ershiyi.domain.Common_Return">
-    select knowledgeid as knowId,courseId,(
-select curriculum  from common_course where id =courseId) as courseName,(select subjectid from common_course where id =courseId) as subjectId,(select picture from common_course where id =courseId) as picture   from common_course_chapter where courseId in (select courseid from common_course_purchase where studenterid=#{studenterId} and status=1)
+select id as knowId,courseId,(select curriculum  from common_course where id =courseId) as courseName,(select subjectid from common_course where id =courseId) as subjectId,
+(select picture from common_course where id =courseId) as picture   from common_course_knowledge  where courseId in
+(select courseid from common_course_purchase where studenterid=#{studenterId} and status=1)
  </select>
 
     <select id="CountKnowledge" parameterType="com.ershiyi.domain.Common_Search"  resultType="com.ershiyi.domain.Common_Return">
-          select a.knowledgeid as knowId,b.curriculum as courseName,a.courseid from  common_lzmd_studyrate a  LEFT JOIN common_course b on  a.courseid =b.id  where  a.studenterid =#{studenterId} and a.isright=1
+          select a.knowledgeid as knowId,b.curriculum as courseName,a.courseid from  common_lzmd_studyrate a
+          LEFT JOIN common_course b on  a.courseid =b.id  where  a.studenterid =#{studenterId} and a.isright=1
     </select>
 
 

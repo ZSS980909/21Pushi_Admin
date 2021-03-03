@@ -40,32 +40,33 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 根据学生编号查询学生课程列表
+     *
      * @param studenterId 学生编号
-     * @param pageNumber 页码
-     * @param pageSize 每页展示的数量
+     * @param pageNumber  页码
+     * @param pageSize    每页展示的数量
      * @return
      */
     @Override
     public PageInfo<CoursePojo> courseList(String studenterId, Integer pageNumber, Integer pageSize) {
         // 开启分页
-        PageHelper.startPage(pageNumber,pageSize);
+        PageHelper.startPage(pageNumber, pageSize);
         // 根据学生编号查询出学生所有的课程id集合
         List<CoursePojo> results = mapper.findAllCourse(studenterId);
         return new PageInfo<>(results);
     }
 
 
-
     @Override
     public List<ChapterMenu> chapterMenu(RequestDTO request) {
         // 将学生浏览该课程存入到历史记录中
         mapper.addHistory(request.getStudenterId(), request.getCourseId());
-        return service.getStudyStatus(request.getStudenterId(),mapper.knowledgeMenu(request));
+        return service.getStudyStatus(request.getStudenterId(), mapper.knowledgeMenu(request));
     }
 
 
     /**
      * 知识星球第一层层结构
+     *
      * @param request
      * @return
      */
@@ -77,22 +78,23 @@ public class LearnServiceImpl<T> implements LearnService {
         List nodes = new ArrayList();
         List links = new ArrayList();
         // 先添加父级
-        nodes.add(new Node(0,mapper.getCourseName(request.getCourseId()),0,40));
+        nodes.add(new Node(0, mapper.getCourseName(request.getCourseId()), 0, 40));
         // 在获取当前所有的章节
-        List<ChapterMenu> chapters = service.getStudyStatus(studentId,mapper.knowledgeMenu(request));
+        List<ChapterMenu> chapters = service.getStudyStatus(studentId, mapper.knowledgeMenu(request));
         for (ChapterMenu chapter : chapters) {
-            nodes.add(new Node(chapter.getChapterId(),chapter.getChapterName(),chapter.getIsStudy(),chapter.getIsLast(),35));
-            links.add(new Link(0,chapter.getChapterId()));
+            nodes.add(new Node(chapter.getChapterId(), chapter.getChapterName(), chapter.getIsStudy(), chapter.getIsLast(), 35));
+            links.add(new Link(0, chapter.getChapterId()));
         }
         result.setLinks(links);
         result.setNodes(nodes);
         // 将结果存入redis，每天0点刷新
-        RedisUtils.set(request.getGuid()+request.getCourseId(),JSON.toJSONString(result),DateUtils.daySurplusTime());
+        RedisUtils.set(request.getGuid() + request.getCourseId(), JSON.toJSONString(result), DateUtils.daySurplusTime());
         return result;
     }
 
     /**
      * 知识星球下一层层结构
+     *
      * @param request
      * @return
      */
@@ -106,22 +108,23 @@ public class LearnServiceImpl<T> implements LearnService {
         List nodes = new ArrayList();
         List links = new ArrayList();
         int size = 0;
-        if(!knows.isEmpty()){
+        if (!knows.isEmpty()) {
             size = SizeUtils.getSymbolSize(knows.get(0).getLevel());
         }
         for (ChapterMenu know : knows) {
-            nodes.add(new Node(know.getChapterId(),know.getChapterName(),know.getIsStudy(),know.getIsLast(),size));
-            links.add(new Link(request.getChapterId(),know.getChapterId()));
+            nodes.add(new Node(know.getChapterId(), know.getChapterName(), know.getIsStudy(), know.getIsLast(), size));
+            links.add(new Link(request.getChapterId(), know.getChapterId()));
         }
         result.setNodes(nodes);
         result.setLinks(links);
         // 将结果存入redis,每天24点刷新
-        RedisUtils.set("chapter"+request.getGuid()+request.getChapterId(), JSON.toJSONString(result),DateUtils.daySurplusTime());
+        RedisUtils.set("chapter" + request.getGuid() + request.getChapterId(), JSON.toJSONString(result), DateUtils.daySurplusTime());
         return result;
     }
 
     /**
      * 获取当前章节的下一级信息
+     *
      * @param request
      * @return
      */
@@ -132,6 +135,7 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 获取当前课程章节信息
+     *
      * @param request
      * @return
      */
@@ -142,6 +146,7 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 学习下一个知识点
+     *
      * @param request
      * @return
      */
@@ -149,10 +154,10 @@ public class LearnServiceImpl<T> implements LearnService {
     public int[] nextKnow(RequestDTO request) {
         // 获取当前课程最后一个学习的知识点
         StudyRecordDTO lastStudy = mapper.getLastStudy(request);
-        if(lastStudy==null){
+        if (lastStudy == null) {
             // 当前课程未学习，返回第一个知识点
             return new int[0];
-        }else {
+        } else {
             // 当前课程已学习，返回下一个知识点
             StudyRecordDTO know = mapper.getNextKnow(lastStudy.getLeftValue(), request.getCourseId());
             int[] result = new int[know.getLevel() - 1];
@@ -166,25 +171,27 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 记录章节学习情况
+     *
      * @param record
      * @return
      */
     @Override
     public int addStudyRecord(StudyRecordDTO record) {
         // 判断是否为首次插入
-        record.setFlag(mapper.isFirstStudy(record.getKnowId(),record.getStudenterId()).isEmpty() ? 1:0);
+        record.setFlag(mapper.isFirstStudy(record.getKnowId(), record.getStudenterId()).isEmpty() ? 1 : 0);
         // 计算学习时间
-        record.setUseTime(DateUtils.getUseTime(record.getStartTime(),record.getEndTime()));
+        record.setUseTime(DateUtils.getUseTime(record.getStartTime(), record.getEndTime()));
         return mapper.insertStudyRecord(record);
     }
 
     /**
      * 获取学习状态
+     *
      * @param studenterId 学生编号
-     * @param chapters 章节信息
+     * @param chapters    章节信息
      * @return
      */
-    public List<ChapterMenu> getStudyStatus(String studenterId,List<ChapterMenu> chapters){
+    public List<ChapterMenu> getStudyStatus(String studenterId, List<ChapterMenu> chapters) {
         for (ChapterMenu chapter : chapters) {
             // 获取当前章节下所有知识点内容的数量
             int allNumber = mapper.getKnowContentNumber(chapter);
@@ -196,8 +203,10 @@ public class LearnServiceImpl<T> implements LearnService {
         }
         return chapters;
     }
+
     /**
      * 获取下一级的章节信息
+     *
      * @param request
      * @return
      */
@@ -208,13 +217,14 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 根据课程id查询出评论信息
+     *
      * @param courseId 课程id
      * @return
      */
     @Override
     public PageInfo<CommentInfo> commentInfo(Integer courseId, String guid, Integer pageNumber, Integer pageSize) {
         // 查询出所有的课程评论信息
-        PageHelper.startPage(pageNumber,pageSize);
+        PageHelper.startPage(pageNumber, pageSize);
         List<CommentInfo> comments = mapper.queryComment(courseId);
         for (CommentInfo comment : comments) {
             // 根据评论id查询出评论点赞数
@@ -229,8 +239,9 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 对评论进行点赞
+     *
      * @param commentId 评论id
-     * @param guid 学生编号
+     * @param guid      学生编号
      * @return 插入的结果 0为失败 其余数字为成功
      */
     @Override
@@ -246,14 +257,15 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 发表评论
+     *
      * @param message 评论内容
-     * @param guid 用户编号
+     * @param guid    用户编号
      * @return 插入成功返回当前评论的内容
      */
     @Override
     public CommentInfo publishComment(String message, String guid, Integer courseId) {
         int result = mapper.publishComment(message, guid, courseId);
-        if(result==0){
+        if (result == 0) {
             // 发布失败
             return null;
         }
@@ -263,7 +275,8 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 当前评论取消点赞
-     * @param discussId 评论id
+     *
+     * @param discussId   评论id
      * @param studenterId 学生编号
      * @return 插入的结果 0为失败 其余数字为成功
      */
@@ -274,28 +287,29 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 答题模块题目内容
-     * @param knowId 知识点id
-     * @param courseId  课程id
+     *
+     * @param knowId   知识点id
+     * @param courseId 课程id
      * @return
      */
     @Override
-    public List<ResultQuestion> knowQuestion(Integer knowId,int courseId) {
+    public List<ResultQuestion> knowQuestion(Integer knowId, int courseId) {
         // 随机获取2-5道题目
-        int count = new Random().nextInt(4)+2;
+        int count = new Random().nextInt(4) + 2;
         List<ResultQuestion> results = new ArrayList<>();
         // 获取当前知识点下的题目
-        List<QuestionType> ids = mapper.getQuestionId(knowId,count);
-        if(ids.size()<count){
+        List<QuestionType> ids = mapper.getQuestionId(knowId, count);
+        if (ids.size() < count) {
             // 如果题目不够就随机出两道当前科目的题目
             System.out.println(knowId);
-            ids.addAll(mapper.getRandom(knowId,(count-ids.size())));
+            ids.addAll(mapper.getRandom(knowId, (count - ids.size())));
         }
         for (QuestionType id : ids) {
-            if(id.getQuestionType()==1){
+            if (id.getQuestionType() == 1) {
                 results.add(SwitchQuestionUtils.choiceQuestion(mapper.choiceSQuestion(id)));
-            }else if(id.getQuestionType()==2){
+            } else if (id.getQuestionType() == 2) {
                 results.add(SwitchQuestionUtils.choiceQuestion(mapper.choiceMQuestion(id)));
-            }else if(id.getQuestionType()==3){
+            } else if (id.getQuestionType() == 3) {
                 results.add(SwitchQuestionUtils.judgeQuestion(mapper.judgeQuestion(id)));
             }
         }
@@ -304,156 +318,168 @@ public class LearnServiceImpl<T> implements LearnService {
 
     /**
      * 收藏当前知识点
-     * @param chapterId  章节id
-     * @param courseId  课程id
+     *
+     * @param chapterId   章节id
+     * @param courseId    课程id
      * @param studenterId 学生编号
-     * @param knowId    知识点id
-     * @param courseName 课程名称
-     * @param subjectId 科目id
+     * @param knowId      知识点id
+     * @param courseName  课程名称
+     * @param subjectId   科目id
      * @return
      */
     @Override
-    public int collectKnow(Integer courseId,Integer chapterId, String studenterId, Integer knowId, String courseName, Integer subjectId) {
-        return mapper.collectKnow(courseId,chapterId,courseName,subjectId,studenterId,knowId);
+    public int collectKnow(Integer courseId, Integer chapterId, String studenterId, Integer knowId, String courseName, Integer subjectId) {
+        return mapper.collectKnow(courseId, chapterId, courseName, subjectId, studenterId, knowId);
     }
 
     /**
      * 提交学生答题情况
+     *
      * @param request
      * @return
      */
     @Override
     public int submitQuestion(List<Correct> request) {
-
         List<Correct> result = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
         for (Correct correct : request) {
-            try{
+            try {
                 long a = simpleDateFormat.parse(correct.getStartdt()).getTime();
                 long b = simpleDateFormat.parse(correct.getEnddt()).getTime();
-                long  c = (b - a);
+                long c = (b - a);
                 correct.setUseTime(c);
-            }catch (Exception e){
-
+            } catch (Exception e) {
             }
             // 判断题目是否为多选题
-            if("2".equals(correct.getQuestionType())){
+            if ("2".equals(correct.getQuestionType())) {
                 // 先判断长度是否相同
-                if(!(correct.getAnswer().length()==correct.getFillAnswer().length())){
+                if (!(correct.getAnswer().length() == correct.getFillAnswer().length())) {
                     // 长度不相同一定错误
                     correct.setCorrect(0);
-                }else{
-                    char[]  fillAnswer = correct.getFillAnswer().toCharArray();
-                    char[]  answer = correct.getAnswer().toCharArray();
+                } else {
+                    char[] fillAnswer = correct.getFillAnswer().toCharArray();
+                    char[] answer = correct.getAnswer().toCharArray();
                     // 长度相同
                     // 对数组进行排序
                     Arrays.sort(answer);
                     Arrays.sort(fillAnswer);
                     // 将答案按照大小排序
                     // 比较选择和答案是否相等
-                    correct.setCorrect(String.valueOf(answer).equals(String.valueOf(fillAnswer)) ? 1:0);
+                    correct.setCorrect(String.valueOf(answer).equals(String.valueOf(fillAnswer)) ? 1 : 0);
                 }
-            }else {
+            } else {
                 // 判断题目是否正确
                 correct.setCorrect(correct.getFillAnswer().equals(correct.getAnswer()) ? 1 : 0);
             }
-          //  if(correct.getSendType()==""||correct.getSendType()==null) {  //学习课堂基本提交
+            //  if(correct.getSendType()==""||correct.getSendType()==null) {  //学习课堂基本提交
             if (correct.getCorrect() == 0) {
                 // 题目错误插入错题库
                 mapper.insertWrongQuestion(correct);
             }
-            if (correct.getSendType()==null||correct.getSendType()==""){
+            if ("0".equals(correct.getSendType())) {
                 //第一次推送
                 /**
                  * 查询是否是未关联的题目
                  */
                 int selectpushquestionby = mapper.selectpushquestionby(correct);
                 if (selectpushquestionby > 0) {
-                    Float a = (float)0.0;
-/*
-                    String planTime = DateUtils.addTime(TimeCalculate.calculateNext(correct.getUseTime().intValue(),0,a,1));
-                    mapper.insertPushQuestion(correct.getChapterId(), correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowContentId(), correct.getQuestionType(), 1);
-*/
+                    Float a = (float) 0.0;
+                    String planTime = DateUtils.addTime(TimeCalculate.calculateNext(correct.getUseTime().intValue(), 0, a, 1));
+                    System.out.println("jar包参数" + TimeCalculate.calculateNext(correct.getUseTime().intValue(), 0, a, 1));
+                    System.out.println("下次推送时间是" + planTime);
+                    System.out.println("参数1" + correct.getUseTime().intValue());
+                    System.out.println("参数2" + 0);
+                    System.out.println("参数3" + a);
+                    System.out.println("参数4" + 1);
+                    mapper.insertPushQuestion(correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), 1);
                 } else {
                     System.out.println("题目是未关联的题目,暂不考虑----过滤掉");
                 }
-            }else {
-                Integer updatepushstatic=0;
+            } else {
+                Integer updatepushstatic = 0;
                 if (correct.getPlushFrequency() >= 1) {
                     //多次推送
-                    if(correct.getKnowContentId().contains(",")){
+                    if (correct.getKnowContentId().contains(",")) {
                         String[] split = correct.getKnowContentId().split(",");
                         correct.setKnowContentId(split[1]);
                     }
-                     updatepushstatic = mapper.updatepushstatic(correct);
+                    updatepushstatic = mapper.updatepushstatic(correct);
                     System.out.println("推送知识点次数更改成功,次数" + correct.getPlushFrequency());
                 }
 
                 // 将当前知识点内容插入到推送表，对学生进行想关推送
-                int selectplush = mapper.selectplush(correct); //查询是否有相同知识点推送记录
-                if(selectplush==0) {
-                        if (updatepushstatic == 1) {
-                            if (correct.getPlushFrequency() <= 6) {
-                                int selectpushquestionby = mapper.selectpushquestionby(correct);
-                                if (selectpushquestionby == 1) {
-                                    if ("1".equals(correct.getSendType())) {
-                                        String s = mapper.SelectStudyTimeByknowledge(correct);
-/*
-                                        String planTime = DateUtils.addTime(TimeCalculate.calculateNext(Integer.parseInt(s), correct.getUseTime().intValue(), (float) correct.getCorrect(), correct.getPlushFrequency()));
-                                        mapper.insertPushQuestionbyKnowledge(correct.getChapterId(), correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowContentId(), correct.getQuestionType(), correct.getPlushFrequency() + 1, correct.getSendType());
-*/
-                                    } else if ("6".equals(correct.getSendType())) {
-                                        /**
-                                         * 1查詢上次学习时长
-                                         * 2.推送次数
-                                         */
-                                        String s = mapper.SelectStudyTimeBy(correct);
-/*
-                                        String planTime = DateUtils.addTime(TimeCalculate.calculateNext(Integer.parseInt(s), correct.getUseTime().intValue(), (float) correct.getCorrect(), correct.getPlushFrequency()));
-                                        mapper.insertPushQuestionbyKnowledge(correct.getChapterId(), correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowContentId(), correct.getQuestionType(), correct.getPlushFrequency() + 1, correct.getSendType());
-*/
-
+                int selectplush = mapper.selectplush(correct.getKnowContentId()); //查询是否有相同知识点推送记录
+                if (selectplush == 0) {
+                    if (updatepushstatic == 1) {
+                        if (correct.getPlushFrequency() <= 6) {
+                            int selectpushquestionby = mapper.selectpushquestionby(correct);
+                            if (selectpushquestionby == 1) {
+                                if ("1".equals(correct.getSendType())) {
+                                    String s = mapper.SelectStudyTimeByknowledge(correct);
+                                    if ("".equals(s) || s == null) {
+                                        s = "1";
                                     }
+                                    String planTime = DateUtils.addTime(TimeCalculate.calculateNext(correct.getUseTime().intValue(), Integer.parseInt(s), (float) correct.getCorrect(), correct.getPlushFrequency()));
+                                    System.out.println("jar包参数" + TimeCalculate.calculateNext(correct.getUseTime().intValue(), Integer.parseInt(s), (float) correct.getCorrect(), correct.getPlushFrequency()));
 
-                                } else {
-                                    System.out.println("题目是未关联的题目,暂不考虑----过滤掉");
+                                    System.out.println("下次推送时间是" + planTime);
+                                    System.out.println("参数1" + Integer.parseInt(s));
+                                    System.out.println("参数2" + correct.getUseTime().intValue());
+                                    System.out.println("参数3" + (float) correct.getCorrect());
+                                    System.out.println("参数4" + correct.getPlushFrequency());
+                                    mapper.insertPushQuestionbyKnowledge( correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), correct.getPlushFrequency() + 1, correct.getSendType());
+                                } else if ("6".equals(correct.getSendType())) {
+                                    /**
+                                     * 1查詢上次学习时长
+                                     * 2.推送次数
+                                     */
+                                    String s = mapper.SelectStudyTimeBy(correct);
+                                    System.out.println(s);
+                                    if ("".equals(s) || s == null) {
+                                        s = "1";
+                                    }
+                                    String planTime = DateUtils.addTime(TimeCalculate.calculateNext(correct.getUseTime().intValue(), Integer.parseInt(s), (float) correct.getCorrect(), correct.getPlushFrequency()));
+                                    mapper.insertPushQuestionbyKnowledge(correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), correct.getPlushFrequency() + 1, correct.getSendType());
+
                                 }
 
                             } else {
-                                System.out.println("推送已经7次,不进入推送列表");
+                                System.out.println("题目是未关联的题目,暂不考虑----过滤掉");
                             }
-                        }
 
-                }else{
+                        } else {
+                            System.out.println("推送已经7次,不进入推送列表");
+                        }
+                    }
+
+                } else {
                     System.out.println("已有推送知识点内容...");
                 }
             }
             // 算出学生做题时间
             correct.setUseTime(DateUtils.getUseTime(correct));
             // 判断是否有疑问
-            if(correct.getUseTime()<3){
+            if (correct.getUseTime() < 3) {
                 // 当前题目不属于认真答题，不记录
                 correct.setIsQuery(0);
-            }else if(correct.getUseTime()>3&&correct.getUseTime()<120){
+            } else if (correct.getUseTime() > 3 && correct.getUseTime() < 120) {
                 // 当前题目属于正常答题
                 correct.setIsQuery(1);
                 result.add(correct);
-            }else if(correct.getUseTime()>120&&correct.getUseTime()<600){
+            } else if (correct.getUseTime() > 120 && correct.getUseTime() < 600) {
                 // 学生学习时间过长，有疑问就将当前题目插入难题表和推送提醒表
                 correct.setIsQuery(2);
                 result.add(correct);
                 // 插入难题库
                 mapper.insertDifficultyQuestion(correct);
-            }else{
+            } else {
                 // 其余属于不认真答题，不记录
                 correct.setIsQuery(3);
             }
         }
-        if(result.isEmpty()){
+        if (result.isEmpty()) {
             return 1;
         }
         return mapper.submitQuestion(result);
     }
-
 }

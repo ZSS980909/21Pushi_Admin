@@ -155,10 +155,16 @@ public interface LearnMapper{
      * 查詢是否有这条知识点内容推送存在
      * @param correct
      */
-    @Select("select count(id) from common_Ipush_record where plushContentId =#{knowContentId} and pushType=#{sendType} and static =0")
-    int selectplush(Correct correct);
+//    @Select("select count(id) from common_Ipush_record where plushContentId =#{knowContentId} and pushType=#{sendType} and static =0")
+//    int selectplush(Correct correct);
+    /**
+     * 查詢是否有这条知识点内容推送存
+     */
+    @Select("select count(id) from common_Ipush_record where plushContentId =#{knowContentId} and static =0")
+    int selectplush(@Param("knowContentId") String knowContentId );
 
-    @Select("select  count(id) from  common_course_knowledge_content where  id=#{knowContentId}  and deleted=0")
+    //@Select("select  count(id) from  common_course_knowledge_content where  id=#{knowContentId}  and deleted=0")
+    @Select("select count(*) from  `21db_test`.common_knowledge_question where questionId =#{questionId}  and isRandom =1")
     int selectpushquestionby(Correct correct);
 
     @Select("select usetime from common_course_knowledge_record where knowledgeid=#{knowContentId}  order by id  desc  limit 1")
@@ -166,7 +172,20 @@ public interface LearnMapper{
 
     @Select("select  usetime from common_course_studyknowledge_record where knowledgecontentid=#{knowContentId} order by id desc  limit 1")
     String SelectStudyTimeByknowledge(Correct correct);
-
+    /**
+     * 将题目插入推送表
+     * @param studenterId 学生编号
+     * @param planTime 计划时间
+     * @return
+     */
+//    @Insert("insert into common_Ipush_record(courseId,chapterId,studenterId,thisPushDt,nextPushDt,static,plushContentId,plushFrequency,pushType,questionType) " +
+//            "values(#{courseId},#{chapterId},#{studenterId},now(),#{planTime},0,#{knowContentId},#{plushFrequency},6,#{questionType})")
+    @Insert("insert into common_Ipush_record(courseId,studenterId,thisPushDt,nextPushDt,static,plushContentId,plushFrequency,pushType,questionType) " +
+            "values(#{courseId},#{studenterId},now(),#{planTime},0,#{knowId},#{plushFrequency},6,#{questionType})")
+    Integer insertPushQuestion(@Param("courseId")String courseId,
+                               @Param("studenterId")String studenterId,@Param("planTime") String planTime,
+                               @Param("knowId")String knowId,@Param("questionType")String questionType,
+                               @Param("plushFrequency")int plushFrequency);
     /**
      * 获取目录信息
      * @param request
@@ -290,5 +309,19 @@ public interface LearnMapper{
      */
     @Select("select curriculum from common_course where id = #{courseId}")
     String getCourseName(Integer courseId);
+
+    /**
+     * 将知识点或者题目插入推送表
+     * @param studenterId 学生编号
+     * @param planTime 计划时间
+     * @return
+     */
+//    @Insert("insert into common_Ipush_record(courseId,chapterId,studenterId,thisPushDt,nextPushDt,static,plushContentId,plushFrequency,pushType,questionType) " +
+//            "values(#{courseId},#{chapterId},#{studenterId},now(),#{planTime},0,#{knowContentId},#{plushFrequency},#{sendType},#{questionType})")
+    @Insert("insert into common_Ipush_record(courseId,studenterId,thisPushDt,nextPushDt,static,plushContentId,plushFrequency,pushType,questionType)" +
+            "values(#{courseId},#{studenterId},now(),#{planTime},0,#{knowId},#{plushFrequency},#{sendType},#{questionType})")
+    Integer insertPushQuestionbyKnowledge(@Param("courseId")String courseId,@Param("studenterId")String studenterId,@Param("planTime") String planTime,@Param("knowId")String knowId,@Param("questionType")String questionType,@Param("plushFrequency")int plushFrequency,@Param("sendType")String sendType);
+
+
 }
 

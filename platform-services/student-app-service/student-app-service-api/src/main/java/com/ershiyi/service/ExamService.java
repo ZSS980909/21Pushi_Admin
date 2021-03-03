@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface ExamService  extends BaseService<ExamDTO> {
 
-    List randomExam(ExamDTO examdto);
+    List randomExam(List<ExamDTO> examdto);
 
     Integer submitExam(Map<String, List<Common_Choice>> list);
 }
