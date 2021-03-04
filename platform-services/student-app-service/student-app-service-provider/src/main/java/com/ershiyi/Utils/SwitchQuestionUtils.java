@@ -86,12 +86,4 @@ public class SwitchQuestionUtils {
         option.setOptions(Arrays.asList("A."+question.getOptionA(),"B."+question.getOptionB(),"C."+question.getOptionC(),"D."+question.getOptionD()));
         return option;
     }
-
-    public static void main(String[] args) {
-        QuestionChoice question = new QuestionChoice();
-        question.setQuestion("sadadad");
-        question.setQuestionId("15");
-        question.setKnowName("hello");
-        System.out.println(judgeQuestion(question));
-    }
 }

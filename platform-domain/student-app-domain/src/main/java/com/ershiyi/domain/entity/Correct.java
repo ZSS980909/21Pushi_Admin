@@ -15,7 +15,6 @@ public class Correct {
     private String knowId;  // 知识点id
     private String startdt; // 开始时间
     private String enddt; // 结束时间
-    private String knowContentId;  // 知识点内容id
     private String questionType;  // 题目类型
     private Long useTime;  // 使用时间
     private Integer correct; // 答题是否正确
@@ -23,19 +22,10 @@ public class Correct {
     private String courseId;  //  课程id
     private String fillAnswer;  // 学生选择的选项
     private Integer isQuery; // 是否有疑问
-    private String chapterId; // 章节id
     private String sendType;//推送类型  1表示知识点 6题目
     private Float accuracy; //正确率
     private int plushFrequency =0; //推送次数  默认0
     private String plushId;//推送记录id
-
-    public String getPlushId() {
-        return plushId;
-    }
-
-    public void setPlushId(String plushId) {
-        this.plushId = plushId;
-    }
 
     public int getPlushFrequency() {
         return plushFrequency;
@@ -101,14 +91,6 @@ public class Correct {
         this.enddt = enddt;
     }
 
-    public String getKnowContentId() {
-        return knowContentId;
-    }
-
-    public void setKnowContentId(String knowContentId) {
-        this.knowContentId = knowContentId;
-    }
-
     public String getQuestionType() {
         return questionType;
     }
@@ -159,17 +141,5 @@ public class Correct {
 
     public Integer getIsQuery() {
         return isQuery;
-    }
-
-    public void setIsQuery(Integer isQuery) {
-        this.isQuery = isQuery;
-    }
-
-    public String getChapterId() {
-        return chapterId;
-    }
-
-    public void setChapterId(String chapterId) {
-        this.chapterId = chapterId;
     }
 }

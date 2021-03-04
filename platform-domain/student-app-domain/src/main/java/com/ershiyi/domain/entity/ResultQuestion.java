@@ -16,8 +16,6 @@ public class ResultQuestion {
     private Integer type;  // 题目类型
     private Integer questionId;   // 题目id
     private String question; // 题目内容
-    private String KnowContentName;  // 相关知识点名称
-    private String knowContentId; // 知识点内容id
     private List<String> options = new ArrayList<>();  // 选项
     private String correctOption = ""; // 正确答案
     private String resolving = "";  // 题目解析
@@ -62,22 +60,6 @@ public class ResultQuestion {
 
     public void setQuestion(String question) {
         this.question = question;
-    }
-
-    public String getKnowContentName() {
-        return KnowContentName;
-    }
-
-    public void setKnowContentName(String knowContentName) {
-        KnowContentName = knowContentName;
-    }
-
-    public String getKnowContentId() {
-        return knowContentId;
-    }
-
-    public void setKnowContentId(String knowContentId) {
-        this.knowContentId = knowContentId;
     }
 
     public List<String> getOptions() {

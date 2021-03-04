@@ -33,8 +33,7 @@
                    courseId,
                    isQuery,
                    answer,
-                   chapterId,
-                  questionTypeByfunction
+                 questionTypeByfunction
                 )
             values
             <foreach collection="list" item="item" index="index" separator=",">
@@ -42,7 +41,7 @@
                     #{item.questionId},
                     #{item.studenterId},
                     #{item.correct},
-                    #{item.knowContentId},
+                    #{item.knowId},
                     #{item.questionType},
                     #{item.startdt},
                     #{item.enddt},
@@ -50,7 +49,6 @@
                     #{item.courseId},
                     #{item.isQuery},
                     #{item.answer},
-                    #{item.chapterId},
                     2)
             </foreach>
     </insert>
