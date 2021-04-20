@@ -52,11 +52,11 @@ public class ParentAlipayServiceImpl extends BaseServiceImpl<AlipayInDTO, Parent
         //设置签名类型
         certAlipayRequest . setSignType ( "RSA2" );
         //设置应用公钥证书路径
-        certAlipayRequest . setCertPath ( parentalipayConfig.getCertPath() );
+        certAlipayRequest . setCertPath ( parentalipayConfig.getCertParentPath() );
         //设置支付宝公钥证书路径
-        certAlipayRequest . setAlipayPublicCertPath ( parentalipayConfig.getAlipayPublicCertPath() );
+        certAlipayRequest . setAlipayPublicCertPath ( parentalipayConfig.getAlipayParentPublicCertPath() );
         //设置支付宝根证书路径
-        certAlipayRequest . setRootCertPath ( parentalipayConfig.getRootCertPath() );
+        certAlipayRequest . setRootCertPath ( parentalipayConfig.getRootCertParentPath() );
         //构造client
         AlipayClient   alipayClient   = null;
         try {
@@ -99,6 +99,7 @@ public class ParentAlipayServiceImpl extends BaseServiceImpl<AlipayInDTO, Parent
             String payJson = gson.toJson(parentalipayindto);
             log.info("支付宝支付预订单信息==>" + payJson);
             parentalipayindto.setRawIntegral(0.0);
+            parentalipayindto.setOrderId(orderId);
             //parentalipayindto.setIntegralValue(parentalipayindto.getRawIntegral()+0);
             //parentalipayindto.setIntegralValue(parentalipayindto.getChangeIntegral()+parentalipayindto.getRawIntegral());
             Integer result= mapper.parentInsertOrder(parentalipayindto);
@@ -109,8 +110,6 @@ public class ParentAlipayServiceImpl extends BaseServiceImpl<AlipayInDTO, Parent
             } else {
                 log.info("订单插入成功：" + result);
             }
-
-
             return response . getBody ();
 
            // System . out . println ( response . getBody ()); //就是orderString 可以直接给客户端请求，无需再做处理。
@@ -158,7 +157,7 @@ public class ParentAlipayServiceImpl extends BaseServiceImpl<AlipayInDTO, Parent
 
         //切记alipaypublickey是支付宝的公钥，请去open.alipay.com对应应用下查看。
         //boolean AlipaySignature.rsaCertCheckV1(Map<String, String> params, String publicKeyCertPath, String charset,String signType)
-                boolean   flag   =   AlipaySignature. rsaCertCheckV1 ( params ,  parentalipayConfig.getAlipayPublicCertPath() ,  parentalipayConfig.getParentcharset() , "RSA2" );
+                boolean   flag   =   AlipaySignature. rsaCertCheckV1 ( params ,  parentalipayConfig.getAlipayParentPublicCertPath() ,  parentalipayConfig.getParentcharset() , "RSA2" );
                 if(flag){
                     log.info("=============================验签成功==============================");
                     log.info("已接收到支付成功状态的回调消息====>" + tradeStatus);

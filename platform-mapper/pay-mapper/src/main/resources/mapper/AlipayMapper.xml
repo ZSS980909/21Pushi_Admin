@@ -21,4 +21,11 @@
             (#{studenterId},#{courseId},#{integral},#{status},#{outTradeNo},1)
 
     </update>
+
+    <insert id="InsertOrder" parameterType="com.ershiyi.dto.AlipayInDTO" >
+        insert into  sys_user_integral_record (studenterid, changeintegral, rawintegral, integralvalue,
+        status, schoolid, keyword, rechargeAmount, orderId, paymentType,paycode,payname)
+        values (#{studenterId},#{changeIntegral},#{rawIntegral},#{integralValue},0,#{schoolId},
+        'PAY',#{rechargeAmount},#{orderId},1,#{parentId},#{payName})
+    </insert>
 </mapper>

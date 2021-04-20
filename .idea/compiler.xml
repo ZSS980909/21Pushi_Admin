@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="auto-domain" />
+        <module name="auto-mapper" />
+        <module name="auto-service-api" />
+        <module name="auto-service-provider" />
+        <module name="common-core" />
+        <module name="common-domain" />
+        <module name="common-mapper" />
+        <module name="common-service-api" />
+        <module name="common-service-provider" />
+        <module name="excel-starter" />
+        <module name="issue-inspect-domain" />
+        <module name="issue-inspect-mapper" />
+        <module name="issue-inspect-service-api" />
+        <module name="issue-inspect-service-provider" />
+        <module name="orm-starter" />
+        <module name="parent-web-domain" />
+        <module name="parent-web-mapper" />
+        <module name="parent-web-service-api" />
+        <module name="parent-web-service-provider" />
+        <module name="pay-domain" />
+        <module name="pay-mapper" />
+        <module name="pay-service-api" />
+        <module name="pay-service-provider" />
+        <module name="platform-gateway" />
+        <module name="student-app-domain" />
+        <module name="student-app-mapper" />
+        <module name="student-app-service-api" />
+        <module name="student-app-service-provider" />
+        <module name="sys-domain" />
+        <module name="sys-mapper" />
+        <module name="sys-service-api" />
+        <module name="sys-service-provider" />
+        <module name="teacher-web-domain" />
+        <module name="teacher-web-mapper" />
+        <module name="teacher-web-service-api" />
+        <module name="teacher-web-service-provider" />
+        <module name="web-starter" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="auto-domain" target="1.8" />
+      <module name="auto-mapper" target="1.8" />
+      <module name="auto-service" target="1.8" />
+      <module name="auto-service-api" target="1.8" />
+      <module name="auto-service-provider" target="1.8" />
+      <module name="common-core" target="1.8" />
+      <module name="common-domain" target="1.8" />
+      <module name="common-mapper" target="1.8" />
+      <module name="common-plugin" target="1.8" />
+      <module name="common-service" target="1.8" />
+      <module name="common-service-api" target="1.8" />
+      <module name="common-service-provider" target="1.8" />
+      <module name="excel-starter" target="1.8" />
+      <module name="issue-inspect-domain" target="1.8" />
+      <module name="issue-inspect-mapper" target="1.8" />
+      <module name="issue-inspect-service" target="1.8" />
+      <module name="issue-inspect-service-api" target="1.8" />
+      <module name="issue-inspect-service-provider" target="1.8" />
+      <module name="orm-starter" target="1.8" />
+      <module name="parent-web-domain" target="1.8" />
+      <module name="parent-web-mapper" target="1.8" />
+      <module name="parent-web-service" target="1.8" />
+      <module name="parent-web-service-api" target="1.8" />
+      <module name="parent-web-service-provider" target="1.8" />
+      <module name="pay-domain" target="1.8" />
+      <module name="pay-mapper" target="1.8" />
+      <module name="pay-service" target="1.8" />
+      <module name="pay-service-api" target="1.8" />
+      <module name="pay-service-provider" target="1.8" />
+      <module name="platform" target="1.8" />
+      <module name="platform-commons" target="1.8" />
+      <module name="platform-dependencies" target="1.5" />
+      <module name="platform-domain" target="1.8" />
+      <module name="platform-gateway" target="1.8" />
+      <module name="platform-mapper" target="1.8" />
+      <module name="platform-services" target="1.8" />
+      <module name="student-app-domain" target="1.8" />
+      <module name="student-app-mapper" target="1.8" />
+      <module name="student-app-service" target="1.8" />
+      <module name="student-app-service-api" target="1.8" />
+      <module name="student-app-service-provider" target="1.8" />
+      <module name="sys-domain" target="1.8" />
+      <module name="sys-mapper" target="1.8" />
+      <module name="sys-service" target="1.8" />
+      <module name="sys-service-api" target="1.8" />
+      <module name="sys-service-provider" target="1.8" />
+      <module name="teacher-web-domain" target="1.8" />
+      <module name="teacher-web-mapper" target="1.8" />
+      <module name="teacher-web-service" target="1.8" />
+      <module name="teacher-web-service-api" target="1.8" />
+      <module name="teacher-web-service-provider" target="1.8" />
+      <module name="web-starter" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

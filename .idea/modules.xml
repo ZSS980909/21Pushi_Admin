@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/auto-domain/auto-domain.iml" filepath="$PROJECT_DIR$/platform-domain/auto-domain/auto-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/auto-mapper/auto-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/auto-mapper/auto-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/auto-service/auto-service.iml" filepath="$PROJECT_DIR$/platform-services/auto-service/auto-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/auto-service/auto-service-api/auto-service-api.iml" filepath="$PROJECT_DIR$/platform-services/auto-service/auto-service-api/auto-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/auto-service/auto-service-provider/auto-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/auto-service/auto-service-provider/auto-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-commons/common-core/common-core.iml" filepath="$PROJECT_DIR$/platform-commons/common-core/common-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/common-domain/common-domain.iml" filepath="$PROJECT_DIR$/platform-domain/common-domain/common-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/common-mapper/common-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/common-mapper/common-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-commons/common-plugin/common-plugin.iml" filepath="$PROJECT_DIR$/platform-commons/common-plugin/common-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/common-service/common-service.iml" filepath="$PROJECT_DIR$/platform-services/common-service/common-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/common-service/common-service-api/common-service-api.iml" filepath="$PROJECT_DIR$/platform-services/common-service/common-service-api/common-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/common-service/common-service-provider/common-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/common-service/common-service-provider/common-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-commons/common-plugin/excel-starter/excel-starter.iml" filepath="$PROJECT_DIR$/platform-commons/common-plugin/excel-starter/excel-starter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/issue-inspect-domain/issue-inspect-domain.iml" filepath="$PROJECT_DIR$/platform-domain/issue-inspect-domain/issue-inspect-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/issue-inspect-mapper/issue-inspect-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/issue-inspect-mapper/issue-inspect-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/issue-inspect-service/issue-inspect-service.iml" filepath="$PROJECT_DIR$/platform-services/issue-inspect-service/issue-inspect-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/issue-inspect-service/issue-inspect-service-api/issue-inspect-service-api.iml" filepath="$PROJECT_DIR$/platform-services/issue-inspect-service/issue-inspect-service-api/issue-inspect-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/issue-inspect-service/issue-inspect-service-provider/issue-inspect-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/issue-inspect-service/issue-inspect-service-provider/issue-inspect-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-commons/orm-starter/orm-starter.iml" filepath="$PROJECT_DIR$/platform-commons/orm-starter/orm-starter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/parent-web-domain/parent-web-domain.iml" filepath="$PROJECT_DIR$/platform-domain/parent-web-domain/parent-web-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/parent-web-mapper/parent-web-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/parent-web-mapper/parent-web-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/parent-web-service/parent-web-service.iml" filepath="$PROJECT_DIR$/platform-services/parent-web-service/parent-web-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/parent-web-service/parent-web-service-api/parent-web-service-api.iml" filepath="$PROJECT_DIR$/platform-services/parent-web-service/parent-web-service-api/parent-web-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/parent-web-service/parent-web-service-provider/parent-web-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/parent-web-service/parent-web-service-provider/parent-web-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/pay-domain/pay-domain.iml" filepath="$PROJECT_DIR$/platform-domain/pay-domain/pay-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/pay-mapper/pay-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/pay-mapper/pay-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/pay-service/pay-service.iml" filepath="$PROJECT_DIR$/platform-services/pay-service/pay-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/pay-service/pay-service-api/pay-service-api.iml" filepath="$PROJECT_DIR$/platform-services/pay-service/pay-service-api/pay-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/pay-service/pay-service-provider/pay-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/pay-service/pay-service-provider/pay-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-commons/platform-commons.iml" filepath="$PROJECT_DIR$/platform-commons/platform-commons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/paltform-dependencies/platform-dependencies.iml" filepath="$PROJECT_DIR$/paltform-dependencies/platform-dependencies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/platform-domain.iml" filepath="$PROJECT_DIR$/platform-domain/platform-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-gateway/platform-gateway.iml" filepath="$PROJECT_DIR$/platform-gateway/platform-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/platform-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/platform-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/platform-services.iml" filepath="$PROJECT_DIR$/platform-services/platform-services.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/student-app-domain/student-app-domain.iml" filepath="$PROJECT_DIR$/platform-domain/student-app-domain/student-app-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/student-app-mapper/student-app-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/student-app-mapper/student-app-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/student-app-service/student-app-service.iml" filepath="$PROJECT_DIR$/platform-services/student-app-service/student-app-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/student-app-service/student-app-service-api/student-app-service-api.iml" filepath="$PROJECT_DIR$/platform-services/student-app-service/student-app-service-api/student-app-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/student-app-service/student-app-service-provider/student-app-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/student-app-service/student-app-service-provider/student-app-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/sys-domain/sys-domain.iml" filepath="$PROJECT_DIR$/platform-domain/sys-domain/sys-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/sys-mapper/sys-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/sys-mapper/sys-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/sys-service/sys-service.iml" filepath="$PROJECT_DIR$/platform-services/sys-service/sys-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/sys-service/sys-service-api/sys-service-api.iml" filepath="$PROJECT_DIR$/platform-services/sys-service/sys-service-api/sys-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/sys-service/sys-service-provider/sys-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/sys-service/sys-service-provider/sys-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-domain/teacher-web-domain/teacher-web-domain.iml" filepath="$PROJECT_DIR$/platform-domain/teacher-web-domain/teacher-web-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-mapper/teacher-web-mapper/teacher-web-mapper.iml" filepath="$PROJECT_DIR$/platform-mapper/teacher-web-mapper/teacher-web-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/teacher-web-service/teacher-web-service.iml" filepath="$PROJECT_DIR$/platform-services/teacher-web-service/teacher-web-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/teacher-web-service/teacher-web-service-api/teacher-web-service-api.iml" filepath="$PROJECT_DIR$/platform-services/teacher-web-service/teacher-web-service-api/teacher-web-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-services/teacher-web-service/teacher-web-service-provider/teacher-web-service-provider.iml" filepath="$PROJECT_DIR$/platform-services/teacher-web-service/teacher-web-service-provider/teacher-web-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platform-commons/web-starter/web-starter.iml" filepath="$PROJECT_DIR$/platform-commons/web-starter/web-starter.iml" />
+    </modules>
+  </component>
+</project>

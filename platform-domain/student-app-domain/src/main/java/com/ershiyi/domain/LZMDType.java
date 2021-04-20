@@ -23,13 +23,13 @@ public class LZMDType {
      */
     @Column(name = "KNOWLEDGECOUNTNUMBER")
     @ApiModelProperty(value="总共知识点数量")
-    private  String knowledgeCountNumber;
+    private  String knowledgeCountNumber;     //作废
     /**
      * 已学的知识点数量
      */
     @Column(name = "KNOWLEDGESTUDYNUMBER")
     @ApiModelProperty(value="已学的知识点数量")
-    private  String knowledgeStudyNumber;
+    private  String knowledgeStudyNumber;  //作废
     /**
      * 课程名称
      */
@@ -41,13 +41,13 @@ public class LZMDType {
      */
     @Column(name = "COUNTKNOWLEDGEID")
     @ApiModelProperty(value="总知识点")
-    private  String countknowledgeId;
+    private  String countknowledgeId;  //作废
     /**
      * 已学知识点
      */
     @Column(name = "STUDYKNOWLEDGEID")
     @ApiModelProperty(value="已学知识点")
-    private  String studyknowledgeId;
+    private  String studyknowledgeId;   //作废
     /**
      * 科目
      */
@@ -74,6 +74,22 @@ public class LZMDType {
     @Column(name = "PICTURE")
     @ApiModelProperty(value="课程图片")
     private  String picture;
+
+    /**
+     * 学生编号
+     * @return
+     */
+    @Column(name = "STUDENTERID")
+    @ApiModelProperty(value="学生编号")
+    private  String studenterId;
+
+    public String getStudenterId() {
+        return studenterId;
+    }
+
+    public void setStudenterId(String studenterId) {
+        this.studenterId = studenterId;
+    }
 
     public String getPicture() {
         return picture;

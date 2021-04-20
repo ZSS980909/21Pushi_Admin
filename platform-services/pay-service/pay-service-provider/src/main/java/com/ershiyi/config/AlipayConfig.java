@@ -41,9 +41,9 @@ public class AlipayConfig {
     @Value("${alipay.alipaypublic.key}")
     private String alipayPublicKey;
 
-    @ApiModelProperty(value = "公钥")
-    @Value("${alipay.public.key}")
-    private String publicKey;
+//    @ApiModelProperty(value = "公钥")
+//    @Value("${alipay.public.key}")
+//    private String publicKey;
 
     @ApiModelProperty(value = "付款人")
     @Value("${alipay.payer.show.name}")
@@ -91,13 +91,13 @@ public class AlipayConfig {
         RootCertPath = rootCertPath;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
+//    public String getPublicKey() {
+//        return publicKey;
+//    }
+//
+//    public void setPublicKey(String publicKey) {
+//        this.publicKey = publicKey;
+//    }
 
     public String getAppid() {
         return appid;

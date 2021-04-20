@@ -16,7 +16,6 @@
         <module>platform-gateway</module>
         <module>paltform-dependencies</module>
     </modules>
-
     <properties>
         <java.version>1.8</java.version>
         <!--项目统一字符集编码-->
@@ -24,15 +23,12 @@
         <platform.common.version>1.0.0-SNAPSHOT</platform.common.version>
         <platform.web.version>1.0.0-SNAPSHOT</platform.web.version>
         <platform.orm.version>1.0.0-SNAPSHOT</platform.orm.version>
-
         <platform.api.issue-inspect.version>1.0.0-SNAPSHOT</platform.api.issue-inspect.version>
         <platform.domain.issue-inspect.version>1.0.0-SNAPSHOT</platform.domain.issue-inspect.version>
         <platform.mapper.issue-inspect.version>1.0.0-SNAPSHOT</platform.mapper.issue-inspect.version>
-
         <platform.api.parent-web.version>1.0.0-SNAPSHOT</platform.api.parent-web.version>
         <platform.domain.parent-web.version>1.0.0-SNAPSHOT</platform.domain.parent-web.version>
         <platform.mapper.parent-web.version>1.0.0-SNAPSHOT</platform.mapper.parent-web.version>
-
         <platform.api.student-app.version>1.0.0-SNAPSHOT</platform.api.student-app.version>
         <platform.domain.student-app.version>1.0.0-SNAPSHOT</platform.domain.student-app.version>
         <platform.mapper.student-app.version>1.0.0-SNAPSHOT</platform.mapper.student-app.version>
@@ -44,27 +40,19 @@
         <platform.api.auto.version>1.0.0-SNAPSHOT</platform.api.auto.version>
         <platform.domain.auto.version>1.0.0-SNAPSHOT</platform.domain.auto.version>
         <platform.mapper.auto.version>1.0.0-SNAPSHOT</platform.mapper.auto.version>
-
-
         <platform.api.resources.version>1.0.0-SNAPSHOT</platform.api.resources.version>
         <platform.domain.resources.version>1.0.0-SNAPSHOT</platform.domain.resources.version>
         <platform.mapper.resources.version>1.0.0-SNAPSHOT</platform.mapper.resources.version>
-
         <platform.api.sys.version>1.0.0-SNAPSHOT</platform.api.sys.version>
         <platform.domain.sys.version>1.0.0-SNAPSHOT</platform.domain.sys.version>
         <platform.mapper.sys.version>1.0.0-SNAPSHOT</platform.mapper.sys.version>
         <platform.mapper.pay.version>1.0.0-SNAPSHOT</platform.mapper.pay.version>
-
-
-
         <platform.api.common.version>1.0.0-SNAPSHOT</platform.api.common.version>
         <platform.domain.common.version>1.0.0-SNAPSHOT</platform.domain.common.version>
         <platform.mapper.common.version>1.0.0-SNAPSHOT</platform.mapper.common.version>
-
         <!--<platform.api.case.version>1.0.0-SNAPSHOT</platform.api.case.version>-->
         <!--<platform.domain.case.version>1.0.0-SNAPSHOT</platform.domain.case.version>-->
         <!--<platform.mapper.case.version>1.0.0-SNAPSHOT</platform.mapper.case.version>-->
-
         <!--<platform.api.medical.version>1.0.0-SNAPSHOT</platform.api.medical.version>-->
         <!--<platform.domain.medical.version>1.0.0-SNAPSHOT</platform.domain.medical.version>-->
         <!--<platform.mapper.medical.version>1.0.0-SNAPSHOT</platform.mapper.medical.version>-->
@@ -108,11 +96,11 @@
                 <!--当前环境-->
                 <profile.name>dev</profile.name>
                 <!--Nacos配置中心地址-->
-                <config.server-addr>localhost:8848</config.server-addr>
+                <config.server-addr>192.168.3.17:8848</config.server-addr>
                 <!--Nacos配置中心命名空间,用于支持多环境.这里必须使用ID，不能使用名称,默认为空-->
                 <config.namespace></config.namespace>
                 <!--Nacos服务发现地址-->
-                <discovery.server-addr>localhost:8848</discovery.server-addr>
+                <discovery.server-addr>192.168.3.17:8848</discovery.server-addr>
                 <docker.image.prefix>ershiyi</docker.image.prefix>
                 <docker.host>http://192.168.3.17:2375</docker.host>
             </properties>
@@ -130,8 +118,8 @@
                 <!--Nacos服务发现地址-->
                 <discovery.server-addr>192.168.1.13:8848</discovery.server-addr>
                 <docker.image.prefix>ershiyi</docker.image.prefix>
-                <docker.host>http://218.76.32.241:2376</docker.host>
-                <docker.create>D:\docker\ca-106</docker.create>
+                <docker.host>https://192.168.1.13:2376</docker.host>
+                <docker.create>D:\Desktop\21docker\ca1</docker.create>
             </properties>
         </profile>
     </profiles>

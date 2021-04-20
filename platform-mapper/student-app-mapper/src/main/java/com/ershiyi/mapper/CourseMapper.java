@@ -231,13 +231,19 @@ public interface CourseMapper extends AbstractMapper<JHZCourseDTO> {
     List<Function_setting> Querytitle();
 
    // @Select("SELECT * from  (select questionId from  common_knowledge_question where common_knowledge_question.knowledgeId=#{knowledgeId}) a order by  rand() limit 1")
-    @Select("select  questionId from  `know_copy`.common_knowledge_question where knowledgeId=#{knowledgeId} order by rand() limit 1")
+    @Select("select  questionId from  `21db_test`.common_knowledge_question where knowledgeId=#{knowledgeId} order by rand() limit 1")
     String SelectKnowledgeBylimit(@Param("knowledgeId")String knowledgeId);
 
     //@Select("select  id as questionId, knowledgeid as knowId, choicea as optionA, choiceb as optionB, choicec as optionC, choiced as optionD, rightaws as correctOption, resolving as resolving, title as question,isgb, schoolid, subjectid,(select courseId from  common_course_knowledge where  id =(select  knowledgeId from common_knowledge_question where  questionId=#{questionId} limit  1)) as courseId  from common_course_choice  where id=#{questionId}")
-    @Select("select id as questionId,(select knowledgeId from  `know_copy`.common_knowledge_question where questionId=#{questionId} limit 1) as knowId,optionA,optionB,optionC,optionD,answer as correctOption,resolving,question,subjectid from  common_course_choice where id=#{questionId}")
+    @Select("select id as questionId,(select knowledgeId from  `21db_test`.common_knowledge_question where questionId=#{questionId} limit 1) as knowId,optionA,optionB,optionC,optionD,answer as correctOption,resolving,question,subjectid from  common_course_choice where id=#{questionId}")
     Common_Choice SelectQuestionBylimit(@Param("questionId") String questionId);
 
     @Select("select   id as questionId, knowledgeid as knowId, title as question, resolving as correctOption, rightaws, isgb, schoolid, subjectid,(select courseId from  common_course_knowledge where  id = (select  knowledgeId from common_knowledge_question where  questionId=#{questionId} limit  1)) as courseId from common_course_judge where id =#{questionId}")
     Common_Judge SelectQuestionBylimitone(@Param("questionId")String questionId);
+   // @Select("select id from common_course_knowledge where courseId=#{courseId} and isdelete=0")
+    List knowledgeMessage(@Param("courseId")String courseId);
+    //@Select("select distinct a.knowledgeid as knowId from  common_lzmd_studyrate a  LEFT JOIN common_course b on  a.courseid =b.id  where  a.studenterid =#{studenterId}  and a.isright=1 and courseid=#{courseId}")
+    List knowledgeStudyMessage(LZMDType lzmdtype);
+   // @Select("SELECT  *  from  common_knowledge_question where courseId=#{courseId} and  knowledgeId =#{knowledgeId} AND  questionType=1 and  isRandom=0 and  isDelete = 0 limit 2")
+    List toquestion(@Param("courseId")String courseId, @Param("knowledgeId")String knowledgeId);
 }

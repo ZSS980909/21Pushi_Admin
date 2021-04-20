@@ -124,7 +124,7 @@ public interface PersonalCenterMapper {
      * @param studentId 学生编号
      * @return HistoryId 学生所有历史记录类的表id和课程id
      */
-    @Select("select DISTINCT courseId from common_student_browsing_history where  studenterId = '110000100118081534974728287983972107729853922427' and DELETEd =0 order by id desc")
+    @Select("select DISTINCT courseId from common_student_browsing_history where  studenterId = #{studenterId} and DELETEd =0 order by id desc")
     public List<Integer> findHistoryCourse(@Param("studenterId") String studentId);
 
 

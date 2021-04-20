@@ -13,6 +13,7 @@ public class CourseStudy {
     private int courseId;  // 科目id
     private String courseName;  // 课程名称
     private String picture;  // 图片链接
+    private String image = ""; // 竖版图片
     private int countKnow;  // 知识点数量
     private int finishKnow;  // 已学习的知识点数量
     private String levelLabel = "";  // 等级标签

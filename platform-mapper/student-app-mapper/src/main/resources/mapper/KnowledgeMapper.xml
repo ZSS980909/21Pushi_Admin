@@ -8,7 +8,7 @@
     </select>
     <insert id="insertQuestionRelated">
         insert into
-            know_copy.common_knowledge_question(
+            21db_test.common_knowledge_question(
                 knowledgeId,
                 knowledgeName,
                 questionId,
@@ -18,7 +18,7 @@
         <foreach collection="list" item="item" separator=",">
             (
                 #{item},
-                (select knowledgeName from know_copy.common_course_knowledge where id = #{item}),
+                (select knowledgeName from 21db_test.common_course_knowledge where id = #{item}),
                 #{questionId},
                 #{type},
                 0

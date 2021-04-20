@@ -7,6 +7,7 @@ import com.ershiyi.domain.entity.QuestionChoice;
 import com.ershiyi.domain.entity.ResultQuestion;
 import com.ershiyi.dto.JpushPojo;
 import com.ershiyi.dto.QuestionAndKnowledge;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import tk.mybatis.mapper.AbstractMapper;
 
@@ -25,4 +26,12 @@ public interface JpushMapper extends AbstractMapper<JpushPojo> {
      * @return
      */
     List<QuestionChoice> questionjpush(QuestionAndKnowledge question);
+
+    List questionjpushbyyes(QuestionAndKnowledge question);
+
+    List<QuestionChoice> questionjpushbyquestion(@Param("questionId") String questionId);
+
+    List<QuestionChoice> questionjpushbyquestionNo(@Param("questionId") String questionId);
+
+    List<QuestionChoice> questionjpushbyquestionbyno(QuestionAndKnowledge question);
 }

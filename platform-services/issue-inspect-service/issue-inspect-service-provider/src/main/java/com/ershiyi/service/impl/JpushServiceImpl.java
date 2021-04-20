@@ -123,18 +123,54 @@ public class JpushServiceImpl  extends BaseServiceImpl<JpushPojo, JpushMapper> i
     public List<ResultQuestion>  questionjpush(QuestionAndKnowledge question) {
         List<ResultQuestion> result =new ArrayList<>();
         question.setPlushContentId(question.getPlushContentId());
-        List<QuestionChoice> questionjpush = mapper.questionjpush(question);
-        for(int i=0;i<questionjpush.size();i++){
-            result.add(SwitchQuestion(questionjpush.get(i)));
-        }
+        /**
+         * 查詢s关联的知识点
+         */
+        List questionjpushandquestion=mapper.questionjpushbyyes(question);
+        if(questionjpushandquestion.size()!=0){
+            for(int i=0;i<questionjpushandquestion.size();i++){
+                List<QuestionChoice> questionjpush=mapper.questionjpushbyquestion(questionjpushandquestion.get(i).toString());
+                if(questionjpush.size()==0){
+                        //没有匹配的题目,拿取随机题目
+                    List<QuestionChoice> questionjpushNo=mapper.questionjpushbyquestionNo(questionjpushandquestion.get(i).toString());
+                    for(int j=0;j<questionjpushNo.size();j++){
+                        result.add(SwitchQuestion(questionjpushNo.get(j)));
+                    }
+                }else{
+                    for(int j=0;j<questionjpush.size();j++){
+                        result.add(SwitchQuestion(questionjpush.get(j)));
+                    }
+                }
+            }
+        }else{
+            List questionjpushandquestionbyno=mapper.questionjpushbyquestionbyno(question);
+            for(int i=0;i<questionjpushandquestionbyno.size();i++){
+//                List<QuestionChoice> questionjpush=mapper.questionjpushbyquestion(questionjpushandquestion.get(i).toString());
+//                if(questionjpush.size()==0){
+                    //随机抽取,就随机拿
+                List<QuestionChoice>   questionjpushNo=mapper.questionjpushbyquestionNo(questionjpushandquestionbyno.get(i).toString());
+                   if(questionjpushNo.size()!=0){
+                       for(int j=0;j<questionjpushNo.size();j++){
+                            result.add(SwitchQuestion(questionjpushNo.get(j)));
+                       }
+                   }
+
+                }
+            }
+
+        //}
+//        List<QuestionChoice> questionjpush = mapper.questionjpush(question);
+//        for(int i=0;i<questionjpush.size();i++){
+//            result.add(SwitchQuestion(questionjpush.get(i)));
+//        }
             return result;
     }
     public static ResultQuestion SwitchQuestion(QuestionChoice question){
         List<String> options = new ArrayList<>();
         ResultQuestion result = new ResultQuestion();
         result.setQuestionId(Integer.parseInt(question.getQuestionId()));
-        result.setKnowContentName(question.getKnowledgeName());
-        result.setKnowContentId(question.getKnowledgeId());
+        result.setKnowName(question.getKnowledgeName());
+        result.setKnowId(question.getKnowledgeId());
         result.setQuestion(question.getQuestion());
         result.setResolving(question.getResolving());
         result.setType(question.getType());

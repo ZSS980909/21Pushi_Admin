@@ -35,4 +35,34 @@
        from  `21db_test`.common_course_choice where  id = #{plushContentId} and deleted=0  order by  rand() limit 5
 
     </select>
+    <select id="questionjpushbyyes" parameterType="com.ershiyi.dto.QuestionAndKnowledge" resultType="java.lang.String">
+         select  questionId from   `21db_test`.common_knowledge_question where knowledgeId=#{plushContentId} and isRandom=0  order by  rand() limit 5
+    </select>
+    <select id="questionjpushbyquestion" parameterType="java.lang.String" resultType="com.ershiyi.domain.entity.QuestionChoice">
+        select id as questionId,
+                 optionA,
+                  optionB,
+                 optionC,
+                 optionD,
+                answer as correctOption,
+                resolving,
+                question,
+                id,
+                1 as type from  `21db_test`.common_course_choice where id =#{questionId} and  deleted=0  and isRelevanceFinish=0
+    </select>
+    <select id="questionjpushbyquestionNo" parameterType="java.lang.String" resultType="com.ershiyi.domain.entity.QuestionChoice">
+        select id as questionId,
+                 optionA,
+                  optionB,
+                 optionC,
+                 optionD,
+                answer as correctOption,
+                resolving,
+                question,
+                id,
+                1 as type from  `21db_test`.common_course_choice where id =#{questionId} and  deleted=0
+    </select>
+    <select id="questionjpushbyquestionbyno" parameterType="com.ershiyi.dto.QuestionAndKnowledge" resultType="java.lang.String">
+           select  questionId from   `21db_test`.common_knowledge_question where knowledgeId=#{plushContentId} and isRandom=1  order by  rand() limit 5
+    </select>
 </mapper>

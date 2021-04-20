@@ -54,7 +54,7 @@
         <foreach collection="list" item="item" separator=";">
             insert  into common_course_knowledge_record (questionid, studenterid, correct, knowledgeid,
             questiontype, courseId, answer, questionTypeByfunction,starttime,endtime)
-            values  (#{item.questionId},#{item.studenterId},#{item.correct},(select  knowledgeId from  common_knowledge_question  where knowledgeContentId =#{item.knowId} limit 1),#{item.type},
+            values  (#{item.questionId},#{item.studenterId},#{item.correct},(select  knowledgeId from  common_knowledge_question  where knowledgeId =#{item.knowId} limit 1),#{item.type},
             #{item.courseId},#{item.correctOption},1,now(),now())
         </foreach>
     </insert>
@@ -89,16 +89,16 @@
         <!--</foreach>-->
     <!--</select>-->
     <select id="SelectValue" parameterType="com.ershiyi.dto.ExamDTO" resultType="java.lang.Integer">
-        select  * from  know_copy.common_course_knowledge where left_value &gt; #{leftValue} AND
+        select  * from  21db_test.common_course_knowledge where left_value &gt; #{leftValue} AND
         right_value &lt; #{rightValue} and courseId=#{courseId}  and isdelete=0 and isLast=1
     </select>
 
     <select id="SelectKnowledgeWithQuestion" parameterType="java.lang.String"   resultType="java.lang.String">
-        select questionId from  know_copy.common_knowledge_question where isDelete=0 and
+        select questionId from  21db_test.common_knowledge_question where isDelete=0 and
          knowledgeId=#{knowledgeId} AND questionType=1
     </select>
     <select id="SelectQuestion" parameterType="java.lang.String"   resultType="com.ershiyi.domain.Common_Choice">
      select id as questionId, optionA,  optionB,  optionC, optionD, answer as correctOption, resolving,question, subjectid,
-       1 as type from know_copy.common_course_choice where id=#{questionId}
+       1 as type from 21db_test.common_course_choice where id=#{questionId}
     </select>
 </mapper>

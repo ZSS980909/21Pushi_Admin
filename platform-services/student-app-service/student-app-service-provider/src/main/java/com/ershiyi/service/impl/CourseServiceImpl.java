@@ -12,6 +12,7 @@ import com.ershiyi.service.CourseService;
 import com.ershiyi.utils.TimeCompute;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -272,8 +273,15 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
 
     @Override
     public List<LZMDType> LZMDKnowledge(Common_Search search) {
-             List<LZMDType> lzmdtype =new ArrayList<>();
-            List<Common_Return> searchone =mapper.LZMDKnowledge(search); //1.查询已购买课程总共多少个知识点
+        //开启分页
+        PageHelper.startPage(search.getPageNumber(),search.getPageSize());
+        List<Common_Return> searchone =mapper.LZMDKnowledge(search); //1.查询已购买课程总共多少个知识点
+        List<LZMDType> lzmdtype =new ArrayList<>();
+            if(searchone.size()==0){
+                return lzmdtype;
+            }else{
+            //List<LZMDType> lzmdtype =new ArrayList<>();
+         //   List<Common_Return> searchone =mapper.LZMDKnowledge(search); //1.查询已购买课程总共多少个知识点
             List<Common_Return> searchtwo =mapper.CountKnowledge(search);//2.查询每个已购买的课程已完成多少个知识点
             if(searchone.size()==0){
                 /**
@@ -284,147 +292,105 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
             /**
              * 计算该学生的已购买课程的所有知识点个数
              */
-             List list =new ArrayList();
-             for(int i=0;i<searchone.size();i++){
-                 list.add(searchone.get(i).getCourseId());
-                 list=(List) list.stream().distinct().collect(Collectors.toList());//去重
-             }
-             for(int c=0;c<list.size();c++){
-                 List listcountknowledge =new ArrayList();
-                 List liststudyknowledge =new ArrayList();
-                 LZMDType lzmd =new LZMDType();
-                 String countknowledge="";//已购买的某们课程所有知识点拼接集合
-                 String studyknowledge="";//已购买的学习过的课程知识点集合
-
-                 //算已购买的总课程
-                 for(int d=0;d<searchone.size();d++){
-                     if(list.get(c).equals(searchone.get(d).getCourseId())){
-                         if(d==searchone.size()-1){
-                             countknowledge+=searchone.get(d).getKnowId();
-                         }else{
-                             countknowledge+=searchone.get(d).getKnowId()+",";
-                         }
-                         lzmd.setSubjectId(searchone.get(d).getSubjectId());
-                         lzmd.setPicture(searchone.get(d).getPicture());
-                     }
-
-                 }
-                 //算出切割然后去重
-                 String[] split = countknowledge.split(",");
-                 for(int s=0;s<split.length;s++){
-                     listcountknowledge.add(split[s]);
-                 }
-                 List listQC= (List) listcountknowledge.stream().distinct().collect(Collectors.toList());//去重
-                 lzmd.setKnowledgeCountNumber(String.valueOf(listQC.size()));
-                 lzmd.setCourseId(list.get(c).toString());
-                 lzmd.setCountknowledgeId(listQC.toString());
-
-                 //算已学习的
-                for(int v=0;v<searchtwo.size();v++){
-                    if(list.get(c).equals(searchtwo.get(v).getCourseId())){
-                        //listknowledge.add(searchtwo.get(v).getKnowledgeid());
-                        studyknowledge+=searchtwo.get(v).getKnowId()+",";
-                        if(v==searchtwo.size()-1){
-                            studyknowledge+=searchtwo.get(v).getKnowId();
+            if(searchtwo.size()!=0){
+                for(int i=0;i<searchone.size();i++){
+                    LZMDType lzmd =new LZMDType();
+                    for(int j=0;j<searchtwo.size();j++){
+                        if (searchone.get(i).getCourseId().equals(searchtwo.get(j).getCourseId())){
+                            lzmd.setSubjectId(searchone.get(i).getSubjectId());
+                            lzmd.setPicture(searchone.get(i).getPicture());
+                            lzmd.setKnowledgeCountNumber(searchone.get(i).getKnowIdNumber());
+                            lzmd.setCourseId(searchone.get(i).getCourseId());
+                            // lzmd.setCountknowledgeId(listQC.toString());
+                            lzmd.setKnowledgeStudyNumber(searchtwo.get(j).getKnowIdNumber());
+                            String baifenbi="";//接收百分比值
+                            double studytime =Integer.parseInt(searchtwo.get(j).getKnowIdNumber())*1.0;
+                            double counttime =Integer.parseInt(searchone.get(i).getKnowIdNumber())*1.0;
+                            double fen = studytime / counttime;
+                            DecimalFormat df1 = new DecimalFormat("0.##");
+                            baifenbi = df1.format(fen);
+                            lzmd.setPercentage(baifenbi);
+                            lzmd.setCurriculum(searchone.get(i).getCourseName());
+                            lzmd.setSubjectId(searchone.get(i).getSubjectId());
+                            lzmdtype.add(lzmd);
+                        }
+                        if(j==searchtwo.size()-1){
+                            if(lzmd.getCourseId()==null){
+                                lzmd.setSubjectId(searchone.get(i).getSubjectId());
+                                lzmd.setPicture(searchone.get(i).getPicture());
+                                lzmd.setKnowledgeCountNumber(searchone.get(i).getKnowIdNumber());
+                                lzmd.setCourseId(searchone.get(i).getCourseId());
+                                // lzmd.setCountknowledgeId(listQC.toString());
+                                lzmd.setKnowledgeStudyNumber("0");
+                                String baifenbi="";//接收百分比值
+                                double studytime =0*1.0;
+                                double counttime =Integer.parseInt(searchone.get(i).getKnowIdNumber())*1.0;
+                                double fen = studytime / counttime;
+                                DecimalFormat df1 = new DecimalFormat("0.##");
+                                baifenbi = df1.format(fen);
+                                lzmd.setPercentage(baifenbi);
+                                lzmd.setCurriculum(searchone.get(i).getCourseName());
+                                lzmd.setSubjectId(searchone.get(i).getSubjectId());
+                                lzmdtype.add(lzmd);
+                            }
                         }
                     }
-                }
-                // System.out.println(studyknowledge);
-                 //算出切割然后去重
-                 String[] splits = studyknowledge.split(",");
-                 for(int s=0;s<splits.length;s++){
-                     liststudyknowledge.add(splits[s]);
-                 }
-                 List liststudyQC= (List) liststudyknowledge.stream().distinct().collect(Collectors.toList());//去重
-                 lzmd.setStudyknowledgeId(liststudyQC.toString());
-                 lzmd.setKnowledgeStudyNumber(String.valueOf(liststudyQC.size()));
-                 String baifenbi="";//接收百分比值
-                 double studytime =liststudyQC.size()*1.0;
-                 double counttime =listQC.size()*1.0;
-                 double fen = studytime / counttime;
-                 DecimalFormat df1 = new DecimalFormat("0.##");
-                 baifenbi = df1.format(fen);
 
-                 lzmd.setPercentage(baifenbi);
-                 for(int k=0;k<searchone.size();k++){
-                     if(searchone.get(k).getCourseId().equals(list.get(c))){
-                         lzmd.setCurriculum(searchone.get(k).getCourseName());
-                         lzmd.setSubjectId(searchone.get(k).getSubjectId());
-                     }
-                 }
-                 List al=new ArrayList();
-                 for(int s=0;s<searchtwo.size();s++){
-                        al.add(searchtwo.get(s).getCourseId());
-                 }
-                 if(!al.toString().contains(list.get(c).toString())){
-                     System.out.println("目前课程是"+list.get(c)+",未学习课程");
-                     for(int k=0;k<searchone.size();k++){
-                         if(searchone.get(k).getCourseId().equals(list.get(c))){
-                             lzmd.setCurriculum(searchone.get(k).getCourseName());
-                         }
-                     }
-                     lzmd.setPercentage("0");
-                     lzmd.setCourseId(list.get(c).toString());
-                     //String aq="";
-                     List aq=new ArrayList();
-                     for(int a=0;a<searchone.size();a++){
-                         if(searchone.get(a).getCourseId().equals(list.get(c).toString())){
-//                             if(a==searchone.size()-1){
-//                                 aq+=searchone.get(a).getKnowledgeid();
-//                             }else{
-//                                 aq+=searchone.get(a).getKnowledgeid()+",";
-//                             }
-                             aq.add(searchone.get(a).getKnowId());
-                         }
-                     }
-                     lzmd.setCountknowledgeId(aq.toString());
-                     lzmd.setStudyknowledgeId("0");
-                     lzmd.setKnowledgeCountNumber(String.valueOf(aq.toString().split(",").length));
-                     lzmd.setKnowledgeStudyNumber("0");
-                 }
-                 lzmdtype.add(lzmd);
-             }
+                }
+            }else{
+                for(int i=0;i<searchone.size();i++){
+                    LZMDType lzmd =new LZMDType();
+                    lzmd.setSubjectId(searchone.get(i).getSubjectId());
+                    lzmd.setPicture(searchone.get(i).getPicture());
+                    lzmd.setKnowledgeCountNumber(searchone.get(i).getKnowIdNumber());
+                    lzmd.setCourseId(searchone.get(i).getCourseId());
+                    // lzmd.setCountknowledgeId(listQC.toString());
+                    lzmd.setKnowledgeStudyNumber("0");
+                    String baifenbi="";//接收百分比值
+                    double studytime =0*1.0;
+                    double counttime =Integer.parseInt(searchone.get(i).getKnowIdNumber())*1.0;
+                    double fen = studytime / counttime;
+                    DecimalFormat df1 = new DecimalFormat("0.##");
+                    baifenbi = df1.format(fen);
+                    lzmd.setPercentage(baifenbi);
+                    lzmd.setCurriculum(searchone.get(i).getCourseName());
+                    lzmd.setSubjectId(searchone.get(i).getSubjectId());
+                    lzmdtype.add(lzmd);
+                }
+            }
+
+
         return lzmdtype;
+            }
     }
 
     @Override
     public List LZMDknowledgeByQuestion(LZMDType lzmdtype) {
         /**
          *        临阵磨刀出题
-         *     1. 随机出30个知识点
-         *     2.根据知识点随机选择题型出题
+         *     1.查询该课程所有的已经做过的知识点信息
+         *     2.查询该课程所有的知识点信息
+         *     3.对比出没有学习过的知识点,然后去拿2道题目  题型目前先不做考虑
+         *     4.添加到数组返回
          */
-        List questiontypes = mapper.SelectQuestionType();  //随机题型
-        Random rand = new Random();
-        //随机知识点
-        String studyknowledgeid = lzmdtype.getStudyknowledgeId();//学习知识点
-        String countknowledgeid = lzmdtype.getCountknowledgeId();  //课程总共知识点
-        List studylist=new ArrayList(); //学习集合
-        List countlist=new ArrayList(); //总共集合
-
-        List list =new ArrayList(); //筛选后的集合
-        String[] studysplit = studyknowledgeid.replace("[", "").replace("]", "").split(",");
-        String[] countsplit = countknowledgeid.replace("[", "").replace("]", "").split(",");
-
-        for(int i=0;i<studysplit.length;i++){
-            studylist.add(studysplit[i].trim());
-        }
-        for(int i=0;i<countsplit.length;i++){
-            countlist.add(countsplit[i].trim());
-        }
-        HashSet hs1 = new HashSet(studylist);
-        HashSet hs2 = new HashSet(countlist);
-        hs2.removeAll(hs1);
-        list.addAll(hs2);
-        /**
-         * 出题20选择题  5判断题
-         */
-        List Clist =new ArrayList();
-        for(int i=0;i<15;i++){
-           // if(i<8){
-                String knowledge = list.get(rand.nextInt(list.size())).toString();
-                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
-                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
+         List knowledgemessage = mapper.knowledgeMessage(lzmdtype.getCourseId());//该课程所有知识
+         List knowledgestudymessage =mapper.knowledgeStudyMessage(lzmdtype);//该课程该学生已学知识点
+         List Clist =new ArrayList(); //题目集合 题目数量达到20道题就停止
+        List  nostudymessage=new ArrayList();  //未学习的知识点
+        HashSet hs1 = new HashSet(knowledgemessage);
+        HashSet hs2 = new HashSet(knowledgestudymessage);
+        hs1.removeAll(hs2);
+        nostudymessage.addAll(hs1);
+        for(int i=0;i<nostudymessage.size();i++){
+            if(Clist.size()==20){
+                return Clist;
+            }
+           List list =mapper.toquestion(lzmdtype.getCourseId(),nostudymessage.get(i).toString()); //题目id
+            if(list.size()==0){
+                continue;
+            }
+            for(int j=0;j<list.size();j++){
+                Common_Choice common_choice =mapper.SelectQuestionBylimit(list.get(j).toString());
                 if(common_choice!=null){
                     common_choice.setType(1);
                     List Choicelist =new ArrayList();
@@ -437,45 +403,92 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
                 }else{
                   log.info("未找到相关题目");
                 }
-//            }else if(i>=8&i<10){
-//                String knowledge = list.get(rand.nextInt(list.size())).toString();
-//                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
-//                Common_Judge common_judge = mapper.SelectQuestionBylimitone(questionId);
-//                if (common_judge != null) {
-//                    List Judgelist =new ArrayList();
-//                    Judgelist.add("对");
-//                    Judgelist.add("错");
-//                    common_judge.setOptions(Judgelist);
-//                    common_judge.setType(3);
-//                    Clist.add(common_judge);
-//                }
-//
-//            }
-
-        }
-        boolean bool=true;
-        while(bool) {
-            if (Clist.size() < 15) {
-                String knowledge = list.get(rand.nextInt(list.size())).toString();
-                String questionId = mapper.SelectKnowledgeBylimit(knowledge);
-                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
-                if (common_choice != null) {
-                    common_choice.setType(1);
-                    List Choicelist = new ArrayList();
-                    Choicelist.add("A." + common_choice.getOptionA());
-                    Choicelist.add("B." + common_choice.getOptionB());
-                    Choicelist.add("C." + common_choice.getOptionC());
-                    Choicelist.add("D." + common_choice.getOptionD());
-                    common_choice.setOptions(Choicelist);
-                    Clist.add(common_choice);
-                }
-
-            } else {
-                bool = false;
             }
 
         }
         return Clist;
+//        List questiontypes = mapper.SelectQuestionType();  //随机题型
+//        Random rand = new Random();
+//        //随机知识点
+//        String studyknowledgeid = lzmdtype.getStudyknowledgeId();//学习知识点
+//        String countknowledgeid = lzmdtype.getCountknowledgeId();  //课程总共知识点
+//        List studylist=new ArrayList(); //学习集合
+//        List countlist=new ArrayList(); //总共集合
+//
+//        List list =new ArrayList(); //筛选后的集合
+//        String[] studysplit = studyknowledgeid.replace("[", "").replace("]", "").split(",");
+//        String[] countsplit = countknowledgeid.replace("[", "").replace("]", "").split(",");
+//
+//        for(int i=0;i<studysplit.length;i++){
+//            studylist.add(studysplit[i].trim());
+//        }
+//        for(int i=0;i<countsplit.length;i++){
+//            countlist.add(countsplit[i].trim());
+//        }
+//        HashSet hs1 = new HashSet(studylist);
+//        HashSet hs2 = new HashSet(countlist);
+//        hs2.removeAll(hs1);
+//        list.addAll(hs2);
+//        /**
+//         * 出题20选择题  5判断题
+//         */
+//        List Clist =new ArrayList();
+//        for(int i=0;i<15;i++){
+//           // if(i<8){
+//                String knowledge = list.get(rand.nextInt(list.size())).toString();
+//                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
+//                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
+//                if(common_choice!=null){
+//                    common_choice.setType(1);
+//                    List Choicelist =new ArrayList();
+//                    Choicelist.add("A."+common_choice.getOptionA());
+//                    Choicelist.add("B."+common_choice.getOptionB());
+//                    Choicelist.add("C."+common_choice.getOptionC());
+//                    Choicelist.add("D."+common_choice.getOptionD());
+//                    common_choice.setOptions(Choicelist);
+//                    Clist.add(common_choice);
+//                }else{
+//                  log.info("未找到相关题目");
+//                }
+////            }else if(i>=8&i<10){
+////                String knowledge = list.get(rand.nextInt(list.size())).toString();
+////                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
+////                Common_Judge common_judge = mapper.SelectQuestionBylimitone(questionId);
+////                if (common_judge != null) {
+////                    List Judgelist =new ArrayList();
+////                    Judgelist.add("对");
+////                    Judgelist.add("错");
+////                    common_judge.setOptions(Judgelist);
+////                    common_judge.setType(3);
+////                    Clist.add(common_judge);
+////                }
+////
+////            }
+//
+//        }
+//        boolean bool=true;
+//        while(bool) {
+//            if (Clist.size() < 15) {
+//                String knowledge = list.get(rand.nextInt(list.size())).toString();
+//                String questionId = mapper.SelectKnowledgeBylimit(knowledge);
+//                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
+//                if (common_choice != null) {
+//                    common_choice.setType(1);
+//                    List Choicelist = new ArrayList();
+//                    Choicelist.add("A." + common_choice.getOptionA());
+//                    Choicelist.add("B." + common_choice.getOptionB());
+//                    Choicelist.add("C." + common_choice.getOptionC());
+//                    Choicelist.add("D." + common_choice.getOptionD());
+//                    common_choice.setOptions(Choicelist);
+//                    Clist.add(common_choice);
+//                }
+//
+//            } else {
+//                bool = false;
+//            }
+//
+//        }
+//        return Clist;
     }
 
     @Override
@@ -495,9 +508,9 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
                 Long day = TimeCompute.getDay(common_studyrateBIES.get(i).getStartdt(), common_studyrateBIES.get(i).getEnddt());
                 log.info("使用时间为"+day);
                 common_studyrateBIES.get(i).setUserdt(day.toString());
-                if(day>=0&day<=3){
+                if(day>=0&day<=2){
                             //0-3s属于不认真答题,先不做处理
-                }else if(day>=3&day<=120) {
+                }else if(day>=2&day<=120) {
                     //3-120s属于正常,记录答题表
                     if(common_studyrateBIES.get(i).getAnswer().equals(common_studyrateBIES.get(i).getFillAnswer())){
                         //正确

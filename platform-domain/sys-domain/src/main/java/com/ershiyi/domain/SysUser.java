@@ -21,7 +21,7 @@ import java.io.Serializable;
 public class SysUser extends AbstractBaseDomain implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public SysUser(Integer ifuse,String loginId, String schoolId, String realName, String pwd, Integer userTypeId, Integer sex, String nickname, String uniqueCode, String validataCode, String email) {
+    public SysUser(String schoolName,Integer ifuse,String loginId, String schoolId, String realName, String pwd, Integer userTypeId, Integer sex, String nickname, String uniqueCode, String validataCode, String email) {
         this.userTypeId = userTypeId;
         this.ifuse = ifuse;
         this.loginId = loginId;
@@ -33,6 +33,7 @@ public class SysUser extends AbstractBaseDomain implements Serializable {
         this.uniqueCode = uniqueCode;
         this.validataCode = validataCode;
         this.email = email;
+        this.schoolName=schoolName;
     }
 
     /**
@@ -57,8 +58,8 @@ public class SysUser extends AbstractBaseDomain implements Serializable {
     /**
      * 学校单位编码  标准：GA 300.1
      */
-    private String schoolId = "";
-
+    private String schoolId = "";  //已废弃
+    private String  schoolName=""; //学校姓名  目前已修改成填写
     // 用户真实姓名
     private String realName = "" ;
 //        /**
@@ -114,4 +115,12 @@ public class SysUser extends AbstractBaseDomain implements Serializable {
      * @return
      */
     private String  email;
+
+    public Integer getUserTypeId() {
+        return userTypeId;
+    }
+
+    public void setUserTypeId(Integer userTypeId) {
+        this.userTypeId = userTypeId;
+    }
 }

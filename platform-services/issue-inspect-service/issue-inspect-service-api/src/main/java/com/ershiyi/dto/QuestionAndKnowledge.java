@@ -3,22 +3,22 @@ package com.ershiyi.dto;
 import com.ershiyi.domain.AbstractBaseDomain;
 
 public class QuestionAndKnowledge extends AbstractBaseDomain {
-    private String  studenterId;
-    private String  thisPushDt;
-    private String  nextPushDt;
-    private String  statics;
+    private String  studenterId;  //学生编号
+    private String  thisPushDt;   //本次推送时间
+    private String  nextPushDt;     //下次推送时间
+    private String  statics;     //状态
     private String  createDt;
-    private String  plushContentId;
-    private String  plushFrequency;
-    private String  pushType;
-    private String  chapterId;
-    private String  courseId;
-    private String  uniqueCode;
-    private String  questionType;
-    private String  knowledgeName;
-    private String  knowledgetext;
-    private String  courseName;
-    private String plushId;
+    private String  plushContentId;   //知识点id
+    private String  plushFrequency;   //推送次数
+    private String  pushType;   //推送类型
+    private String  chapterId;  //章节id 已废弃
+    private String  courseId;    //课程id
+    private String  uniqueCode;     //推送对象的唯一编码值
+    private String  questionType;       //题目类型
+    private String  knowledgeName;  //知识点名称
+    private String  knowledgetext;  //
+    private String  courseName;  //课程名称
+    private String plushId;  //推送记录id
 
     public String getPlushId() {
         return plushId;

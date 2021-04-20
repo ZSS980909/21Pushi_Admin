@@ -27,7 +27,14 @@ public class DateTimeJobServiceImpl extends BaseServiceImpl<QuestionAndKnowledge
         /**
          *查找推送知识点
          */
-        List<QuestionAndKnowledge> questionAndKnowledge1 = mapper.SelectKnowledge();//查找推送
+        //计算推送比对时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+        Date afterDate = new Date(now .getTime() + 300000);
+        String format = sdf.format(afterDate);
+        System.out.println("获取"+format+"之前的推送数据");
+
+        List<QuestionAndKnowledge> questionAndKnowledge1 = mapper.SelectKnowledge(format);//查找推送
         List<Map<String, Object>> listMap = new ArrayList<>();//封装数据
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if(questionAndKnowledge1.size()!=0){
@@ -46,8 +53,19 @@ public class DateTimeJobServiceImpl extends BaseServiceImpl<QuestionAndKnowledge
                     //for(int j=0;j<split.length;j++){
                         QuestionAndKnowledge questionAndKnowledge = mapper.SelectKnowledge_Content( questionAndKnowledge1.get(i).getPlushContentId());
                         Map<String, Object> map = new HashMap();
-                        Date date = sf.parse(questionAndKnowledge1.get(i).getNextPushDt());
-                        String cron= CronUtil.getCron(date);
+                        //判断是否时间是遗留未推送或者用户未完成操作的数据
+                        Long time = sdf.parse(questionAndKnowledge1.get(i).getNextPushDt()).getTime();
+                        Long time1 = sdf.parse(sdf.format(new Date())).getTime();
+                        String cron="";
+                        if(time<=time1){
+                                //直接推送
+                            Date newDate = addSeconds(now, 60);
+                            cron= CronUtil.getCron(newDate);
+                        }else{
+                            //使用数据库时间
+                            Date date = sf.parse(questionAndKnowledge1.get(i).getNextPushDt());
+                             cron= CronUtil.getCron(date);
+                        }
                         map.put("jobTime", cron);
                         map.put("studenterId",questionAndKnowledge1.get(i).getStudenterId());
                         map.put("static",questionAndKnowledge1.get(i).getStatics());
@@ -57,18 +75,18 @@ public class DateTimeJobServiceImpl extends BaseServiceImpl<QuestionAndKnowledge
                         map.put("courseId",questionAndKnowledge1.get(i).getCourseId());
                         map.put("knowledgeName",questionAndKnowledge.getKnowledgeName());
                         map.put("knowledgeText",questionAndKnowledge.getKnowledgetext());
-                        map.put("plushFrequency",questionAndKnowledge1.get(i).getPlushFrequency());
+                        map.put("plushFrequency",Integer.parseInt(questionAndKnowledge1.get(i).getPlushFrequency())+1);
                         map.put("plushId",questionAndKnowledge1.get(i).getPlushId());
                         map.put("nextPushDt",questionAndKnowledge1.get(i).getNextPushDt());
-                          map.put("courseName",questionAndKnowledge1.get(i).getCourseName());
+                        map.put("courseName",questionAndKnowledge1.get(i).getCourseName());
                         // map.put("uniqueCode",questionAndKnowledge.get(i).getUniqueCode());
                         map.put("uniqueCode",questionAndKnowledge1.get(i).getUniqueCode());
                         map.put("questionType",questionAndKnowledge1.get(i).getQuestionType());
                         map.put("jobClass", "com.ershiyi.JobDemo.MyJob");
-                    map.put("jobName", "知识点-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
-                    map.put("jobGroupName", "knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
-                    map.put("triggerName","knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
-                    map.put("triggerGroupName","知识点-knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
+                        map.put("jobName", "知识点-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
+                        map.put("jobGroupName", "knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
+                        map.put("triggerName","knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
+                        map.put("triggerGroupName","知识点-knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"知识点内容编号"+questionAndKnowledge1.get(i).getPlushContentId());
 //                        map.put("jobName", "知识点-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"随机编号"+(int)((Math.random()*9+1)*100000));
 //                        map.put("jobGroupName", "knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"随机编号"+(int)((Math.random()*9+1)*100000));
 //                        map.put("triggerName","knowledge-学生编号:"+questionAndKnowledge1.get(i).getStudenterId()+"随机编号"+(int)((Math.random()*9+1)*100000));
@@ -82,8 +100,18 @@ public class DateTimeJobServiceImpl extends BaseServiceImpl<QuestionAndKnowledge
                     if(questionAndKnowledge!=null){
                     }
                     Map<String, Object> map = new HashMap();
-                    Date date = sf.parse(questionAndKnowledge1.get(i).getNextPushDt());
-                    String cron= CronUtil.getCron(date);
+                    Long time = sdf.parse(questionAndKnowledge1.get(i).getNextPushDt()).getTime();
+                    Long time1 = sdf.parse(sdf.format(new Date())).getTime();
+                    String cron="";
+                    if(time<=time1){
+                        //直接推送
+                        Date newDate = addSeconds(now, 60);
+                        cron= CronUtil.getCron(newDate);
+                    }else{
+                        //使用数据库时间
+                        Date date = sf.parse(questionAndKnowledge1.get(i).getNextPushDt());
+                        cron= CronUtil.getCron(date);
+                    }
                     map.put("jobTime", cron);
                     map.put("studenterId",questionAndKnowledge1.get(i).getStudenterId());
                     map.put("static",questionAndKnowledge1.get(i).getStatics());
@@ -93,7 +121,7 @@ public class DateTimeJobServiceImpl extends BaseServiceImpl<QuestionAndKnowledge
                     map.put("courseId",questionAndKnowledge1.get(i).getCourseId());
                     map.put("knowledgeName",questionAndKnowledge.getKnowledgeName());
                     map.put("knowledgeText",questionAndKnowledge.getKnowledgetext());
-                    map.put("plushFrequency",questionAndKnowledge1.get(i).getPlushFrequency());
+                    map.put("plushFrequency",Integer.parseInt(questionAndKnowledge1.get(i).getPlushFrequency())+1);
                     map.put("plushId",questionAndKnowledge1.get(i).getPlushId());
                     map.put("nextPushDt",questionAndKnowledge1.get(i).getNextPushDt());
                     map.put("courseName",questionAndKnowledge1.get(i).getCourseName());
@@ -113,6 +141,12 @@ public class DateTimeJobServiceImpl extends BaseServiceImpl<QuestionAndKnowledge
             System.out.println("当前无知识点需要推送");
         }
         return listMap;
+    }
+    private static Date addSeconds(Date date, int seconds) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.SECOND, seconds);
+        return calendar.getTime();
     }
 }
 

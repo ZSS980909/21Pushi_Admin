@@ -52,6 +52,46 @@ public class AlipayInDTO extends AbstractBaseDomain {
     private Integer type;
     @ApiModelProperty(value = "课程id")
     private Integer courseId;
+    @ApiModelProperty(value = "商品描述")
+    private String shopBody;
+    @ApiModelProperty(value = "商品名称")
+    private String shopName;
+    @ApiModelProperty(value = "家长编号")
+    private String parentId;
+    @ApiModelProperty(value = "家长姓名")
+    private String payName;
+
+    public String getShopBody() {
+        return shopBody;
+    }
+
+    public void setShopBody(String shopBody) {
+        this.shopBody = shopBody;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getPayName() {
+        return payName;
+    }
+
+    public void setPayName(String payName) {
+        this.payName = payName;
+    }
 
     public Integer getCourseId() {
         return courseId;

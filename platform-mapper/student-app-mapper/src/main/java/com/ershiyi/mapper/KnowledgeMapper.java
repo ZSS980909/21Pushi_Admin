@@ -34,7 +34,7 @@ public interface KnowledgeMapper {
      * @return
      */
     @Select("select id as questionId,optionA,optionB,1 as type,optionC,optionD, answer as correctOption,question,resolving " +
-            " from know_copy.common_course_choice where deleted = 0 and isRelevanceFinish = 0 and " +
+            " from 21db_test.common_course_choice where deleted = 0 and isRelevanceFinish = 0 and " +
             " subjectId = #{subjectId} and id not in (select DISTINCT questionId from common_course_question where studenterId = #{studenterId}) ORDER BY id desc limit 1")
     QuestionChoice getChoiceQuestion(RequestDTO request);
 
@@ -91,7 +91,7 @@ public interface KnowledgeMapper {
      * @param request
      * @return
      */
-    @Update("update know_copy.common_course_choice set deleted = 1 where id = #{questionId}")
+    @Update("update 21db_test.common_course_choice set deleted = 1 where id = #{questionId}")
     Integer modifyQuestionChoice(RequestDTO request);
 
     /**
@@ -99,7 +99,7 @@ public interface KnowledgeMapper {
      * @param request
      * @return
      */
-    @Update("update know_copy.common_course_Multi set deleted = 1 where id = #{questionId}")
+    @Update("update 21db_test.common_course_Multi set deleted = 1 where id = #{questionId}")
     Integer modifyQuestionMulti(RequestDTO request);
 
     /**
@@ -107,7 +107,7 @@ public interface KnowledgeMapper {
      * @param request
      * @return
      */
-    @Update("update know_copy.common_course_Judge set deleted = 1 where id = #{questionId}")
+    @Update("update 21db_test.common_course_Judge set deleted = 1 where id = #{questionId}")
     Integer modifyQuestionJudge(RequestDTO request);
 
     /**
@@ -115,7 +115,7 @@ public interface KnowledgeMapper {
      * @param questionId
      * @return
      */
-    @Update("update know_copy.common_course_choice set isRelevanceFinish = 1 where id = #{questionId}")
+    @Update("update 21db_test.common_course_choice set isRelevanceFinish = 1 where id = #{questionId}")
     int modifyQuestionStatus(@Param("questionId") String questionId);
 
     /**

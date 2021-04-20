@@ -42,11 +42,13 @@
             <if test="studenterId != null  and  studenterId!= ''">studenterId,</if>
             <if test="studentUserId != null  and studentUserId != ''">studentUserId,</if>
             <if test="schoolId != null  and schoolId != ''">schoolId,</if>
+            <if test="schoolName !=null and schoolName !=''">schoolName,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="studenterId != null  and  studenterId!= ''">#{studenterId},</if>
             <if test="studentUserId != null  and studentUserId != ''">#{studentUserId},</if>
             <if test="schoolId != null  and schoolId != ''">#{schoolId},</if>
+            <if test="schoolName !=null and schoolName !=''">#{schoolName},</if>
         </trim>
     </insert>
 
@@ -59,7 +61,6 @@
         where
         loginid = #{loginid} and ifuse=1 and  deleted=0
     </update>
-
 
     <select id="userRegistered"  parameterType="com.ershiyi.domain.SysUser" resultType="java.lang.String">
           select ifnull((select guid  from sys_user where loginid=#{loginId} and deleted=0 limit 1 ), 0)

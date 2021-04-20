@@ -45,7 +45,7 @@ public class QuartzJobListener implements CommandLineRunner,Job {
         try{
             List<Map<String, Object>> listMap = datetimejobservice.SelectQuestionAndKnowledge();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            long currentTime = System.currentTimeMillis() + 2 * 60 * 1000;
+            //long currentTime = System.currentTimeMillis() + 2 * 60 * 1000;
             for(int i=0;i<listMap.size();i++){
                 if("1".equals(listMap.get(i).get("pushType"))) {
                     System.out.println("推送知识点中....");
@@ -55,19 +55,29 @@ public class QuartzJobListener implements CommandLineRunner,Job {
 //                        System.out.println("123");
 //                        listMap.get(i).put("jobTime",new Date(currentTime));
 //                    }
-                    quartzScheduler.addJob((String) listMap.get(i).get("jobName"), (String) listMap.get(i).get("jobGroupName"),
-                            (String) listMap.get(i).get("triggerName"), (String) listMap.get(i).get("triggerGroupName"), (String) listMap.get(i).get("jobClass"),
-                            (String) listMap.get(i).get("jobTime"), listMap.get(i));
+//                    Boolean aBoolean = quartzScheduler.notExists((String) listMap.get(i).get("triggerName"), (String) listMap.get(i).get("triggerGroupName"));
+//                    if (aBoolean){
+//                        System.out.println("已经存在任务");
+//                    }else {
+                        quartzScheduler.addJob((String) listMap.get(i).get("jobName"), (String) listMap.get(i).get("jobGroupName"),
+                                (String) listMap.get(i).get("triggerName"), (String) listMap.get(i).get("triggerGroupName"), (String) listMap.get(i).get("jobClass"),
+                                (String) listMap.get(i).get("jobTime"), listMap.get(i));
+                   // }
                 }
                 //推送知识点
                 else if("6".equals(listMap.get(i).get("pushType"))){
                     System.out.println("推送题目中....");
                     System.out.println("应该推送的时间为"+listMap.get(i).get("jobTime"));
+//                    Boolean aBoolean = quartzScheduler.notExists((String) listMap.get(i).get("triggerName"), (String) listMap.get(i).get("triggerGroupName"));
+//                    if (aBoolean){
 //
-                    //推送题目
-                    quartzScheduler.addJob((String)listMap.get(i).get("jobName"),(String)listMap.get(i).get("jobGroupName"),
-                            (String)listMap.get(i).get("triggerName"),(String)listMap.get(i).get("triggerGroupName"),(String)listMap.get(i).get("jobClass"),
-                            (String)listMap.get(i).get("jobTime"),listMap.get(i));
+//                    }else{
+                        //推送题目
+                        quartzScheduler.addJob((String)listMap.get(i).get("jobName"),(String)listMap.get(i).get("jobGroupName"),
+                                (String)listMap.get(i).get("triggerName"),(String)listMap.get(i).get("triggerGroupName"),(String)listMap.get(i).get("jobClass"),
+                                (String)listMap.get(i).get("jobTime"),listMap.get(i));
+                   // }
+
                 }
 //                quartzScheduler.addJob((String)listMap.get(i).get("jobName"),(String)listMap.get(i).get("jobGroupName"),
 //                        (String)listMap.get(i).get("jobName"),(String)listMap.get(i).get("jobGroupName"),(String)listMap.get(i).get("jobClass"),(String)listMap.get(i).get("jobTime"),listMap.get(i));

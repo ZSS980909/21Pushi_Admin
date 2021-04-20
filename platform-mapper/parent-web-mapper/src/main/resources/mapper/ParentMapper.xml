@@ -30,33 +30,33 @@
     </select>
     <select id="queryChoiceQuestion" resultType="com.ershiyi.entity.QuestionWrongChoice">
         select
-            *
+        *
         from
-            student_wrongChoice_Question
+        student_wrongChoice_Question
         where
-            questionId in
+        questionId in
         <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>
     </select>
     <select id="queryMultipleQuestion" resultType="com.ershiyi.entity.QuestionWrongChoice">
         select
-            *
+        *
         from
-            student_wrongMulti_Question
+        student_wrongMulti_Question
         where
-            questionId in
+        questionId in
         <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>
     </select>
     <select id="queryJudgeQuestion" resultType="com.ershiyi.entity.QuestionWrongJudge">
         select
-             *
+        *
         from
-            student_wrongJudge_Question
+        student_wrongJudge_Question
         where
-            questionId in
+        questionId in
         <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -77,51 +77,53 @@
         *
         from
         (
-            select
-                a.id as courseId,
-                a.curriculum as courseName,
-                a.author,
-                a.synopsis,
-                a.biography,
-                a.picture,
-                a.subjectid,
-                a.integral as score,
-                (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
-                (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
-                (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
-                (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status =
-                1 limit 1) as isPay,
-                (select count(*) from common_collect_course where courseId=a.id and studenterId = #{parenterId} and deleted = 0
-                limit 1) as isCollection
-            from
-                common_course a
-            where
-                deleted = 0
-            <if test="subjectId!=null and subjectId!='' and subjectId!=0">
-                and
-                subjectId = #{subjectId}
-            </if> ) a
+        select
+        a.id as courseId,
+        a.curriculum as courseName,
+        a.author,
+        a.h_picture as image,
+        a.synopsis,
+        a.biography,
+        a.picture,
+        a.subjectid,
+        a.integral as score,
+        (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
+        (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
+        (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
+        (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status =
+        1 limit 1) as isPay,
+        (select count(*) from common_collect_course where courseId=a.id and studenterId = #{parenterId} and deleted = 0
+        limit 1) as isCollection
+        from
+        common_course a
+        where
+        deleted = 0
+        <if test="subjectId!=null and subjectId!='' and subjectId!=0">
+            and
+            subjectId = #{subjectId}
+        </if> ) a
         order by a.pageViews desc
     </select>
     <select id="getCoursePOJO" resultType="com.ershiyi.entity.CoursePojo">
         select
-            a.id as courseId,
-            a.curriculum as courseName,
-            a.author,
-            a.synopsis,
-            a.biography,
-            a.picture,
-            a.subjectid,
-            a.integral as score,
-            (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
-            (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
-            (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
-            (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
-            (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection
+        a.id as courseId,
+        a.curriculum as courseName,
+        a.author,
+        a.synopsis,
+        a.biography,
+        a.h_picture as image,
+        a.picture,
+        a.subjectid,
+        a.integral as score,
+        (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
+        (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
+        (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
+        (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
+        (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection
         from
-             common_course a
+        common_course a
         where
-            deleted = 0
+        deleted = 0
         <if test="subjectId!=null and subjectId!='' and subjectId!=0">
             and
             subjectId = #{subjectId}

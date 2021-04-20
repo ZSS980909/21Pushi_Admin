@@ -35,9 +35,16 @@ public class AccountServiceImpl implements AccountService {
         error.setUserKey("错误信息");
         // 获取当前手机用户的相信信息
         SysUser sysUser = sysUserFeign.findByLoginId(accountAuthDTO.getLoginId());
+        //根据usertypeId判断是否是正确端口  家长端/学生端  对比一下usertypeid
        // System.out.println(sysUser);
         if(sysUser==null){
             error.setToken("账号不存在！");
+            return error;
+        }
+        if (sysUser.getUserTypeId()==accountAuthDTO.getUserTypeId()){
+
+        }else{
+            error.setToken("账户用户或密码不对(友情提示:账户类型,密码大小写是否输入错误)！");
             return error;
         }
 //        if(!sysUser.getUserTypeId().equals(accountAuthDTO.getUserTypeId())){

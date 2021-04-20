@@ -13,6 +13,7 @@ public class CoursePojo {
     private int courseId;  // 课程id
     private int subjectId;  // 科目id
     private String courseName;  // 课程名称
+    private String image = ""; // 竖版图片
     private String picture;  // 图片链接
     private String author;  // 作者
     private String synopsis; // 课程介绍

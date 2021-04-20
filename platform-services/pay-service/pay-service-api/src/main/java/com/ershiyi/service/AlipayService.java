@@ -13,11 +13,11 @@ public interface AlipayService extends BaseService<AlipayInDTO>{
 
     /**
      * 支付宝支付
-     * @param response
+//     * @param response
      * @param inDTO
      * @throws IOException
      *///HttpServletResponse response, AlipayInDTO inDTO
-    void  alipayOrderPay(HttpServletResponse response, AlipayInDTO inDTO) throws IOException;
+    String  alipayOrderPay(AlipayInDTO inDTO) throws IOException;
 
     /**
      * 支付宝支付回调

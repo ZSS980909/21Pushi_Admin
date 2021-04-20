@@ -6,13 +6,15 @@ import tk.mybatis.mapper.AbstractMapper;
 import java.util.Map;
 
 public interface AlipayMapper extends AbstractMapper<AlipayInDTO> {
-    //插入预订单信息
+    //插入预订单信息 h5
     Integer insertorder(AlipayInDTO inDTO);
-
-
+    // h5
     String selectIntegral(AlipayInDTO inDTO);
 
     Integer updateOrder(Map<String, String> mapUpdate);
 
     Integer updateOrderbyfather(Map<String, String> mapUpdate);
+
+    //APP
+    Integer InsertOrder(AlipayInDTO inDTO);
 }

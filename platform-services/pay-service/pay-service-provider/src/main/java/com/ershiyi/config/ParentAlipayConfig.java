@@ -37,9 +37,9 @@ public class ParentAlipayConfig {
     @Value("${alipay.parentcharset}")
     private String parentcharset;
 
-    @ApiModelProperty(value = "支付宝公钥")
-    @Value("${alipay.alipaypublic.parentkey}")
-    private String parentalipayPublicKey;
+//    @ApiModelProperty(value = "支付宝公钥")
+//    @Value("${alipay.alipaypublic.parentkey}")
+//    private String parentalipayPublicKey;
 
     @ApiModelProperty(value = "公钥")
     @Value("${alipay.public.parentkey}")
@@ -58,39 +58,45 @@ public class ParentAlipayConfig {
     private String parentpayeeType;
 
     @ApiModelProperty(value = "设置应用公钥证书路径")
-    @Value("${alipay.certPath}")
-    private String certPath;
+    @Value("${alipay.certParentPath}")
+    private String certParentPath;
     @ApiModelProperty(value = "设置支付宝公钥证书路径")
-    @Value("${alipay.AlipayPublicCertPath}")
-    private String AlipayPublicCertPath;
+    @Value("${alipay.AlipayParentPublicCertPath}")
+    private String AlipayParentPublicCertPath;
     @ApiModelProperty(value = "收款人类型")
-    @Value("${alipay.RootCertPath}")
-    private String RootCertPath;
+    @Value("${alipay.RootCertParentPath}")
+    private String RootCertParentPath;
 
-
-
-    public String getCertPath() {
-        return certPath;
+    public String getParentrasPrivateKey() {
+        return parentrasPrivateKey;
     }
 
-    public void setCertPath(String certPath) {
-        this.certPath = certPath;
+    public void setParentrasPrivateKey(String parentrasPrivateKey) {
+        this.parentrasPrivateKey = parentrasPrivateKey;
     }
 
-    public String getAlipayPublicCertPath() {
-        return AlipayPublicCertPath;
+    public String getCertParentPath() {
+        return certParentPath;
     }
 
-    public void setAlipayPublicCertPath(String alipayPublicCertPath) {
-        AlipayPublicCertPath = alipayPublicCertPath;
+    public void setCertParentPath(String certParentPath) {
+        this.certParentPath = certParentPath;
     }
 
-    public String getRootCertPath() {
-        return RootCertPath;
+    public String getAlipayParentPublicCertPath() {
+        return AlipayParentPublicCertPath;
     }
 
-    public void setRootCertPath(String rootCertPath) {
-        RootCertPath = rootCertPath;
+    public void setAlipayParentPublicCertPath(String alipayParentPublicCertPath) {
+        AlipayParentPublicCertPath = alipayParentPublicCertPath;
+    }
+
+    public String getRootCertParentPath() {
+        return RootCertParentPath;
+    }
+
+    public void setRootCertParentPath(String rootCertParentPath) {
+        RootCertParentPath = rootCertParentPath;
     }
 
     public String getParentappid() {
@@ -107,14 +113,6 @@ public class ParentAlipayConfig {
 
     public void setParentgateway(String parentgateway) {
         this.parentgateway = parentgateway;
-    }
-
-    public String getParentrasPrivateKey() {
-        return parentrasPrivateKey;
-    }
-
-    public void setParentrasPrivateKey(String parentrasPrivateKey) {
-        this.parentrasPrivateKey = parentrasPrivateKey;
     }
 
     public String getParentnotifyUrl() {
@@ -139,14 +137,6 @@ public class ParentAlipayConfig {
 
     public void setParentcharset(String parentcharset) {
         this.parentcharset = parentcharset;
-    }
-
-    public String getParentalipayPublicKey() {
-        return parentalipayPublicKey;
-    }
-
-    public void setParentalipayPublicKey(String parentalipayPublicKey) {
-        this.parentalipayPublicKey = parentalipayPublicKey;
     }
 
     public String getParentpublicKey() {

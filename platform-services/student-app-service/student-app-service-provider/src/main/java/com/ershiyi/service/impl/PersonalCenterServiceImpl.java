@@ -185,9 +185,11 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
         PageHelper.startPage(pageNumber,pageSize);
         // 根据学生编号获取到学生所有浏览过的课程
         List<Integer> courseId = mapper.findHistoryCourse(studenterId);
+        if(courseId.isEmpty()){
+            return new PageInfo<>(new ArrayList<>());
+        }
         List<CoursePojo> results = mapper.getCourseInfo(courseId,studenterId);
         return new PageInfo(results);
-
     }
 
     @Override

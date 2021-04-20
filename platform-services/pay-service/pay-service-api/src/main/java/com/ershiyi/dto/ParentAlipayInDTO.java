@@ -10,7 +10,7 @@ public class ParentAlipayInDTO {
     @ApiModelProperty(value = "家长编号")
     private String parentId;
     @ApiModelProperty(value = "家长姓名")
-    private String parentName;
+    private String payName;
 
     @ApiModelProperty(value = "变化积分")
     private Double changeIntegral;
@@ -60,12 +60,12 @@ public class ParentAlipayInDTO {
         this.courseId = courseId;
     }
 
-    public String getParentName() {
-        return parentName;
+    public String getPayName() {
+        return payName;
     }
 
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
+    public void setPayName(String payName) {
+        this.payName = payName;
     }
 
     public String getSchoolId() {

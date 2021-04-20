@@ -11,7 +11,6 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableDiscoveryClient
 @MapperScan("com.ershiyi.mapper")
 public class ParentWebServiceProviderApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ParentWebServiceProviderApplication.class, args);
 	}

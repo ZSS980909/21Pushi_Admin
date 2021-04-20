@@ -5,20 +5,20 @@
     <insert id="insertorder" parameterType="com.ershiyi.dto.ParentAlipayInDTO">
       insert into  sys_user_integral_record (studenterid, changeintegral, rawintegral, integralvalue,
       status, schoolid, keyword, rechargeAmount, orderId, paymentType,paycode,payname)
-      values (#{studenterId},#{changeintegral},#{rawintegral},#{integralvalue},0,#{schoolId},
+      values (#{studenterId},#{changeintegral},#{rawintegral},#{integralvalue},0,#{s7choolId},
       'PAY',#{rechargeAmount},#{orderId},1,#{parentId},#{payName})
     </insert>
 
     <update id="updateOrder" parameterType="java.util.Map" >
           UPDATE  sys_user_integral_record  set status =1,updatedt=#{updateTime}  where orderId =#{outTradeNo};
-            insert into common_course_purchase(studenterId,courseId,integralvalue,status,outTradeNo,purchased) values
+            insert into common_course_purchase(studenterId,courseId,integralvalue,status,outTrad eNo,purchased) values
             (#{studenterId},#{courseId},#{integral},#{status},#{outTradeNo},1)
     </update>
 
     <insert id="parentInsertOrder" parameterType="com.ershiyi.dto.ParentAlipayInDTO">
         insert sys_user_integral_record( studenterid, changeintegral, rawintegral, integralvalue, status,
-        schoolid, keyword, courseid, rechargeAmount, orderId, paymentType, updatedt, paycode, payname) values (
-        #{studenterId},0,#{rawIntegral},#{integralValue},1,#{schoolId},'PAY',#{courseId},#{rechargeAmount},#{orderId},1,now(),#{parentId},#{parentName}
+        schoolid, keyword, courseid, rechargeAmount, orderId, paymentType, updatedt, paycode, payname,integralId) values (
+        #{studenterId},0,#{rawIntegral},#{integralValue},1,#{schoolId},'PAY',#{courseId},#{rechargeAmount},#{orderId},3,now(),#{parentId},#{payName},5
          )
 
 </insert>

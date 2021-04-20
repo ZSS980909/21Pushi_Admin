@@ -132,14 +132,14 @@ select courseid,curriculum,author,synopsis,picture,browse,upvote,discussid,bill,
     </select>
 
     <select id="LZMDKnowledge" parameterType="com.ershiyi.domain.Common_Search"  resultType="com.ershiyi.domain.Common_Return">
-select id as knowId,courseId,(select curriculum  from common_course where id =courseId) as courseName,(select subjectid from common_course where id =courseId) as subjectId,
-(select picture from common_course where id =courseId) as picture   from common_course_knowledge  where courseId in
-(select courseid from common_course_purchase where studenterid=#{studenterId} and status=1)
- </select>
+        select count(courseId) as knowIdNumber,courseId,courseName,subjectId,picture from (select id as knowId,courseId,(select curriculum  from common_course where id =courseId) as courseName,(select subjectid from common_course where id =courseId) as subjectId,
+        (select picture from common_course where id =courseId) as picture   from common_course_knowledge  where courseId in
+        (select courseid from common_course_purchase where studenterid=#{studenterId} and status=1))  as ko group by courseName
+</select>
 
     <select id="CountKnowledge" parameterType="com.ershiyi.domain.Common_Search"  resultType="com.ershiyi.domain.Common_Return">
-          select a.knowledgeid as knowId,b.curriculum as courseName,a.courseid from  common_lzmd_studyrate a
-          LEFT JOIN common_course b on  a.courseid =b.id  where  a.studenterid =#{studenterId} and a.isright=1
+          select count(knowId) AS knowIdNumber,courseId,courseName from ( select distinct a.knowledgeid as knowId,b.curriculum as courseName,a.courseid from  common_lzmd_studyrate a
+          LEFT JOIN common_course b on  a.courseid =b.id  where  a.studenterid =#{studenterId}  and a.isright=1)  as ko group by  courseid
     </select>
 
 
@@ -187,7 +187,7 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
     </insert>
     <select id="getWrongQuestionId" resultType="com.ershiyi.domain.entity.QuestionType">
         select
-            DISTINCT questionId,questionType,courseId
+            DISTINCT questionId,questionType
         from
             common_course_wrongquestions
         where
@@ -238,5 +238,15 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
         </foreach>
         order by
             id desc
+    </select>
+
+    <select id="knowledgeMessage" resultType="java.lang.String" parameterType="java.lang.String">
+        select id from common_course_knowledge where courseId=#{courseId} and isdelete=0
+    </select>
+    <select id="knowledgeStudyMessage" resultType="java.lang.String" parameterType="com.ershiyi.domain.LZMDType">
+        select distinct a.knowledgeid as knowId from  common_lzmd_studyrate a  LEFT JOIN common_course b on  a.courseid =b.id  where  a.studenterid =#{studenterId}  and a.isright=1 and courseid=#{courseId}
+    </select>
+    <select id="toquestion" resultType="java.lang.String" parameterType="java.lang.String">
+       SELECT  questionId  from  common_knowledge_question where courseId=#{courseId} and  knowledgeId =#{knowledgeId} AND  questionType=1 and  isDelete = 0  order by  isRandom  limit 2
     </select>
 </mapper>

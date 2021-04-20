@@ -96,8 +96,10 @@ public class SysLoginServiceImpl extends BaseServiceImpl<SysUser, SysLoginMapper
                  */
                 String studenterId = sysUser.getSchoolId() + randomNickname;
                 String schoolId = sysUser.getSchoolId();
+                String schoolName=sysUser.getSchoolName();
                 String guid = sysUser.getGuid();
                 user.setSchoolId(schoolId);
+                user.setSchoolName(schoolName);
                 user.setStudenterId(studenterId);
                 user.setStudentUserId(guid);
                 Integer integer = mapper.UserByStudent(user);

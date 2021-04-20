@@ -14,5 +14,40 @@ public class Common_Search {
     private  Integer Id;
     @ApiModelProperty(value="学生编号")
     private  String studenterId;
+    @ApiModelProperty(value="页码")
+    private Integer pageNumber;  // 页码
+    @ApiModelProperty(value="每页展示的数量")
+    private Integer pageSize;  // 每页展示的数量
 
+    public Integer getId() {
+        return Id;
+    }
+
+    public void setId(Integer id) {
+        Id = id;
+    }
+
+    public String getStudenterId() {
+        return studenterId;
+    }
+
+    public void setStudenterId(String studenterId) {
+        this.studenterId = studenterId;
+    }
+
+    public Integer getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(Integer pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
 }

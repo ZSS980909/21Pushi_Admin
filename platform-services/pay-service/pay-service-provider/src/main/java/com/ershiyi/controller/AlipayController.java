@@ -1,6 +1,9 @@
 package com.ershiyi.controller;
 
+import com.ershiyi.common.dto.AbstractBaseResult;
+import com.ershiyi.dist.RespEnum;
 import com.ershiyi.dto.AlipayInDTO;
+import com.ershiyi.dto.ParentAlipayInDTO;
 import com.ershiyi.service.AlipayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,12 +30,18 @@ public class AlipayController {
     @Autowired
     private AlipayService alipayService;
 
-    @ApiOperation("支付宝订单支付")
-    @PostMapping("/alipayOrderPay")
-    @ResponseBody//HttpServletResponse response, @RequestBody AlipayInDTO inDTO
-    public void alipayOrderPay(HttpServletResponse response, @RequestBody AlipayInDTO inDTO) throws IOException {
-          alipayService.alipayOrderPay(response,inDTO);
-    }
+//    @ApiOperation("支付宝订单支付")
+//    @PostMapping("/alipayOrderPay")
+//    @ResponseBody//HttpServletResponse response, @RequestBody AlipayInDTO inDTO
+//    public void alipayOrderPay(HttpServletResponse response, @RequestBody AlipayInDTO inDTO) throws IOException {
+//          alipayService.alipayOrderPay(response,inDTO);
+//    }
+        @ApiOperation("支付宝订单支付")
+        @PostMapping("/alipayOrderPay")
+        @ResponseBody//HttpServletResponse response, @RequestBody AlipayInDTO inDTO
+        public AbstractBaseResult alipayOrderPay(@RequestBody AlipayInDTO inDTO) throws IOException {
+            return RespEnum.OK.result( alipayService.alipayOrderPay(inDTO));
+        }
 
     @ApiOperation("支付宝支付回调")
     @PostMapping("/alipayOrderNotify")

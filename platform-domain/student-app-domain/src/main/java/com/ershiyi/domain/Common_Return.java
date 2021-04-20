@@ -22,6 +22,16 @@ public class Common_Return {
     private  String subjectId;
     @ApiModelProperty(value="图片")
     private  String picture;
+    @ApiModelProperty(value="知识点数量")
+    private  String knowIdNumber;
+
+    public String getKnowIdNumber() {
+        return knowIdNumber;
+    }
+
+    public void setKnowIdNumber(String knowIdNumber) {
+        this.knowIdNumber = knowIdNumber;
+    }
 
     public String getPicture() {
         return picture;

@@ -57,7 +57,7 @@ public interface ParentMapper {
      * @param studenterId 学生编号
      * @return
      */
-    @Select("select id as courseId,curriculum as courseName,picture,(select count(id) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as countKnow,(select count(DISTINCT knowledgeId) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = a.id) as finishKnow from common_course a where id in ( select DISTINCT courseId from common_course_purchase where studenterId = #{studenterId} and status = 1 ) and deleted = 0 ")
+    @Select("select id as courseId,curriculum as courseName,picture,h_picture as image,(select count(id) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as countKnow,(select count(DISTINCT knowledgeId) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = a.id) as finishKnow from common_course a where id in ( select DISTINCT courseId from common_course_purchase where studenterId = #{studenterId} and status = 1 ) and deleted = 0 ")
     List<CourseStudy> awaitCourse(@Param("studenterId") String studenterId);
 
     /**
@@ -67,7 +67,7 @@ public interface ParentMapper {
      * @return
      */
     @Select("select ifnull(count(knowledgeId),0) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1")
-    int getFinishKnow(@Param("courseId") int courseId,@Param("studenterId") String studenterId);
+    int getFinishKnow(@Param("courseId") int courseId, @Param("studenterId") String studenterId);
 
     /**
      * 获取学生所有学的知识点
@@ -122,7 +122,7 @@ public interface ParentMapper {
      * @return
      */
     @Select("select ifNull((select ifnull(count(id),0) from common_course_knowledge_record where correct = 1 and studenterId = #{studenterId} and TO_DAYS(NOW())-TO_DAYS(starttime) = #{number})/count(id),0) from common_course_knowledge_record where studenterId = #{studenterId} and TO_DAYS(NOW())-TO_DAYS(starttime) = #{number}")
-    double getDateAccuracy(@Param("studenterId") String studenterId,@Param("number") int number);
+    double getDateAccuracy(@Param("studenterId") String studenterId, @Param("number") int number);
 
     /**
      * 获取错题id和相关信息
@@ -206,9 +206,10 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime)")
+//    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime)")
+//    List<Know> nowStudyKnow(RequestDTO request);
+    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime) and courseId = #{courseId}")
     List<Know> nowStudyKnow(RequestDTO request);
-
     /**
      * 获取课程详细信息
      * @param request
@@ -255,7 +256,7 @@ public interface ParentMapper {
      * @return
      */
     @Select("select ifnull((select count(id) from common_course_knowledge_record where studenterId =#{studenterId} and courseId = #{courseId} and correct = 1)/count(id),0) from common_course_knowledge_record where studenterId =#{studenterId} and courseId = #{courseId}")
-    double getCourseAccuracy(@Param("studenterId") String studenterId,@Param("courseId") int courseId);
+    double getCourseAccuracy(@Param("studenterId") String studenterId, @Param("courseId") int courseId);
 
     /**
      * 模糊搜索课程
@@ -270,7 +271,8 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId}")
+    //@Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId}")
+    @Select("select knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and isFirst = 1 and courseId = #{courseId}")
     List<Know> allStudyKnow(RequestDTO request);
 
     /**
