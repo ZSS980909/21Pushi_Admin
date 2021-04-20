@@ -1,6 +1,7 @@
 package com.ershiyi.service.impl;
 
 import com.ershiyi.Utils.DateUtils;
+import com.ershiyi.Utils.SwitchQuestionUtils;
 import com.ershiyi.domain.Chapter;
 import com.ershiyi.domain.*;
 import com.ershiyi.domain.Collect_Course;
@@ -12,46 +13,22 @@ import com.ershiyi.service.CourseService;
 import com.ershiyi.utils.TimeCompute;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
-public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMapper> implements CourseService {
+public class CourseServiceImpl implements CourseService {
+
+    @Autowired
+    private CourseMapper mapper;
+
     public static Log log = LogFactory.getLog(CourseServiceImpl.class);
-
-    @Override
-    public PageInfo<CoursePlan> JHZCourse(RequestDTO request) {
-        // 查询出学生所有可学的课程id
-        PageHelper.startPage(request.getPageNumber(),request.getPageSize());
-        String week = DateUtils.getWeek();
-        List<JHZCourseDTO> planCourse = mapper.queryCourse(request.getStudenterId(),week);
-        List<CoursePlan> jhzCourseDTO = new ArrayList<>();
-        // 开启分页
-        for (JHZCourseDTO courseDTO : planCourse) {
-           courseDTO.setPlandt(week);
-           CoursePlan jhzCourse = mapper.planCourse(courseDTO);
-           // 设置上课时间
-           String planTime = jhzCourse.getPlanTime();
-           if(planTime!=null&&planTime!=""){
-               jhzCourse.setPlanType(1);
-               jhzCourse.setPlanTime(planTime + "-" + DateUtils.getAddHour(planTime ,"HH:mm", 1));
-           }
-           jhzCourseDTO.add(jhzCourse);
-        }
-        return new PageInfo<>(jhzCourseDTO);
-    }
-
-    @Override
-    public Chapter CourseChapter(JHZCourseDTO course) {
-        return null;
-    }
 
     /**
      * 添加课程  搜索课程
@@ -69,11 +46,6 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
             courses.add(mapper.searchCourseInfo(courseId,request.getStudenterId()));
         }
         return new PageInfo<>(courses);
-    }
-
-    @Override
-    public List<subjectInfo> title() {
-        return mapper.title();
     }
 
     /**
@@ -163,24 +135,6 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
     public CoursePojo courseById(Course course) {
         return mapper.courseById(course.getCourseId());
     }
-
-    /*@Override
-    public List<CommentInfo> courseByAppraise(Course course) {
-        // 查询出所有的课程评论信息
-        List<CommentInfo> comments = mapper.queryComment(course.getCourseId());
-        for (CommentInfo comment : comments) {
-            // 根据评论id查询出评论点赞数
-            List<String> studentIds = mapper.queryLikeInfo(comment.getCommentId());
-            comment.setLikes(studentIds.size());
-            // 查询出评论是否已经点赞
-            if(studentIds.contains(comment.getGuid())){
-                comment.setLikeFlag(1);
-            }else{
-                comment.setLikeFlag(0);
-            }
-        }
-        return comments;
-    }*/
 
     @Override
     public int appraiseByDiscuss(Thumbs thumbs) {
@@ -675,35 +629,14 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
     public PageInfo<ResultWrongQuestion> wrongQuestion(RequestDTO request) {
         // 开启分页
         PageHelper.startPage(request.getPageNumber(),request.getPageSize());
-        List<QuestionType> ids = mapper.getWrongQuestionId(request);
+        List<Integer> ids = mapper.getWrongQuestionId(request);
+        System.out.println(ids);
         List<ResultWrongQuestion> results = new ArrayList<>();
-        // 得到题目id和类型获取题目
-        List<Integer> choiceIds = new ArrayList<>();
-        List<Integer> multiples = new ArrayList<>();
-        List<Integer> judges =new ArrayList<>();
-        for (QuestionType id : ids) {
-            if(id.getQuestionType()==1){
-                // 题目为单选题
-                choiceIds.add(id.getQuestionId());
-            }else if(id.getQuestionType()==2){
-                // 题目为多选题
-                multiples.add(id.getQuestionId());
-            }else if(id.getQuestionType()==3){
-                // 题目为判断题
-                judges.add(id.getQuestionId());
-            }
+        if(ids.isEmpty()){
+            return new PageInfo<>(new ArrayList<>());
         }
-        // 如果选择题不为空，则查询选择题的错题信息
-        if(!choiceIds.isEmpty()){
-            results.addAll(QuestionSwitch(mapper.queryChoiceQuestion(choiceIds)));
-        }
-        // 如果多选题不为空，则查询选择题的错题信息
-        if(!multiples.isEmpty()){
-            results.addAll(QuestionSwitch(mapper.queryMultipleQuestion(multiples)));
-        }
-        // 如果判断题不为空，则查询选择题的错题信息
-        if(!judges.isEmpty()){
-            results.addAll(QuestionSwitch(mapper.queryJudgeQuestion(judges)));
+        for (Integer id : ids) {
+            results.add(SwitchQuestionUtils.switchWrongQuestion(mapper.queryChoiceQuestion(id)));
         }
         return new PageInfo<>(results);
     }
@@ -729,54 +662,4 @@ public class CourseServiceImpl extends BaseServiceImpl<JHZCourseDTO, CourseMappe
         return  mapper.Querytitle();
     }
 
-    /**
-     * 选择题转换成返回类
-     * @param lists
-     * @return
-     */
-    public static List<ResultWrongQuestion> QuestionSwitch(ArrayList<WrongQuestionChoice> lists){
-        List<ResultWrongQuestion> results = new ArrayList<>();
-        for (WrongQuestionChoice list : lists) {
-            ResultWrongQuestion question = new ResultWrongQuestion();
-            question.setQuestion(list.getQuestion());
-            question.setCorrectOption(list.getCorrectOption());
-            question.setResolving(list.getResolving());
-            question.setType(list.getType());
-            question.setQuestionId(Integer.parseInt(list.getQuestionId()));
-            question.setCourseName(list.getCourseName());
-            question.setSubjectId(list.getSubjectId());
-            question.setFillAnswer(list.getFillAnswer());
-            question.setKnowName(list.getKnowName());
-            question.setStudyTime(list.getStudyTime());
-            question.setOptions(Arrays.asList("A."+list.getOptionA(),"B."+list.getOptionB(),"C."+list.getOptionC(),"D."+list.getOptionD()));
-            question.setSubjectImgUrl(list.getSubjectImgUrl());
-            question.setSubjectId(list.getSubjectId());
-            results.add(question);
-        }
-        return results;
-    }
-
-    /**
-     * 判断题转换成返回类
-     * @param lists
-     * @return
-     */
-    public static List<ResultWrongQuestion> QuestionSwitch(List<WrongQuestionJudge> lists){
-        List<ResultWrongQuestion> results = new ArrayList<>();
-        for (WrongQuestionJudge list : lists) {
-            ResultWrongQuestion question = new ResultWrongQuestion();
-            question.setQuestion(list.getQuestion());
-            question.setCorrectOption(list.getCorrectOption());
-            question.setResolving(list.getResolving());
-            question.setType(list.getType());
-            question.setCourseName(list.getCourseName());
-            question.setSubjectId(list.getSubjectId());
-            question.setQuestionId(list.getQuestionId());
-            question.setFillAnswer(list.getFillAnswer());
-            question.setKnowName(list.getKnowName());
-            question.setStudyTime(list.getStudyTime());
-            results.add(question);
-        }
-        return results;
-    }
 }

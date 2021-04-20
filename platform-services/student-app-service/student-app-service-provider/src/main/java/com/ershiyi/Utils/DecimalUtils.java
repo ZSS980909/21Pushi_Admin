@@ -1,6 +1,7 @@
 package com.ershiyi.Utils;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 /**
  * @Description: 精准运算
@@ -118,4 +119,28 @@ public class DecimalUtils {
         return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
+    /**
+     * 计算题目难度
+     * @param count 做题数量
+     * @param errCount 错误数量
+     * @return
+     */
+    public static int calculationLevel(int count, int errCount) {
+        double difficulty = div(errCount,count,2);
+        if(difficulty<=0.7){
+            return 1;
+        }else if(difficulty<=0.75){
+            return 2;
+        }else if(difficulty<=0.8){
+            return 3;
+        }else if(difficulty<=0.85){
+            return 4;
+        }else if(difficulty<=0.9){
+            return 5;
+        }else if(difficulty<=0.95){
+            return 6;
+        }else{
+            return 7;
+        }
+    }
 }

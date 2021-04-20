@@ -148,16 +148,9 @@ public interface LearnMapper{
 
 
 
-    //@Update("update common_Ipush_record set static =2 where plushContentId =#{knowContentId} and plushFrequency=#{plushFrequency} ")
-    @Update("update common_Ipush_record set static =2 where id =#{plushId}")
+    @Update("update common_Ipush_record set static =2 where plushContentId =#{knowContentId} and plushFrequency=#{plushFrequency} ")
     Integer updatepushstatic(Correct correct);
 
-    /**
-     * 查詢是否有这条知识点内容推送存在
-     * @param correct
-     */
-//    @Select("select count(id) from common_Ipush_record where plushContentId =#{knowContentId} and pushType=#{sendType} and static =0")
-//    int selectplush(Correct correct);
     /**
      * 查詢是否有这条知识点内容推送存
      */
@@ -166,13 +159,13 @@ public interface LearnMapper{
     int selectplush(@Param("knowContentId") String knowContentId,@Param("studenterId") String studenterId );
 
     //@Select("select  count(id) from  common_course_knowledge_content where  id=#{knowContentId}  and deleted=0")
-    @Select("select count(*) from  `21db_test`.common_knowledge_question where questionId =#{questionId}  and isRandom =0")
+    @Select("select count(*) from  `21db_test`.common_knowledge_question where questionId =#{questionId}  and isRandom =1")
     int selectpushquestionby(Correct correct);
 
-    @Select("select usetime from common_course_knowledge_record where knowledgeid=#{knowId}  order by id  desc  limit 1")
+    @Select("select usetime from common_course_knowledge_record where knowledgeid=#{knowContentId}  order by id  desc  limit 1")
     String SelectStudyTimeBy(Correct correct);
 
-    @Select("select  usetime from common_course_studyknowledge_record where knowledgecontentid=#{knowId} order by id desc  limit 1")
+    @Select("select  usetime from common_course_studyknowledge_record where knowledgecontentid=#{knowContentId} order by id desc  limit 1")
     String SelectStudyTimeByknowledge(Correct correct);
     /**
      * 将题目插入推送表
@@ -200,7 +193,7 @@ public interface LearnMapper{
      * @param request
      * @return
      */
-    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from 21db_test.common_course_knowledge a where pid = #{chapterId}")
+    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from know_copy.common_course_knowledge a where pid = #{chapterId}")
     List<ChapterMenu> nextKnow(RequestDTO request);
 
     /**
@@ -209,7 +202,7 @@ public interface LearnMapper{
      * @param number
      * @return
      */
-    List<QuestionType> getQuestionId(@Param("knowId") Integer knowId,@Param("number")int number);
+    List<Integer> getQuestionId(@Param("knowId") Integer knowId,@Param("number")int number);
 
     /**
      * 随机获取当前科目的题目
@@ -217,13 +210,13 @@ public interface LearnMapper{
      * @param number
      * @return
      */
-    List<QuestionType> getRandom(@Param("knowId") int knowId,@Param("number") int number);
+    List<Integer> getRandom(@Param("knowId") int knowId,@Param("number") int number);
 
     /**
      * 判断是否为首次插入
      * @return
      */
-    @Select("select id from 21db_test.common_study_record where knowledgeId = #{knowId} and studenterId=#{studenterId}")
+    @Select("select id from know_copy.common_study_record where knowledgeId = #{knowId} and studenterId=#{studenterId}")
     List<String> isFirstStudy(@Param("knowId")int knowId,@Param("studenterId")String studenterId);
 
     /**
@@ -238,7 +231,7 @@ public interface LearnMapper{
      * @param menu
      * @return
      */
-    @Select("select count(id) from 21db_test.common_course_knowledge where left_value >= #{leftValue} and right_value <= #{rightValue} and isLast = 1 and courseId = #{courseId}")
+    @Select("select count(id) from know_copy.common_course_knowledge where left_value >= #{leftValue} and right_value <= #{rightValue} and isLast = 1 and courseId = #{courseId}")
     int getKnowContentNumber(ChapterMenu menu);
 
     /**
@@ -249,7 +242,7 @@ public interface LearnMapper{
      * @param rightValue
      * @return
      */
-    @Select("select count(id) from 21db_test.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1 and left_Value >= #{leftValue} and right_value <= #{rightValue}")
+    @Select("select count(id) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1 and left_Value >= #{leftValue} and right_value <= #{rightValue}")
     int getCompleteKnow(@Param("studenterId") String studenterId,@Param("courseId") int courseId, @Param("leftValue") int leftValue,@Param("rightValue") int rightValue);
 
     /**
@@ -257,7 +250,7 @@ public interface LearnMapper{
      * @param request
      * @return
      */
-    @Select("select  courseId,left_value as leftValue,right_value as rightValue,knowledgeId as knowId,level from 21db_test.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} order by createTime desc limit 1")
+    @Select("select  courseId,left_value as leftValue,right_value as rightValue,knowledgeId as knowId,level from know_copy.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} order by createTime desc limit 1")
     StudyRecordDTO getLastStudy(RequestDTO request);
 
     /**
@@ -265,7 +258,7 @@ public interface LearnMapper{
      * @param courseId
      * @return
      */
-    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from 21db_test.common_course_knowledge where courseId = #{courseId} and isLast = 1 order by left_value limit 1")
+    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from know_copy.common_course_knowledge where courseId = #{courseId} and isLast = 1 order by left_value limit 1")
     StudyRecordDTO getFirstKnow(Integer courseId);
 
     /**
@@ -274,7 +267,7 @@ public interface LearnMapper{
      * @param courseId
      * @return
      */
-    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from 21db_test.common_course_knowledge where courseId = #{courseId} and isLast = 1 and left_value > #{leftValue} order by left_value limit 1")
+    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from know_copy.common_course_knowledge where courseId = #{courseId} and isLast = 1 and left_value > #{leftValue} order by left_value limit 1")
     StudyRecordDTO getNextKnow(@Param("leftValue") int leftValue,@Param("courseId") Integer courseId);
 
     /**
@@ -285,7 +278,7 @@ public interface LearnMapper{
      * @param level 级别
      * @return
      */
-    @Select("select id from 21db_test.common_course_knowledge where left_value < #{leftValue} and right_Value > #{rightValue} and level = #{level} and courseId = #{courseId}")
+    @Select("select id from know_copy.common_course_knowledge where left_value < #{leftValue} and right_Value > #{rightValue} and level = #{level} and courseId = #{courseId}")
     int getUpLevelId(@Param("leftValue") int leftValue,@Param("rightValue") int rightValue,@Param("level") int level,@Param("courseId")int courseId);
 
     /**
@@ -293,7 +286,7 @@ public interface LearnMapper{
      * @param request
      * @return
      */
-    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from 21db_test.common_course_knowledge where courseId = #{courseId} and level = 2")
+    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from know_copy.common_course_knowledge where courseId = #{courseId} and level = 2")
     List<ChapterMenu> firstKnowMenu(RequestDTO request);
 
     /**
@@ -324,6 +317,62 @@ public interface LearnMapper{
             "values(#{courseId},#{studenterId},now(),#{planTime},0,#{knowId},#{plushFrequency},#{sendType},#{questionType})")
     Integer insertPushQuestionbyKnowledge(@Param("courseId")String courseId,@Param("studenterId")String studenterId,@Param("planTime") String planTime,@Param("knowId")String knowId,@Param("questionType")String questionType,@Param("plushFrequency")int plushFrequency,@Param("sendType")String sendType);
 
+    /**
+     * 获取共享便签内容
+     * @param
+     * @return
+     */
+    List<NoteInfo> noteList(@Param("knowId") int knowId,@Param("page") int page,@Param("size") int size);
 
+    int insertNote(NoteInfo request);
+
+    /**
+     * 获取学生昵称和头像
+     * @param request
+     * @return
+     */
+    @Select("select userImage as userImage,nickname as name from sys_user where guid = (select studentUserId from common_student_user where studenterId = #{studenterId})")
+    StudentInformation getStudentInfo(NoteInfo request);
+
+    int insertLikeNote(@Param("id") Integer id,@Param("studenterId") String studenterId);
+
+
+    int addLike(Integer id);
+
+    @Select("select id from common_course_note_record where noteId = #{id} and studenterId = #{studenterId} and deleted = 0")
+    List<String> isLike(@Param("id")int id,@Param("studenterId")String studenterId);
+
+    int cancelNoteLike(NoteInfo request);
+
+    List<QuestionChoice> getQuestionInfo(@Param("list") List<Integer> ids,@Param("knowId") Integer knowId,@Param("knowName") String knowName);
+
+    List<Integer> getRuleQuestionId(@Param("knowId") Integer knowId,@Param("number")int number);
+
+    @Select("select knowledgeName from common_course_knowledge where id = #{knowId}")
+    String getKnowName(Integer knowId);
+
+    /**
+     * 查询题目已经做了的数量以及错误的数量
+     * @param questionId 题目id
+     * @return
+     */
+    @Select("select count(*) as count,(select count(*) from common_course_knowledge_record where questionid = #{questionId} and correct = 0) as errCount from common_course_knowledge_record where questionid = #{questionId}")
+    QuestionCorrect getQuestionNumber(String questionId);
+
+    /**
+     * 修改题目难度
+     * @param id 题目id
+     * @param level 难度等级
+     * @return
+     */
+    int updateQuestion(@Param("id") String id,@Param("level") int level);
+
+    /**
+     * 查询题目难度
+     * @param questionId 题目id
+     * @return
+     */
+    @Select("select difficulty from common_course_choice where id = #{questionId}")
+    int getQuestionLevel(String questionId);
 }
 

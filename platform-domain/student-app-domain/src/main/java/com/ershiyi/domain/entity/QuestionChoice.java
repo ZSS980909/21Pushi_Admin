@@ -1,17 +1,20 @@
 package com.ershiyi.domain.entity;
 
 
+import lombok.Data;
+
 /**
  * @Description: 单选题
  * @author: zss98
  * @date: 2020-08-08 16:39
  * @version: 1.0
  */
+@Data
 public class QuestionChoice {
     private String knowledgeId = "";
     private String knowledgeName = "";
     private Integer type;  // 题目类型
-    private String questionId;   // 题目id
+    private Integer questionId;   // 题目id
     private String question = ""; // 题目内容
     private String optionA = ""; // A选项
     private String optionB = ""; // B选项
@@ -54,14 +57,6 @@ public class QuestionChoice {
 
     public void setType(Integer type) {
         this.type = type;
-    }
-
-    public String getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(String questionId) {
-        this.questionId = questionId;
     }
 
     public String getQuestion() {

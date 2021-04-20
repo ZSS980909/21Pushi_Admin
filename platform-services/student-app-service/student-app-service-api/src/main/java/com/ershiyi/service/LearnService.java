@@ -64,7 +64,7 @@ public interface LearnService {
      * @param knowId
      * @return 题目内容
      */
-    List<ResultQuestion> knowQuestion(Integer knowId, int courseId);
+    List<ResultQuestion> knowQuestion(Integer knowId);
 
     /**
      * 收藏当前知识点
@@ -124,16 +124,30 @@ public interface LearnService {
     List<ChapterMenu> nextMenu(RequestDTO request);
 
     /**
-     * 知识星球第一层结构
+     * 获取共享学习笔记内容列表
      * @param request
      * @return
      */
-    KnowledgeStatus knowFirstTree(RequestDTO request);
+    List<NoteInfo> noteList(RequestDTO request);
 
     /**
-     * 知识星球下一层层结构
+     * 发布学习笔记
      * @param request
      * @return
      */
-    KnowledgeStatus knowNextTree(RequestDTO request);
+    NoteInfo pushNote(NoteInfo request);
+
+    /**
+     * 对当前学习笔记点赞
+     * @param request
+     * @return
+     */
+    int likeNote(NoteInfo request);
+
+    /**
+     * 删除学习笔记点赞
+     * @param request
+     * @return
+     */
+    int cancelNoteLike(NoteInfo request);
 }

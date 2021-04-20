@@ -59,5 +59,11 @@
             <groupId>cn.easyproject</groupId>
             <artifactId>orai18n</artifactId>
         </dependency>
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper-base</artifactId>
+            <version>1.1.5</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

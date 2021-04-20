@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 public class JpushServiceImpl  extends BaseServiceImpl<JpushPojo, JpushMapper> implements JpushService {
     public static Log log = LogFactory.getLog(JpushServiceImpl.class);
@@ -168,7 +167,7 @@ public class JpushServiceImpl  extends BaseServiceImpl<JpushPojo, JpushMapper> i
     public static ResultQuestion SwitchQuestion(QuestionChoice question){
         List<String> options = new ArrayList<>();
         ResultQuestion result = new ResultQuestion();
-        result.setQuestionId(Integer.parseInt(question.getQuestionId()));
+        result.setQuestionId(question.getQuestionId());
         result.setKnowName(question.getKnowledgeName());
         result.setKnowId(question.getKnowledgeId());
         result.setQuestion(question.getQuestion());

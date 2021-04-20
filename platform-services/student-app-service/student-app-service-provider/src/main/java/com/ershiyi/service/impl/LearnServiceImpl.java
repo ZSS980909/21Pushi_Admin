@@ -1,20 +1,17 @@
 package com.ershiyi.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.ershiyi.Utils.DateUtils;
-import com.ershiyi.Utils.IdsUtils;
-import com.ershiyi.Utils.SizeUtils;
+import com.ershiyi.Utils.DecimalUtils;
 import com.ershiyi.Utils.SwitchQuestionUtils;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.dto.StudyRecordDTO;
 import com.ershiyi.mapper.LearnMapper;
-import com.ershiyi.mapper.PersonalCenterMapper;
 import com.ershiyi.service.LearnService;
-import com.ershiyi.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import twenty.alp.TimeCalculate;
 
@@ -30,6 +27,7 @@ import java.util.*;
  * @version: 1.0
  */
 @Service
+@PropertySource("classpath:application.yml")
 public class LearnServiceImpl<T> implements LearnService {
 
     @Resource
@@ -37,6 +35,9 @@ public class LearnServiceImpl<T> implements LearnService {
 
     @Resource
     private LearnServiceImpl service;
+
+    @Value("#{'${question.rule}'.split(',')}")
+    private List<Integer> list;
 
 
     /**
@@ -56,7 +57,6 @@ public class LearnServiceImpl<T> implements LearnService {
         return new PageInfo<>(results);
     }
 
-
     @Override
     public List<ChapterMenu> chapterMenu(RequestDTO request) {
         // 将学生浏览该课程存入到历史记录中
@@ -64,64 +64,58 @@ public class LearnServiceImpl<T> implements LearnService {
         return service.getStudyStatus(request.getStudenterId(), mapper.knowledgeMenu(request));
     }
 
-
     /**
-     * 知识星球第一层层结构
-     *
+     * 点在学习笔记
      * @param request
      * @return
      */
     @Override
-    public KnowledgeStatus knowFirstTree(RequestDTO request) {
-        // 获取学生编号
-        String studentId = mapper.getStudentId(request.getGuid());
-        KnowledgeStatus result = new KnowledgeStatus();
-        List nodes = new ArrayList();
-        List links = new ArrayList();
-        // 先添加父级
-        nodes.add(new Node(0, mapper.getCourseName(request.getCourseId()), 0, 40));
-        // 在获取当前所有的章节
-        List<ChapterMenu> chapters = service.getStudyStatus(studentId, mapper.knowledgeMenu(request));
-        for (ChapterMenu chapter : chapters) {
-            nodes.add(new Node(chapter.getChapterId(), chapter.getChapterName(), chapter.getIsStudy(), chapter.getIsLast(), 35));
-            links.add(new Link(0, chapter.getChapterId()));
-        }
-        result.setLinks(links);
-        result.setNodes(nodes);
-        // 将结果存入redis，每天0点刷新
-        RedisUtils.set(request.getGuid() + request.getCourseId(), JSON.toJSONString(result), DateUtils.daySurplusTime());
-        return result;
+    public int likeNote(NoteInfo request) {
+        // 插入当条记录
+        mapper.insertLikeNote(request.getId(),request.getStudenterId());
+        // 当前标签点赞数加1
+        return mapper.addLike(request.getId());
     }
 
     /**
-     * 知识星球下一层层结构
-     *
+     * 发表学习笔记
      * @param request
      * @return
      */
     @Override
-    public KnowledgeStatus knowNextTree(RequestDTO request) {
-        // 获取学生编号
-        request.setStudenterId(mapper.getStudentId(request.getGuid()));
-        KnowledgeStatus result = new KnowledgeStatus();
-        // 查询出当前节点下的所有章节信息
-        List<ChapterMenu> knows = service.KnowList(request);
-        List nodes = new ArrayList();
-        List links = new ArrayList();
-        int size = 0;
-        if (!knows.isEmpty()) {
-            size = SizeUtils.getSymbolSize(knows.get(0).getLevel());
-        }
-        for (ChapterMenu know : knows) {
-            nodes.add(new Node(know.getChapterId(), know.getChapterName(), know.getIsStudy(), know.getIsLast(), size));
-            links.add(new Link(request.getChapterId(), know.getChapterId()));
-        }
-        result.setNodes(nodes);
-        result.setLinks(links);
-        // 将结果存入redis,每天24点刷新
-        RedisUtils.set("chapter" + request.getGuid() + request.getChapterId(), JSON.toJSONString(result), DateUtils.daySurplusTime());
+    public NoteInfo pushNote(NoteInfo request) {
+        // 获取学生头像和昵称
+        StudentInformation info = mapper.getStudentInfo(request);
+        request.setSendImg(info.getUserImage());
+        request.setSendName(info.getName());
+        request.setSendTime(DateUtils.formatTime());
+        mapper.insertNote(request);
+        return request;
+    }
+
+    /**
+     * 获取共享学习笔记内容列表
+     * @param request
+     * @return
+     */
+    @Override
+    public List<NoteInfo> noteList(RequestDTO request) {
+        List<NoteInfo> result = mapper.noteList(request.getKnowId(), request.getPageNumber() - 1, request.getPageSize());
+        result.forEach(res -> res.setIsLike(mapper.isLike(res.getId(),request.getStudenterId()).isEmpty() ? 0:1));
         return result;
     }
+
+    /**
+     * 当前评论取消点赞
+     * @param request
+     * @return
+     */
+    @Override
+    public int cancelNoteLike(NoteInfo request) {
+        System.out.println(list);
+        return mapper.cancelNoteLike(request);
+    }
+
 
     /**
      * 获取当前章节的下一级信息
@@ -286,35 +280,31 @@ public class LearnServiceImpl<T> implements LearnService {
         return mapper.cancelLike(discussId, studenterId);
     }
 
+
     /**
      * 答题模块题目内容
      *
      * @param knowId   知识点id
-     * @param courseId 课程id
      * @return
      */
     @Override
-    public List<ResultQuestion> knowQuestion(Integer knowId, int courseId) {
+    public List<ResultQuestion> knowQuestion(Integer knowId) {
         // 随机获取2-5道题目
         int count = new Random().nextInt(4) + 2;
-        List<ResultQuestion> results = new ArrayList<>();
         // 获取当前知识点下的题目
-        List<QuestionType> ids = mapper.getQuestionId(knowId, count);
-        if (ids.size() < count) {
-            // 如果题目不够就随机出两道当前科目的题目
-            System.out.println(knowId);
-            ids.addAll(mapper.getRandom(knowId, (count - ids.size())));
+        List<Integer> ids = new ArrayList<>();
+        // 判断今天是否属于规定出新题的日期
+        if(list.contains(DateUtils.getWeekNumber())){
+            ids = mapper.getRuleQuestionId(knowId,count);
+        }else{
+            // 如果不是规定的星期，则随机拿题目
+            ids = mapper.getQuestionId(knowId,count);
         }
-        for (QuestionType id : ids) {
-            if (id.getQuestionType() == 1) {
-                results.add(SwitchQuestionUtils.choiceQuestion(mapper.choiceSQuestion(id)));
-            } else if (id.getQuestionType() == 2) {
-                results.add(SwitchQuestionUtils.choiceQuestion(mapper.choiceMQuestion(id)));
-            } else if (id.getQuestionType() == 3) {
-                results.add(SwitchQuestionUtils.judgeQuestion(mapper.judgeQuestion(id)));
-            }
+        // 如果取出的数量<随机的题目数 则拿随机的题目
+        if(ids.size()<count){
+            ids.addAll(mapper.getRandom(knowId,(count-ids.size())));
         }
-        return results;
+        return SwitchQuestionUtils.switchQuestion(mapper.getQuestionInfo(ids,knowId,mapper.getKnowName(knowId)));
     }
 
     /**
@@ -343,19 +333,15 @@ public class LearnServiceImpl<T> implements LearnService {
     public int submitQuestion(List<Correct> request) {
         List<Correct> result = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        //1.对每一道题目进行使用时间计算
         for (Correct correct : request) {
             try {
                 long a = simpleDateFormat.parse(correct.getStartdt()).getTime();
                 long b = simpleDateFormat.parse(correct.getEnddt()).getTime();
                 long c = (b - a);
-
-                correct.setUseTime(c/1000);
+                correct.setUseTime(c);
             } catch (Exception e) {
             }
-            //2.对每一道题目进行题型判断  目前只有单选题
-            //1.单选  2 多选
+            // 判断题目是否为多选题
             if ("2".equals(correct.getQuestionType())) {
                 // 先判断长度是否相同
                 if (!(correct.getAnswer().length() == correct.getFillAnswer().length())) {
@@ -376,10 +362,23 @@ public class LearnServiceImpl<T> implements LearnService {
                 // 判断题目是否正确
                 correct.setCorrect(correct.getFillAnswer().equals(correct.getAnswer()) ? 1 : 0);
             }
-           //3.对题目进行是否正确判断  错误插入错题库
+            //  if(correct.getSendType()==""||correct.getSendType()==null) {  //学习课堂基本提交
             if (correct.getCorrect() == 0) {
                 // 题目错误插入错题库
                 mapper.insertWrongQuestion(correct);
+            }
+            // 查询当前题目是否已经有难度
+            String questionId = correct.getQuestionId();
+            int level = mapper.getQuestionLevel(questionId);
+            if(level==0) {
+                // 查询当前题目的数量是否达到了99
+                QuestionCorrect number = mapper.getQuestionNumber(questionId);
+                if (number.getCount() >= 99) {
+                    int count = number.getCount() + 1;
+                    int errCount = correct.getCorrect() == 0 ? number.getErrCount() + 1 : number.getErrCount();
+                    // 则开始计算正确率
+                    mapper.updateQuestion(questionId, DecimalUtils.calculationLevel(count, errCount));
+                }
             }
             //4.进行推送记录插入
             //4.1  查询是否第一次记录此推送记录  1.表示第一次推送   >1表示多次
@@ -393,9 +392,9 @@ public class LearnServiceImpl<T> implements LearnService {
                      *
                      * 查询是否是未关联的题目  查询selectpushquestionby >0 已经关联  <0未关联
                      */
-                   // int selectpushquestionby = mapper.selectpushquestionby(correct);  暂时去掉 没有数据
+                    // int selectpushquestionby = mapper.selectpushquestionby(correct);  暂时去掉 没有数据
                     //if (selectpushquestionby > 0) {
-                        Float a = (float) 0.0;
+                    Float a = (float) 0.0;
                     Long aLong = TimeCalculate.calculateNext((correct.getUseTime().intValue()), null, a, 1);
                     Long millisecond = Instant.now().toEpochMilli();
                     Long  miao=aLong+millisecond;
@@ -408,9 +407,9 @@ public class LearnServiceImpl<T> implements LearnService {
                             "参数3:"+miao);
                     System.out.println("参数4:"+planTime);
 
-                        mapper.insertPushQuestion(correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), 1);
+                    mapper.insertPushQuestion(correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), 1);
                     //} else {
-                        // System.out.println("题目是未关联的题目,暂不考虑----过滤掉");
+                    // System.out.println("题目是未关联的题目,暂不考虑----过滤掉");
                     //}
                 }else{
                     System.out.println("已有相同知識點");
@@ -449,7 +448,7 @@ public class LearnServiceImpl<T> implements LearnService {
                                      * 2.推送次数
                                      */
                                     String s = mapper.SelectStudyTimeBy(correct);
-                                   // System.out.println(s);
+                                    // System.out.println(s);
                                     if ("".equals(s) || s == null) {
                                         s = "1";
                                     }
@@ -508,13 +507,4 @@ public class LearnServiceImpl<T> implements LearnService {
         }
         return mapper.submitQuestion(result);
     }
-    public String getStandardTime(long timestamp) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss",
-                Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        Date date = new Date(timestamp+8*60*60*1000);
-        sdf.format(date);
-        return sdf.format(date);
-    }
-
 }

@@ -3,7 +3,6 @@ package com.ershiyi.controller;
 import com.ershiyi.common.dto.AbstractBaseResult;
 import com.ershiyi.dist.RespEnum;
 import com.ershiyi.domain.*;
-import com.ershiyi.dto.JHZCourseDTO;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.service.CourseService;
 import io.swagger.annotations.*;
@@ -25,25 +24,6 @@ public class CourseController {
     @Autowired
     private CourseService courseseservice;
     /**
-     * 课程查询
-     */
-    @PostMapping("/jhzCourse")
-    @ResponseBody
-    @ApiOperation(value = "今日待学课程", notes = "今天待学课程",httpMethod = "POST")
-    public AbstractBaseResult JHZCourse(@RequestBody RequestDTO request) {
-        return RespEnum.OK.result(courseseservice.JHZCourse(request));
-    }
-
-    /**
-     * 查询课程的章节
-     */
-    @PostMapping("/courseChapter")
-    @ResponseBody
-    @ApiOperation(value = "查询课程的章节数", notes = "查询课程的章节数")
-    public AbstractBaseResult CourseChapter(@RequestBody JHZCourseDTO course) {
-        return RespEnum.OK.result(courseseservice.CourseChapter(course));
-    }
-    /**
      * 添加课堂模糊搜索
      */
     @PostMapping("/obscure")
@@ -51,15 +31,6 @@ public class CourseController {
     @ApiOperation(value = "查询课程的模糊查询", notes = "查询课程的模糊查询")
     public AbstractBaseResult Obscure(@RequestBody RequestDTO request) {
         return RespEnum.OK.result(courseseservice.Obscure(request));
-    }
-    /**
-     *查询课标分类
-     */
-    @PostMapping("/title")
-    @ResponseBody
-    @ApiOperation(value = "查询课标分类", notes = "查询课标分类")
-    public AbstractBaseResult title() {
-        return RespEnum.OK.result(courseseservice.title());
     }
 
     /**

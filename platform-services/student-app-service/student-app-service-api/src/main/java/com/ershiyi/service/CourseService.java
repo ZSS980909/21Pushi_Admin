@@ -10,14 +10,10 @@ import com.github.pagehelper.PageInfo;
 import java.util.List;
 import java.util.Map;
 
-public interface CourseService extends BaseService<JHZCourseDTO> {
-    public PageInfo<CoursePlan> JHZCourse(RequestDTO request);
-
-    public Chapter CourseChapter(JHZCourseDTO course);
+public interface CourseService {
 
     public PageInfo<CoursePojo> Obscure(RequestDTO request);
 
-    public List<subjectInfo> title();
 
     public List<CoursePojo> billboard(Billboardtitle billboard);
 
