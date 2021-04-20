@@ -46,10 +46,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         // 目前只做返回单选题
         QuestionChoice choiceQuestion = mapper.getChoiceQuestion(request);
         // 将题目转换成通用的题目类
-        if(choiceQuestion==null){
-            result = null;
-        }else {
-            result = SwitchQuestionUtils.choiceQuestion(choiceQuestion);
+        if(choiceQuestion!=null){
+            result = SwitchQuestionUtils.switchQuestion(choiceQuestion);
         }
         return result;
     }

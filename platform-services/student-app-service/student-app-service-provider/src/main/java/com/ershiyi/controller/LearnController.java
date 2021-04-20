@@ -188,7 +188,7 @@ public class LearnController {
     @ApiOperation(value = "题目",notes = "知识点内容学习完毕根据节点id来查询所关联的题目")
     public AbstractBaseResult knowQuestion(@RequestBody RequestDTO request){
         try{
-            return RespEnum.OK.result(service.knowQuestion(request.getKnowId(),request.getCourseId()));
+            return RespEnum.OK.result(service.knowQuestion(request.getKnowId()));
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙，请稍后再试");
@@ -276,47 +276,63 @@ public class LearnController {
             return RespEnum.ERROR.result("系统繁忙，请稍后再试！");
         }
     }
-
     /**
-     * 知识星球第一层结构
+     * 获取共享学习笔记内容列表
      * @param request
      * @return
      */
-    @PostMapping("/knowFirstTree")
-    public AbstractBaseResult knowFirstTree(@RequestBody RequestDTO request){
+    @RequestMapping("/noteList")
+    public AbstractBaseResult noteList(@RequestBody RequestDTO request){
         try{
-            KnowledgeStatus data = new KnowledgeStatus();
-            if(RedisUtils.hasKey(request.getGuid()+request.getCourseId())){
-                data = JSON.parseObject(RedisUtils.get(request.getGuid()+request.getCourseId()),KnowledgeStatus.class);
-            }else{
-                data = service.knowFirstTree(request);
-            }
-            return RespEnum.OK.result(data);
+            return RespEnum.OK.result(service.noteList(request));
         }catch (Exception e){
             e.printStackTrace();
-            return  RespEnum.ERROR.result("系统繁忙！");
+            return RespEnum.ERROR.result("系统繁忙！");
         }
     }
 
     /**
-     * 知识星球下一层层结构
+     * 发布学习笔记
      * @param request
      * @return
      */
-    @PostMapping("/knowNextTree")
-    public AbstractBaseResult knowNextTree(@RequestBody RequestDTO request){
+    @RequestMapping("/pushNote")
+    public AbstractBaseResult pushNote(@RequestBody NoteInfo request){
         try{
-            KnowledgeStatus data = new KnowledgeStatus();
-            // 先查询是否已经缓存
-            if(RedisUtils.hasKey(request.getGuid()+request.getChapterId())){
-                data = JSON.parseObject(RedisUtils.get("chapter"+request.getGuid()+request.getChapterId()),KnowledgeStatus.class);
-            }else{
-                data = service.knowNextTree(request);
-            }
-            return RespEnum.OK.result(data);
+            return RespEnum.OK.result(service.pushNote(request));
         }catch (Exception e){
             e.printStackTrace();
-            return  RespEnum.ERROR.result("系统繁忙！");
+            return RespEnum.ERROR.result("系统繁忙！");
+        }
+    }
+
+    /**
+     * 点赞学习笔记
+     * @param request
+     * @return
+     */
+    @RequestMapping("/likeNote")
+    public AbstractBaseResult likeNote(@RequestBody NoteInfo request){
+        try{
+            return RespEnum.OK.result(service.likeNote(request));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙！");
+        }
+    }
+
+    /**
+     * 删除学习笔记点赞
+     * @param request
+     * @return
+     */
+    @RequestMapping("/cancelNoteLike")
+    public AbstractBaseResult cancelNoteLike(@RequestBody NoteInfo request){
+        try{
+            return RespEnum.OK.result(service.cancelNoteLike(request));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙！");
         }
     }
 }

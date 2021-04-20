@@ -1,10 +1,10 @@
 package com.ershiyi.Utils;
 
 import com.ershiyi.domain.entity.QuestionChoice;
-import com.ershiyi.domain.entity.QuestionJudge;
 import com.ershiyi.domain.entity.ResultQuestion;
+import com.ershiyi.domain.entity.ResultWrongQuestion;
+import com.ershiyi.domain.entity.WrongQuestionChoice;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,74 +16,75 @@ import java.util.List;
  * @version: 1.0
  */
 public class SwitchQuestionUtils {
-
-    private static List results = new ArrayList();
-
     /**
-     *  最基本类型转换
-     * @param question
+     * 题目转换
+     * @param question orm实体类
      * @return
      */
-    public static ResultQuestion judgeQuestion(Object question){
+    public static ResultQuestion switchQuestion(QuestionChoice question){
         ResultQuestion result = new ResultQuestion();
-        if(question instanceof QuestionChoice){
-            QuestionChoice choice =(QuestionChoice) question;
-            result.setResolving(choice.getResolving());
-            result.setType(choice.getType());
-            result.setQuestion(choice.getQuestion());
-            result.setQuestionId(Integer.parseInt(choice.getQuestionId()));
-            result.setCorrectOption(choice.getCorrectOption());
-            result.setKnowName(choice.getKnowName());
-            result.setKnowId(choice.getKnowId());
-        }else{
-            QuestionJudge judge = (QuestionJudge) question;
-            result.setResolving(judge.getResolving());
-            result.setType(judge.getType());
-            result.setQuestion(judge.getQuestion());
-            result.setQuestionId(judge.getQuestionId());
-            result.setCorrectOption(judge.getCorrectOption());
-            result.setKnowName(judge.getKnowName());
-            result.setKnowId(judge.getKnowId());
+        result.setType(question.getType());
+        result.setQuestion(question.getQuestion());
+        result.setQuestionId(question.getQuestionId());
+        result.setResolving(question.getResolving());
+        result.setCorrectOption(question.getCorrectOption());
+        result.setKnowId(question.getKnowId());
+        result.setKnowName(question.getKnowName());
+        if(question.getType()==1||question.getType()==2){
+            result.setOptions(Arrays.asList("A."+question.getOptionA(),"B."+question.getOptionB(),"C."+question.getOptionC(),"D."+question.getOptionD()));
         }
         return result;
     }
 
     /**
-     * 判断题集合转换
+     * 题目转换-list
      * @param questions
      * @return
      */
-    public static List<ResultQuestion> judgeQuestion(List<QuestionJudge> questions){
-        results.removeAll(results);
-        for (QuestionJudge question : questions) {
-            results.add(judgeQuestion(questions));
-        }
-        return results;
-    }
-
-    /**
-     * 选择题集合转换
-     * @param questions
-     * @return
-     */
-    public static List<ResultQuestion> choiceQuestion(List<QuestionChoice> questions){
-        results.removeAll(results);
+    public static List<ResultQuestion> switchQuestion(List<QuestionChoice> questions){
+        List<ResultQuestion> results = new ArrayList<>();
         for (QuestionChoice question : questions) {
-            ResultQuestion option = judgeQuestion(question);
-            option.setOptions(Arrays.asList("A."+question.getOptionA(),"B."+question.getOptionB(),"C."+question.getOptionC(),"D."+question.getOptionD()));
-            results.add(option);
+            results.add(switchQuestion(question));
         }
         return results;
     }
 
     /**
-     * 选择题转换
+     * 错题转换
      * @param question
      * @return
      */
-    public static ResultQuestion choiceQuestion(QuestionChoice question){
-        ResultQuestion option = judgeQuestion(question);
-        option.setOptions(Arrays.asList("A."+question.getOptionA(),"B."+question.getOptionB(),"C."+question.getOptionC(),"D."+question.getOptionD()));
-        return option;
+    public static ResultWrongQuestion switchWrongQuestion(WrongQuestionChoice question){
+        ResultWrongQuestion result = new ResultWrongQuestion();
+        result.setQuestionId(question.getQuestionId());
+        result.setType(question.getType());
+        result.setQuestion(question.getQuestion());
+        result.setQuestionId(question.getQuestionId());
+        result.setResolving(question.getResolving());
+        result.setCorrectOption(question.getCorrectOption());
+        result.setKnowId(question.getKnowId());
+        result.setKnowName(question.getKnowName());
+        result.setFillAnswer(question.getFillAnswer());
+        result.setStudyTime(question.getStudyTime());
+        result.setCourseName(question.getCourseName());
+        result.setSubjectId(question.getSubjectId());
+        result.setSubjectImgUrl(question.getSubjectImgUrl());
+        if(question.getType()==1||question.getType()==2){
+            result.setOptions(Arrays.asList("A."+question.getOptionA(),"B."+question.getOptionB(),"C."+question.getOptionC(),"D."+question.getOptionD()));
+        }
+        return result;
+    }
+
+    /**
+     * 错题转换-list
+     * @param questions
+     * @return
+     */
+    public static List<ResultWrongQuestion> switchWrongQuestion(List<WrongQuestionChoice> questions){
+        List<ResultWrongQuestion> results = new ArrayList<>();
+        for (WrongQuestionChoice question : questions) {
+            results.add(switchWrongQuestion(question));
+        }
+        return results;
     }
 }

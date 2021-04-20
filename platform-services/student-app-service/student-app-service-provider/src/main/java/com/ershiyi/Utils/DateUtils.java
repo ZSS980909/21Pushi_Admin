@@ -1,5 +1,4 @@
 package com.ershiyi.Utils;
-
 import com.ershiyi.domain.entity.Correct;
 
 import java.net.URL;
@@ -277,5 +276,23 @@ public class DateUtils {
         }
         long endTime  = System.currentTimeMillis();
         return (int)((endTime-startTime)/(1000*60*60*24));
+    }
+
+    /**
+     * 格式化当前日期 例：2018-10-11 12:01:30
+     * @return
+     */
+    public static String formatTime() {
+        return sdf.format(now);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static Integer getWeekNumber(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+        return cal.get(Calendar.DAY_OF_WEEK)-1;
     }
 }

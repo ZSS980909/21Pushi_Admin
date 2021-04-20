@@ -38,5 +38,11 @@
             <artifactId>student-app-domain</artifactId>
             <version>${platform.domain.student-app.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>common-core</artifactId>
+            <groupId>com.ershiyi</groupId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

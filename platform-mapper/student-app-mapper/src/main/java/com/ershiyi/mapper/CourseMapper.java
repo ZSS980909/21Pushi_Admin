@@ -34,8 +34,6 @@ public interface CourseMapper extends AbstractMapper<JHZCourseDTO> {
     @Select("select courseId,studenterId from common_course_plan where studenterId = #{studenterId} and planType = 0 and deleted = 0")
     List<JHZCourseDTO> queryNotPlanCourse(@Param("studenterId") String studenterId);
     List<Integer> Obscure(String courseName);
-
-    List<subjectInfo> title();  //select billboardname,billboardkey,billboartype from  common_billboard_title
         //热门
     List<Integer> billboardbillboardByHOT();
         //推荐
@@ -187,29 +185,14 @@ public interface CourseMapper extends AbstractMapper<JHZCourseDTO> {
      * @param request
      * @return
      */
-    List<QuestionType> getWrongQuestionId(RequestDTO request);
+    List<Integer> getWrongQuestionId(RequestDTO request);
 
     /**
-     * 获取单选题内容
-     * @param choiceIds
+     * 获取题目内容
+     * @param questionId
      * @return
      */
-    ArrayList<WrongQuestionChoice> queryChoiceQuestion(@Param("list")List<Integer> choiceIds);
-
-    /**
-     * 获取多选题内容
-     * @param choiceIds
-     * @return
-     */
-    ArrayList<WrongQuestionChoice> queryMultipleQuestion(@Param("list")List<Integer> choiceIds);
-
-    /**
-     * 获取判断题内容
-     * @param choiceIds
-     * @return
-     */
-    List<WrongQuestionJudge> queryJudgeQuestion(@Param("list")List<Integer> choiceIds);
-
+    WrongQuestionChoice queryChoiceQuestion(@Param("questionId")Integer questionId);
     /**
      * 获取所有推荐课程id
      * @param studenterId 学生编号
