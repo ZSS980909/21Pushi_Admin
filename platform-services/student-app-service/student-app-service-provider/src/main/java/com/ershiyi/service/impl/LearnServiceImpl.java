@@ -1,19 +1,15 @@
 package com.ershiyi.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.ershiyi.Utils.DateUtils;
 import com.ershiyi.Utils.DecimalUtils;
-import com.ershiyi.Utils.SizeUtils;
 import com.ershiyi.Utils.SwitchQuestionUtils;
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.dto.StudyRecordDTO;
 import com.ershiyi.mapper.LearnMapper;
 import com.ershiyi.service.LearnService;
-import com.ershiyi.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
