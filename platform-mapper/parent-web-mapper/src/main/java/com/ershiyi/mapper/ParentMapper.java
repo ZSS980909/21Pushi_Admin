@@ -57,7 +57,7 @@ public interface ParentMapper {
      * @param studenterId 学生编号
      * @return
      */
-    @Select("select id as courseId,curriculum as courseName,picture,h_picture as image,(select count(id) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as countKnow,(select count(DISTINCT knowledgeId) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = a.id) as finishKnow from common_course a where id in ( select DISTINCT courseId from common_course_purchase where studenterId = #{studenterId} and status = 1 ) and deleted = 0 ")
+    @Select("select id as courseId,curriculum as courseName,picture,h_picture as image,(select count(id) from common_course_knowledge where courseId = a.id and isLast = 1) as countKnow,(select count(DISTINCT knowledgeId) from common_study_record where studenterId = #{studenterId} and courseId = a.id) as finishKnow from common_course a where id in ( select DISTINCT courseId from common_course_purchase where studenterId = #{studenterId} and status = 1 ) and deleted = 0 ")
     List<CourseStudy> awaitCourse(@Param("studenterId") String studenterId);
 
     /**
@@ -66,7 +66,7 @@ public interface ParentMapper {
      * @param studenterId
      * @return
      */
-    @Select("select ifnull(count(knowledgeId),0) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1")
+    @Select("select ifnull(count(knowledgeId),0) from common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1")
     int getFinishKnow(@Param("courseId") int courseId, @Param("studenterId") String studenterId);
 
     /**
@@ -74,7 +74,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select ifnull(count(knowledgeId),0) from know_copy.common_study_record where studenterId = #{studenterId} and isFirst = 1")
+    @Select("select ifnull(count(knowledgeId),0) from common_study_record where studenterId = #{studenterId} and isFirst = 1")
     int queryStudentAllKnows(RequestDTO request);
 
     /**
@@ -98,7 +98,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select ifnull(sum(useTime),0) from know_copy.study_length where studenterId=#{studenterId}")
+    @Select("select ifnull(sum(useTime),0) from study_length where studenterId=#{studenterId}")
     int getStudyLength(RequestDTO request);
 
     /**
@@ -174,7 +174,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select ifnull(sum(useTime),0) from know_copy.study_length where studenterId = #{studenterId} and courseId = #{courseId} and TO_DAYS(startTime)=TO_DAYS(NOW())")
+    @Select("select ifnull(sum(useTime),0) from study_length where studenterId = #{studenterId} and courseId = #{courseId} and TO_DAYS(startTime)=TO_DAYS(NOW())")
     Long getNowStudyLength(RequestDTO request);
 
     /**
@@ -182,7 +182,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select ifnull(sum(useTime),0) from know_copy.study_length where studenterId = #{studenterId} and courseId = #{courseId}")
+    @Select("select ifnull(sum(useTime),0) from study_length where studenterId = #{studenterId} and courseId = #{courseId}")
     Long historyStudyLength(RequestDTO request);
 
     /**
@@ -206,7 +206,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-//    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime)")
+//    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime)")
 //    List<Know> nowStudyKnow(RequestDTO request);
     @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime) and courseId = #{courseId}")
     List<Know> nowStudyKnow(RequestDTO request);
@@ -246,7 +246,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select id as chapterId,knowledgeName as chapterName from know_copy.common_course_knowledge where courseId =#{courseId} and level = 2")
+    @Select("select id as chapterId,knowledgeName as chapterName from common_course_knowledge where courseId =#{courseId} and level = 2")
     List<chapterInfo> queryChapterInfo(RequestDTO request);
 
     /**
@@ -263,7 +263,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select a.id as courseId,a.curriculum as courseName,a.author,a.synopsis,a.biography,a.picture,a.subjectid,(select subjectName from common_course_subject where id = a.subjectId) as subjectName,(select count(*) from common_student_browsing_history where courseid = a.id) as views,(select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,(select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,(select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection from common_course a where a.curriculum like #{name} ")
+    @Select("select a.id as courseId,a.curriculum as courseName,a.author,a.synopsis,a.biography,a.picture,a.subjectid,(select subjectName from common_course_subject where id = a.subjectId) as subjectName,(select count(*) from common_student_browsing_history where courseid = a.id) as views,(select count(*) from common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,(select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,(select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection from common_course a where a.curriculum like #{name} ")
     List<CoursePojo> searchCourse(RequestDTO request);
 
     /**
@@ -271,7 +271,7 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    //@Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from know_copy.common_course_knowledge where id = a.knowledgeId ) as knowName from know_copy.common_study_record a where studenterId = #{studenterId}")
+    //@Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId}")
     @Select("select knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and isFirst = 1 and courseId = #{courseId}")
     List<Know> allStudyKnow(RequestDTO request);
 
@@ -308,6 +308,6 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select startTime from know_copy.study_length where studenterId = #{studenterId} GROUP BY day(starttime)")
+    @Select("select startTime from study_length where studenterId = #{studenterId} GROUP BY day(starttime)")
     List<String> getStudyDays(RequestDTO request);
 }

@@ -234,7 +234,7 @@
                   #{rightValue},
                   #{useTime},
                   #{flag},
-                  (select level from know_copy.common_course_knowledge where id = #{knowId})
+                  (select level from common_course_knowledge where id = #{knowId})
               )
     </insert>
     <insert id="insertLikeNote">

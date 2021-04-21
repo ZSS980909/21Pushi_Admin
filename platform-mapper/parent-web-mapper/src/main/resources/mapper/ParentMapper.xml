@@ -4,9 +4,9 @@
     <!--获取对比昨天提升的学习知识点数量-->
     <select id="getRiseKnow" resultType="java.lang.Integer">
         select
-            ifnull(count(DISTINCT knowledgeid),0)-(select ifnull(count(DISTINCT knowledgeid),0) from know_copy.common_study_record  where TO_DAYS(now())-TO_DAYS(createTime) = 1 and studenterId = #{studenterId})
+            ifnull(count(DISTINCT knowledgeid),0)-(select ifnull(count(DISTINCT knowledgeid),0) from common_study_record  where TO_DAYS(now())-TO_DAYS(createTime) = 1 and studenterId = #{studenterId})
         from
-            know_copy.common_study_record
+            common_study_record
         where
             TO_DAYS(now()) = TO_DAYS(createTime) and studenterId = #{studenterId}
     </select>
@@ -15,7 +15,7 @@
         select
             ifnull(sum(usetime),0)-(select ifnull(sum(usetime),0) from study_length where TO_DAYS(NOW())-TO_DAYS(starttime)=1 and studenterId = #{studenterId})
         from
-            know_copy.study_length
+            study_length
         where
             TO_DAYS(NOW()) = TO_DAYS(starttime) and studenterId = #{studenterId}
     </select>
@@ -68,7 +68,7 @@
            knowledgeName as knowContentName,
            knowledgeVideoUrl as knowledgeTextUrl
         from
-            know_copy.common_course_knowledge
+            common_course_knowledge
         where
             id = #{knowId}
     </select>
@@ -89,7 +89,7 @@
         a.integral as score,
         (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
         (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
-        (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
+        (select count(*) from common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
         (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status =
         1 limit 1) as isPay,
         (select count(*) from common_collect_course where courseId=a.id and studenterId = #{parenterId} and deleted = 0
@@ -117,7 +117,7 @@
         a.integral as score,
         (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
         (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
-        (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
+        (select count(*) from common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
         (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
         (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection
         from
@@ -144,7 +144,7 @@
             a.integral as score,
             (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
             (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
-            (select count(*) from know_copy.common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
+            (select count(*) from common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
             (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
             (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{studenterId} and deleted = 0 limit 1) as isCollection
         from

@@ -6,7 +6,6 @@ import com.ershiyi.domain.Chapter;
 import com.ershiyi.domain.*;
 import com.ershiyi.domain.Collect_Course;
 import com.ershiyi.domain.entity.*;
-import com.ershiyi.dto.JHZCourseDTO;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.mapper.CourseMapper;
 import com.ershiyi.service.CourseService;
@@ -630,13 +629,13 @@ public class CourseServiceImpl implements CourseService {
         // 开启分页
         PageHelper.startPage(request.getPageNumber(),request.getPageSize());
         List<Integer> ids = mapper.getWrongQuestionId(request);
-        System.out.println(ids);
         List<ResultWrongQuestion> results = new ArrayList<>();
         if(ids.isEmpty()){
             return new PageInfo<>(new ArrayList<>());
         }
         for (Integer id : ids) {
-            results.add(SwitchQuestionUtils.switchWrongQuestion(mapper.queryChoiceQuestion(id)));
+            WrongQuestionChoice choice = mapper.queryChoiceQuestion(id);
+            results.add(SwitchQuestionUtils.switchWrongQuestion(choice));
         }
         return new PageInfo<>(results);
     }
