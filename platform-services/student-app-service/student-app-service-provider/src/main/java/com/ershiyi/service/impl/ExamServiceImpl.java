@@ -31,13 +31,15 @@ public class ExamServiceImpl extends BaseServiceImpl<ExamDTO,ExamMapper> impleme
             countlist.addAll(list1);
         }
         //获取到了知识点id
-        //
-        List list2 = mapper.SelectKnowledgeWithQuestion(countlist.get(random.nextInt(countlist.size())).toString());
-        for(int i=0;i<=15;i++){
-            int i1 = random.nextInt(list2.size());
-            Common_Choice common_choice = mapper.SelectQuestion( list2.get(random.nextInt(list2.size())).toString());
+
+        for(int i=0;i<15;i++){
+            List list2 = mapper.SelectKnowledgeWithQuestion(countlist.get(random.nextInt(countlist.size())).toString());
+            if(list2.size()==0){
+                continue;
+            }
+            Common_Choice common_choice = mapper.SelectQuestion( list2.get(random.nextInt(list2.size())).toString());//随机拿取一道题目
             if(common_choice==null){
-                 common_choice = mapper.SelectQuestion(list2.get(random.nextInt(list2.size())).toString());
+                common_choice = mapper.SelectQuestion(list2.get(random.nextInt(list2.size())).toString());
             }
             List Choicelist =new ArrayList();
             if(common_choice!=null){
@@ -47,9 +49,32 @@ public class ExamServiceImpl extends BaseServiceImpl<ExamDTO,ExamMapper> impleme
                 Choicelist.add("D." + common_choice.getOptionD());
                 common_choice.setOptions(Choicelist);
                 list.add(common_choice);
+                common_choice.setResolving(common_choice.getResolving());
             }
-            common_choice.setResolving(common_choice.getResolving());
         }
+
+
+//        List list2 = mapper.SelectKnowledgeWithQuestion(countlist.get(random.nextInt(countlist.size())).toString());
+//        if(list2.size()==0){
+//            return list;
+//        }
+//        for(int i=0;i<=15;i++){
+//            int i1 = random.nextInt(list2.size());
+//            Common_Choice common_choice = mapper.SelectQuestion( list2.get(random.nextInt(list2.size())).toString());
+//            if(common_choice==null){
+//                 common_choice = mapper.SelectQuestion(list2.get(random.nextInt(list2.size())).toString());
+//            }
+//            List Choicelist =new ArrayList();
+//            if(common_choice!=null){
+//                Choicelist.add("A." + common_choice.getOptionA());
+//                Choicelist.add("B." + common_choice.getOptionB());
+//                Choicelist.add("C." + common_choice.getOptionC());
+//                Choicelist.add("D." + common_choice.getOptionD());
+//                common_choice.setOptions(Choicelist);
+//                list.add(common_choice);
+//            }
+//            common_choice.setResolving(common_choice.getResolving());
+//        }
         HashSet h = new HashSet(list);
         list.clear();
         list.addAll(h);
