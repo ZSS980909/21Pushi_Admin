@@ -213,7 +213,7 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
         select
             *
         from
-            student_wrongChoice_Question
+            studenknow_copyt_wrongChoice_Question
         where
             questionId = #{questionId}
         order by

@@ -148,9 +148,15 @@ public interface LearnMapper{
 
 
 
-    @Update("update common_Ipush_record set static =2 where plushContentId =#{knowContentId} and plushFrequency=#{plushFrequency} ")
+    @Update("update common_Ipush_record set static =2 where id =#{plushId}")
     Integer updatepushstatic(Correct correct);
 
+    /**
+     * 查詢是否有这条知识点内容推送存在
+     * @param correct
+     */
+//    @Select("select count(id) from common_Ipush_record where plushContentId =#{knowContentId} and pushType=#{sendType} and static =0")
+//    int selectplush(Correct correct);
     /**
      * 查詢是否有这条知识点内容推送存
      */
@@ -159,13 +165,13 @@ public interface LearnMapper{
     int selectplush(@Param("knowContentId") String knowContentId,@Param("studenterId") String studenterId );
 
     //@Select("select  count(id) from  common_course_knowledge_content where  id=#{knowContentId}  and deleted=0")
-    @Select("select count(*) from  `21db_test`.common_knowledge_question where questionId =#{questionId}  and isRandom =1")
+    @Select("select count(*) from  common_knowledge_question where questionId =#{questionId}  and isRandom =0")
     int selectpushquestionby(Correct correct);
 
-    @Select("select usetime from common_course_knowledge_record where knowledgeid=#{knowContentId}  order by id  desc  limit 1")
+    @Select("select usetime from common_course_knowledge_record where knowledgeid=#{knowId}  order by id  desc  limit 1")
     String SelectStudyTimeBy(Correct correct);
 
-    @Select("select  usetime from common_course_studyknowledge_record where knowledgecontentid=#{knowContentId} order by id desc  limit 1")
+    @Select("select  usetime from common_course_studyknowledge_record where knowledgecontentid=#{knowId} order by id desc  limit 1")
     String SelectStudyTimeByknowledge(Correct correct);
     /**
      * 将题目插入推送表
@@ -193,7 +199,7 @@ public interface LearnMapper{
      * @param request
      * @return
      */
-    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from know_copy.common_course_knowledge a where pid = #{chapterId}")
+    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from common_course_knowledge a where pid = #{chapterId}")
     List<ChapterMenu> nextKnow(RequestDTO request);
 
     /**
@@ -216,7 +222,7 @@ public interface LearnMapper{
      * 判断是否为首次插入
      * @return
      */
-    @Select("select id from know_copy.common_study_record where knowledgeId = #{knowId} and studenterId=#{studenterId}")
+    @Select("select id from common_study_record where knowledgeId = #{knowId} and studenterId=#{studenterId}")
     List<String> isFirstStudy(@Param("knowId")int knowId,@Param("studenterId")String studenterId);
 
     /**
@@ -231,7 +237,7 @@ public interface LearnMapper{
      * @param menu
      * @return
      */
-    @Select("select count(id) from know_copy.common_course_knowledge where left_value >= #{leftValue} and right_value <= #{rightValue} and isLast = 1 and courseId = #{courseId}")
+    @Select("select count(id) from common_course_knowledge where left_value >= #{leftValue} and right_value <= #{rightValue} and isLast = 1 and courseId = #{courseId}")
     int getKnowContentNumber(ChapterMenu menu);
 
     /**
@@ -242,7 +248,7 @@ public interface LearnMapper{
      * @param rightValue
      * @return
      */
-    @Select("select count(id) from know_copy.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1 and left_Value >= #{leftValue} and right_value <= #{rightValue}")
+    @Select("select count(id) from common_study_record where studenterId = #{studenterId} and courseId = #{courseId} and isFirst = 1 and left_Value >= #{leftValue} and right_value <= #{rightValue}")
     int getCompleteKnow(@Param("studenterId") String studenterId,@Param("courseId") int courseId, @Param("leftValue") int leftValue,@Param("rightValue") int rightValue);
 
     /**
@@ -250,7 +256,7 @@ public interface LearnMapper{
      * @param request
      * @return
      */
-    @Select("select  courseId,left_value as leftValue,right_value as rightValue,knowledgeId as knowId,level from know_copy.common_study_record where studenterId = #{studenterId} and courseId = #{courseId} order by createTime desc limit 1")
+    @Select("select  courseId,left_value as leftValue,right_value as rightValue,knowledgeId as knowId,level from common_study_record where studenterId = #{studenterId} and courseId = #{courseId} order by createTime desc limit 1")
     StudyRecordDTO getLastStudy(RequestDTO request);
 
     /**
@@ -258,7 +264,7 @@ public interface LearnMapper{
      * @param courseId
      * @return
      */
-    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from know_copy.common_course_knowledge where courseId = #{courseId} and isLast = 1 order by left_value limit 1")
+    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from common_course_knowledge where courseId = #{courseId} and isLast = 1 order by left_value limit 1")
     StudyRecordDTO getFirstKnow(Integer courseId);
 
     /**
@@ -267,7 +273,7 @@ public interface LearnMapper{
      * @param courseId
      * @return
      */
-    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from know_copy.common_course_knowledge where courseId = #{courseId} and isLast = 1 and left_value > #{leftValue} order by left_value limit 1")
+    @Select("select id as knowId,level,left_value as leftValue,right_value as rightValue,pid from common_course_knowledge where courseId = #{courseId} and isLast = 1 and left_value > #{leftValue} order by left_value limit 1")
     StudyRecordDTO getNextKnow(@Param("leftValue") int leftValue,@Param("courseId") Integer courseId);
 
     /**
@@ -278,7 +284,7 @@ public interface LearnMapper{
      * @param level 级别
      * @return
      */
-    @Select("select id from know_copy.common_course_knowledge where left_value < #{leftValue} and right_Value > #{rightValue} and level = #{level} and courseId = #{courseId}")
+    @Select("select id from common_course_knowledge where left_value < #{leftValue} and right_Value > #{rightValue} and level = #{level} and courseId = #{courseId}")
     int getUpLevelId(@Param("leftValue") int leftValue,@Param("rightValue") int rightValue,@Param("level") int level,@Param("courseId")int courseId);
 
     /**
@@ -286,7 +292,7 @@ public interface LearnMapper{
      * @param request
      * @return
      */
-    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from know_copy.common_course_knowledge where courseId = #{courseId} and level = 2")
+    @Select("select id as chapterId,pid,left_value as leftValue,right_value as rightValue,knowledgeName as chapterName,isLast,subjectId,courseId,knowledgeContent as knowContent,level from common_course_knowledge where courseId = #{courseId} and level = 2")
     List<ChapterMenu> firstKnowMenu(RequestDTO request);
 
     /**
