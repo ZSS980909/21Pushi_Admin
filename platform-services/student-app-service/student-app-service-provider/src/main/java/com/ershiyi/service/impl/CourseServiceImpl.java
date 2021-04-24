@@ -550,8 +550,7 @@ public class CourseServiceImpl implements CourseService {
             return new PageInfo<>(new ArrayList<>());
         }
         for (Integer id : ids) {
-            WrongQuestionChoice choice = mapper.queryChoiceQuestion(id);
-            results.add(SwitchQuestionUtils.switchWrongQuestion(choice));
+            results.add(SwitchQuestionUtils.switchWrongQuestion(mapper.queryChoiceQuestion(id)));
         }
         return new PageInfo<>(results);
     }

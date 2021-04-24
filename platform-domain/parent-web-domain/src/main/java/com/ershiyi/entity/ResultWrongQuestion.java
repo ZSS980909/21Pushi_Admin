@@ -15,4 +15,6 @@ public class ResultWrongQuestion extends ResultQuestion {
     private String fillAnswer;  // 学生选择选项
     private String courseName;  // 课程名称
     private int subjectId;  // 科目id
+    private String subjectImgUrl;//科目图片
+
 }

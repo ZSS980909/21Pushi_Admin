@@ -129,29 +129,16 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    @Select("select DISTINCT questionType,questionId from common_course_wrongquestions where courseId = #{courseId} and studenterId = #{studenterId}")
-    List<QuestionType> getWrongQuestion(RequestDTO request);
+    @Select("select DISTINCT questionId from common_course_wrongquestions where courseId = #{courseId} and studenterId = #{studenterId}  order by id desc")
+    List<Integer> getWrongQuestionId(RequestDTO request);
 
     /**
      * 获取单选题内容
-     * @param choices
+     * @param questionId 题目id
+     * @param studenterId 学生编号
      * @return
      */
-    ArrayList<QuestionWrongChoice> queryChoiceQuestion(List<String> choices);
-
-    /**
-     * 获取多选题内容
-     * @param multiples
-     * @return
-     */
-    ArrayList<QuestionWrongChoice> queryMultipleQuestion(List<String> multiples);
-
-    /**
-     * 获取判断题内容
-     * @param judges
-     * @return
-     */
-    List<QuestionWrongJudge> queryJudgeQuestion(List<String> judges);
+    WrongQuestionChoice getWrongQuestion(@Param("questionId") Integer questionId,@Param("studenterId") String studenterId);
 
     /**
      * 获取知识点内容
