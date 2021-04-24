@@ -190,9 +190,10 @@ public interface CourseMapper extends AbstractMapper<JHZCourseDTO> {
     /**
      * 获取题目内容
      * @param questionId
+     * @param studentId
      * @return
      */
-    WrongQuestionChoice queryChoiceQuestion(@Param("questionId")Integer questionId);
+    WrongQuestionChoice queryChoiceQuestion(@Param("questionId") Integer questionId,@Param("studentId")  String studentId);
     /**
      * 获取所有推荐课程id
      * @param studenterId 学生编号
