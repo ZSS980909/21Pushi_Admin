@@ -59,7 +59,7 @@ public class DateTimeJobServiceImpl extends BaseServiceImpl<QuestionAndKnowledge
                         String cron="";
                         if(time<=time1){
                                 //直接推送
-                            Date newDate = addSeconds(now, 60);
+                            Date newDate = addSeconds(now, 300);
                             cron= CronUtil.getCron(newDate);
                         }else{
                             //使用数据库时间

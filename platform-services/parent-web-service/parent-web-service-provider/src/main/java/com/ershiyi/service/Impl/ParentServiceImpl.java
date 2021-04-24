@@ -46,8 +46,15 @@ public class ParentServiceImpl implements ParentService {
      * @return
      */
     @Override
-    public int relationStudent(RequestDTO request) {
-        return mapper.relationStudent(request);
+    public AbstractBaseResult relationStudent(RequestDTO request) {
+        /**
+         * 先查询是否该家长已经绑定该学生
+         */
+        Integer isrelation = mapper.isrelation(request);
+        if(isrelation==1){
+            return RespEnum.SYS_ERROR.result("请勿重复绑定");
+        }
+        return RespEnum.OK.result(mapper.relationStudent(request));
     }
 
     /**
