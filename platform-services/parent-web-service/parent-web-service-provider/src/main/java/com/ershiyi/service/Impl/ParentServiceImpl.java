@@ -2,11 +2,13 @@ package com.ershiyi.service.Impl;
 
 import com.ershiyi.Utils.DecimalUtils;
 import com.ershiyi.Utils.ParentUtils;
+import com.ershiyi.Utils.SwitchQuestionUtils;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.entity.*;
 import com.ershiyi.mapper.ParentMapper;
 import com.ershiyi.service.ParentService;
 import com.github.pagehelper.PageHelper;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -145,31 +147,15 @@ public class ParentServiceImpl implements ParentService {
     public List<ResultWrongQuestion> wrongQuestion(RequestDTO request) {
         // 开启分页
         PageHelper.startPage(request.getPageNumber(),request.getPageSize());
+        String studenterId = request.getStudenterId();
         // 获取该学生当前课程的错题
-        List<QuestionType> ids = mapper.getWrongQuestion(request);
-        List<String> choices = new ArrayList<>();
-        List<String> multiples = new ArrayList<>();
-        List<String> judges = new ArrayList<>();
+        List<Integer> ids = mapper.getWrongQuestionId(request);
         List<ResultWrongQuestion> results = new ArrayList<>();
-        for (QuestionType id : ids) {
-            if(id.getQuestionType()==1){
-                // 单选题
-                choices.add(id.getQuestionId());
-            }else if(id.getQuestionType()==2){
-                // 多选题
-                multiples.add(id.getQuestionId());
-            }else{
-                // 判断题
-                judges.add(id.getQuestionId());
-            }
-        } if(!choices.isEmpty()){
-            results.addAll(QuestionSwitch(mapper.queryChoiceQuestion(choices)));
+        if(ids.isEmpty()){
+            return results;
         }
-        if(!multiples.isEmpty()){
-            results.addAll(QuestionSwitch(mapper.queryMultipleQuestion(multiples)));
-        }
-        if(!judges.isEmpty()) {
-            results.addAll(QuestionSwitch(mapper.queryJudgeQuestion(judges)));
+        for (Integer id : ids) {
+            results.add(SwitchQuestionUtils.switchWrongQuestion(mapper.getWrongQuestion(id,studenterId)));
         }
         return results;
     }
@@ -287,61 +273,6 @@ public class ParentServiceImpl implements ParentService {
         return courseInfo;
     }
 
-    /**
-     * 选择题转换成返回类
-     * @param lists
-     * @return
-     */
-    public static List<ResultWrongQuestion> QuestionSwitch(ArrayList<QuestionWrongChoice> lists){
-        List<ResultWrongQuestion> results = new ArrayList<>();
-        for (QuestionWrongChoice list : lists) {
-            ResultWrongQuestion question = new ResultWrongQuestion();
-            question.setQuestion(list.getQuestion());
-            question.setCourseName(list.getCourseName());
-            question.setSubjectId(list.getSubjectId());
-            question.setKnowId(list.getKnowId());
-            question.setCorrectOption(list.getCorrectOption());
-            question.setResolving(list.getResolving());
-            question.setType(list.getType());
-            question.setQuestionId(list.getQuestionId());
-            List<String> options = new ArrayList<>();
-            options.add("A."+list.getOptionA());
-            options.add("B."+list.getOptionB());
-            options.add("C."+list.getOptionC());
-            options.add("D."+list.getOptionD());
-            question.setFillAnswer(list.getFillAnswer());
-            question.setKnowName(list.getKnowName());
-            question.setStudyTime(list.getStudyTime());
-            question.setOptions(options);
-            results.add(question);
-        }
-        return results;
-    }
-
-    /**
-     * 判断题转换成返回类
-     * @param lists
-     * @return
-     */
-    public static List<ResultWrongQuestion> QuestionSwitch(List<QuestionWrongJudge> lists){
-        List<ResultWrongQuestion> results = new ArrayList<>();
-        for (QuestionWrongJudge list : lists) {
-            ResultWrongQuestion question = new ResultWrongQuestion();
-            question.setCourseName(list.getCourseName());
-            question.setSubjectId(list.getSubjectId());
-            question.setQuestion(list.getQuestion());
-            question.setKnowId(list.getKnowId());
-            question.setCorrectOption(list.getCorrectOption());
-            question.setResolving(list.getResolving());
-            question.setType(list.getType());
-            question.setQuestionId(list.getQuestionId());
-            question.setFillAnswer(list.getFillAnswer());
-            question.setKnowName(list.getKnowName());
-            question.setStudyTime(list.getStudyTime());
-            results.add(question);
-        }
-        return results;
-    }
 
     /**
      * 获取家长端app各平台下载地址

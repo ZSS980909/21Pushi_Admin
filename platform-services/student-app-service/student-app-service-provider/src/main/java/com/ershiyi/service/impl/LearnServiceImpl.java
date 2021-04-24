@@ -331,16 +331,8 @@ public class LearnServiceImpl<T> implements LearnService {
      */
     @Override
     public int submitQuestion(List<Correct> request) {
-        List<Correct> result = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (Correct correct : request) {
-            try {
-                long a = simpleDateFormat.parse(correct.getStartdt()).getTime();
-                long b = simpleDateFormat.parse(correct.getEnddt()).getTime();
-                long c = (b - a);
-                correct.setUseTime(c);
-            } catch (Exception e) {
-            }
+            correct.setUseTime(DateUtils.getUseTime(correct));
             // 判断题目是否为多选题
             if ("2".equals(correct.getQuestionType())) {
                 // 先判断长度是否相同
@@ -370,7 +362,7 @@ public class LearnServiceImpl<T> implements LearnService {
             // 查询当前题目是否已经有难度
             String questionId = correct.getQuestionId();
             int level = mapper.getQuestionLevel(questionId);
-            if(level==0) {
+            if (level == 0) {
                 // 查询当前题目的数量是否达到了99
                 QuestionCorrect number = mapper.getQuestionNumber(questionId);
                 if (number.getCount() >= 99) {
@@ -382,11 +374,11 @@ public class LearnServiceImpl<T> implements LearnService {
             }
             //4.进行推送记录插入
             //4.1  查询是否第一次记录此推送记录  1.表示第一次推送   >1表示多次
-            if (correct.getPlushFrequency()<=1) {
+            if (correct.getPlushFrequency() <= 1) {
                 /**
                  *查詢是否有相同知識點推送
                  */
-                int selectplush = mapper.selectplush(correct.getKnowId(),correct.getStudenterId());
+                int selectplush = mapper.selectplush(correct.getKnowId(), correct.getStudenterId());
                 if (selectplush == 0) {
                     /**
                      *
@@ -397,21 +389,21 @@ public class LearnServiceImpl<T> implements LearnService {
                     Float a = (float) 0.0;
                     Long aLong = TimeCalculate.calculateNext((correct.getUseTime().intValue()), null, a, 1);
                     Long millisecond = Instant.now().toEpochMilli();
-                    Long  miao=aLong+millisecond;
+                    Long miao = aLong + millisecond;
                     String planTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(miao));
                     //                    String planTime = DateUtils.addTime(TimeCalculate.calculateNext((correct.getUseTime().intValue()), null, a, 1));
 //                             System.out.println("下次推送时间"+planTime);
-                    System.out.println("参数1:"+aLong);
-                    System.out.println("参数2:"+millisecond);
+                    System.out.println("参数1:" + aLong);
+                    System.out.println("参数2:" + millisecond);
                     System.out.println(
-                            "参数3:"+miao);
-                    System.out.println("参数4:"+planTime);
+                            "参数3:" + miao);
+                    System.out.println("参数4:" + planTime);
 
                     mapper.insertPushQuestion(correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), 1);
                     //} else {
                     // System.out.println("题目是未关联的题目,暂不考虑----过滤掉");
                     //}
-                }else{
+                } else {
                     System.out.println("已有相同知識點");
                 }
             } else {
@@ -421,9 +413,9 @@ public class LearnServiceImpl<T> implements LearnService {
                 }
 
                 // 将当前知识点内容插入到推送表，对学生进行想关推送
-                int selectplush = mapper.selectplush(correct.getKnowId(),correct.getStudenterId()); //查询是否有相同知识点推送记录
+                int selectplush = mapper.selectplush(correct.getKnowId(), correct.getStudenterId()); //查询是否有相同知识点推送记录
                 if (selectplush == 0) {
-                    if (updatepushstatic  == 1) {
+                    if (updatepushstatic == 1) {
                         if (correct.getPlushFrequency() <= 6) {
                             int selectpushquestionby = mapper.selectpushquestionby(correct);
                             if (selectpushquestionby >= 1) {
@@ -432,16 +424,16 @@ public class LearnServiceImpl<T> implements LearnService {
                                     if ("".equals(s) || s == null) {
                                         s = "1";
                                     }
-                                    Long aLong =TimeCalculate.calculateNext(((correct.getUseTime().intValue())), Integer.parseInt(s), (float) correct.getCorrect(), correct.getPlushFrequency());
+                                    Long aLong = TimeCalculate.calculateNext(((correct.getUseTime().intValue())), Integer.parseInt(s), (float) correct.getCorrect(), correct.getPlushFrequency());
                                     Long millisecond = Instant.now().toEpochMilli();
-                                    Long  miao=aLong+millisecond;
+                                    Long miao = aLong + millisecond;
                                     String planTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(miao));
-                                    System.out.println("参数1:"+aLong);
-                                    System.out.println("参数2:"+millisecond);
-                                    System.out.println("参数3:"+miao);
-                                    System.out.println("参数4:"+planTime);
-                                    System.out.println("下次推送时间"+planTime);
-                                    mapper.insertPushQuestionbyKnowledge( correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), correct.getPlushFrequency(), correct.getSendType());
+                                    System.out.println("参数1:" + aLong);
+                                    System.out.println("参数2:" + millisecond);
+                                    System.out.println("参数3:" + miao);
+                                    System.out.println("参数4:" + planTime);
+                                    System.out.println("下次推送时间" + planTime);
+                                    mapper.insertPushQuestionbyKnowledge(correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), correct.getPlushFrequency(), correct.getSendType());
                                 } else if ("6".equals(correct.getSendType())) {
                                     /**
                                      * 1查詢上次学习时长
@@ -453,15 +445,15 @@ public class LearnServiceImpl<T> implements LearnService {
                                         s = "1";
                                     }
 
-                                    Long aLong =TimeCalculate.calculateNext(((correct.getUseTime().intValue())), Integer.parseInt(s), (float) correct.getCorrect(), correct.getPlushFrequency());
+                                    Long aLong = TimeCalculate.calculateNext(((correct.getUseTime().intValue())), Integer.parseInt(s), (float) correct.getCorrect(), correct.getPlushFrequency());
                                     Long millisecond = Instant.now().toEpochMilli();
-                                    Long  miao=aLong+millisecond;
+                                    Long miao = aLong + millisecond;
                                     String planTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(miao));
-                                    System.out.println("参数1:"+aLong);
-                                    System.out.println("参数2:"+millisecond);
-                                    System.out.println("参数3:"+miao);
-                                    System.out.println("参数4:"+planTime);
-                                    System.out.println("下次推送时间"+planTime);
+                                    System.out.println("参数1:" + aLong);
+                                    System.out.println("参数2:" + millisecond);
+                                    System.out.println("参数3:" + miao);
+                                    System.out.println("参数4:" + planTime);
+                                    System.out.println("下次推送时间" + planTime);
                                     mapper.insertPushQuestionbyKnowledge(correct.getCourseId(), correct.getStudenterId(), planTime, correct.getKnowId(), correct.getQuestionType(), correct.getPlushFrequency(), correct.getSendType());
 
                                 }
@@ -473,7 +465,7 @@ public class LearnServiceImpl<T> implements LearnService {
                         } else {
                             System.out.println("推送已经7次,不进入推送列表");
                         }
-                    }else{
+                    } else {
                         System.out.println("上次推送状态修改失败.....");
                     }
 
@@ -481,30 +473,7 @@ public class LearnServiceImpl<T> implements LearnService {
                     System.out.println("已有推送知识点内容...");
                 }
             }
-            // 算出学生做题时间
-            correct.setUseTime(DateUtils.getUseTime(correct));
-            // 判断是否有疑问
-            if (correct.getUseTime() < 3) {
-                // 当前题目不属于认真答题，不记录
-                correct.setIsQuery(0);
-            } else if (correct.getUseTime() > 3 && correct.getUseTime() < 120) {
-                // 当前题目属于正常答题
-                correct.setIsQuery(1);
-                result.add(correct);
-            } else if (correct.getUseTime() > 120 && correct.getUseTime() < 600) {
-                // 学生学习时间过长，有疑问就将当前题目插入难题表和推送提醒表
-                correct.setIsQuery(2);
-                result.add(correct);
-                // 插入难题库
-                mapper.insertDifficultyQuestion(correct);
-            } else {
-                // 其余属于不认真答题，不记录
-                correct.setIsQuery(3);
-            }
         }
-        if (result.isEmpty()) {
-            return 1;
-        }
-        return mapper.submitQuestion(result);
+        return mapper.submitQuestion(request);
     }
 }

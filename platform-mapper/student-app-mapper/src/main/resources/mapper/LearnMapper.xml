@@ -87,7 +87,7 @@
     </update>
     <insert id="submitQuestion">
         insert into
-        21db_changsha.common_course_knowledge_record
+            common_course_knowledge_record
         (
         questionId,
         studenterId,

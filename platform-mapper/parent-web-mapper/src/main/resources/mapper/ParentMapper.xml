@@ -28,38 +28,17 @@
         where
             TO_DAYS(NOW()) = TO_DAYS(starttime) and studenterId = #{studenterId}
     </select>
-    <select id="queryChoiceQuestion" resultType="com.ershiyi.entity.QuestionWrongChoice">
+    <select id="getWrongQuestion" resultType="com.ershiyi.entity.WrongQuestionChoice">
         select
-        *
+            *
         from
-        student_wrongChoice_Question
+            student_wrongChoice_Question
         where
-        questionId in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </select>
-    <select id="queryMultipleQuestion" resultType="com.ershiyi.entity.QuestionWrongChoice">
-        select
-        *
-        from
-        student_wrongMulti_Question
-        where
-        questionId in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </select>
-    <select id="queryJudgeQuestion" resultType="com.ershiyi.entity.QuestionWrongJudge">
-        select
-        *
-        from
-        student_wrongJudge_Question
-        where
-        questionId in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+            questionId = #{questionId}
+        and
+            studenterId = #{studenterId}
+        order by id desc
+        limit 1;
     </select>
     <select id="queryKnow" resultType="com.ershiyi.entity.KnowContent">
         select
