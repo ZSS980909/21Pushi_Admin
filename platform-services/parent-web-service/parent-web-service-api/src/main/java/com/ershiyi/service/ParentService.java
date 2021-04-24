@@ -1,5 +1,6 @@
 package com.ershiyi.service;
 
+import com.ershiyi.common.dto.AbstractBaseResult;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.entity.*;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public interface ParentService {
      * @param request
      * @return
      */
-    int relationStudent(RequestDTO request);
+    AbstractBaseResult relationStudent(RequestDTO request);
 
     /**
      * 获取家长信息

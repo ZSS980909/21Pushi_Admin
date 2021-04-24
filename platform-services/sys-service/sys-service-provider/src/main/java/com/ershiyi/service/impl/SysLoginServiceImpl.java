@@ -28,12 +28,12 @@ import java.util.*;
 public class SysLoginServiceImpl extends BaseServiceImpl<SysUser, SysLoginMapper>  implements SysLoginService {
     @Override
     public ValidataCode getVerificationCode(ValidataCode validatacode) {
-        boolean b = RedisUtils.hasKey(validatacode.getMobilePhone());
-        long expire = RedisUtils.getExpire(validatacode.getMobilePhone());
-        //验证redis
-        if(expire>120){
-            return null;
-        }else{
+//        boolean b = RedisUtils.hasKey(validatacode.getMobilePhone());
+//        long expire = RedisUtils.getExpire(validatacode.getMobilePhone());
+//        //验证redis
+//        if(expire>60){
+//            return null;
+//        }else{
             String randomcode = RandomCode.randomcode();//验证码
             Date dd=new Date();
             //格式化
@@ -71,7 +71,7 @@ public class SysLoginServiceImpl extends BaseServiceImpl<SysUser, SysLoginMapper
                 System.out.println("验证码存入redis失败");
             }
             return validatacode;
-        }
+      //  }
     }
 
     @Override

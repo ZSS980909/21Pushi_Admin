@@ -311,8 +311,6 @@ public class CourseServiceImpl implements CourseService {
                     lzmdtype.add(lzmd);
                 }
             }
-
-
         return lzmdtype;
             }
     }
@@ -360,88 +358,6 @@ public class CourseServiceImpl implements CourseService {
 
         }
         return Clist;
-//        List questiontypes = mapper.SelectQuestionType();  //随机题型
-//        Random rand = new Random();
-//        //随机知识点
-//        String studyknowledgeid = lzmdtype.getStudyknowledgeId();//学习知识点
-//        String countknowledgeid = lzmdtype.getCountknowledgeId();  //课程总共知识点
-//        List studylist=new ArrayList(); //学习集合
-//        List countlist=new ArrayList(); //总共集合
-//
-//        List list =new ArrayList(); //筛选后的集合
-//        String[] studysplit = studyknowledgeid.replace("[", "").replace("]", "").split(",");
-//        String[] countsplit = countknowledgeid.replace("[", "").replace("]", "").split(",");
-//
-//        for(int i=0;i<studysplit.length;i++){
-//            studylist.add(studysplit[i].trim());
-//        }
-//        for(int i=0;i<countsplit.length;i++){
-//            countlist.add(countsplit[i].trim());
-//        }
-//        HashSet hs1 = new HashSet(studylist);
-//        HashSet hs2 = new HashSet(countlist);
-//        hs2.removeAll(hs1);
-//        list.addAll(hs2);
-//        /**
-//         * 出题20选择题  5判断题
-//         */
-//        List Clist =new ArrayList();
-//        for(int i=0;i<15;i++){
-//           // if(i<8){
-//                String knowledge = list.get(rand.nextInt(list.size())).toString();
-//                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
-//                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
-//                if(common_choice!=null){
-//                    common_choice.setType(1);
-//                    List Choicelist =new ArrayList();
-//                    Choicelist.add("A."+common_choice.getOptionA());
-//                    Choicelist.add("B."+common_choice.getOptionB());
-//                    Choicelist.add("C."+common_choice.getOptionC());
-//                    Choicelist.add("D."+common_choice.getOptionD());
-//                    common_choice.setOptions(Choicelist);
-//                    Clist.add(common_choice);
-//                }else{
-//                  log.info("未找到相关题目");
-//                }
-////            }else if(i>=8&i<10){
-////                String knowledge = list.get(rand.nextInt(list.size())).toString();
-////                String questionId=mapper.SelectKnowledgeBylimit(knowledge);
-////                Common_Judge common_judge = mapper.SelectQuestionBylimitone(questionId);
-////                if (common_judge != null) {
-////                    List Judgelist =new ArrayList();
-////                    Judgelist.add("对");
-////                    Judgelist.add("错");
-////                    common_judge.setOptions(Judgelist);
-////                    common_judge.setType(3);
-////                    Clist.add(common_judge);
-////                }
-////
-////            }
-//
-//        }
-//        boolean bool=true;
-//        while(bool) {
-//            if (Clist.size() < 15) {
-//                String knowledge = list.get(rand.nextInt(list.size())).toString();
-//                String questionId = mapper.SelectKnowledgeBylimit(knowledge);
-//                Common_Choice common_choice = mapper.SelectQuestionBylimit(questionId);
-//                if (common_choice != null) {
-//                    common_choice.setType(1);
-//                    List Choicelist = new ArrayList();
-//                    Choicelist.add("A." + common_choice.getOptionA());
-//                    Choicelist.add("B." + common_choice.getOptionB());
-//                    Choicelist.add("C." + common_choice.getOptionC());
-//                    Choicelist.add("D." + common_choice.getOptionD());
-//                    common_choice.setOptions(Choicelist);
-//                    Clist.add(common_choice);
-//                }
-//
-//            } else {
-//                bool = false;
-//            }
-//
-//        }
-//        return Clist;
     }
 
     @Override
@@ -454,16 +370,15 @@ public class CourseServiceImpl implements CourseService {
          * 3.错题插入错题库
          * 4.正确题目插入  common_lzmd_studyrate
          */
-        List<Map> correctlist =new ArrayList<>();
         List<Common_StudyrateBy> common_studyrateBIES = list.get("data");
         for(int i=0;i<common_studyrateBIES.size();i++){
                 log.info(common_studyrateBIES.get(i).getQuestionId());
                 Long day = TimeCompute.getDay(common_studyrateBIES.get(i).getStartdt(), common_studyrateBIES.get(i).getEnddt());
                 log.info("使用时间为"+day);
                 common_studyrateBIES.get(i).setUserdt(day.toString());
-                if(day>=0&day<=2){
+                //if(day>=0&day<=2){
                             //0-3s属于不认真答题,先不做处理
-                }else if(day>=2&day<=120) {
+              //  if(day>=0&day<=120) {
                     //3-120s属于正常,记录答题表
                     if(common_studyrateBIES.get(i).getAnswer().equals(common_studyrateBIES.get(i).getFillAnswer())){
                         //正确
@@ -482,12 +397,13 @@ public class CourseServiceImpl implements CourseService {
                     }
 
                     mapper.ZSubmit(common_studyrateBIES.get(i));
-                }else if(day>=120&day<=600) {
+                  if(day>=120&day<=600) {
                     //120-600s属于疑难题,加入难题表
                     mapper.NSubmit(common_studyrateBIES.get(i));
-                }else{
-                    //600属于不认真答题,先不做处理
                 }
+// else{
+//                    //600属于不认真答题,先不做处理
+//                }
 
         }
         return null;

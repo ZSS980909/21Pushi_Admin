@@ -310,4 +310,6 @@ public interface ParentMapper {
      */
     @Select("select startTime from study_length where studenterId = #{studenterId} GROUP BY day(starttime)")
     List<String> getStudyDays(RequestDTO request);
+    @Select("select 1 from parent_relation_student where studenterId=#{studenterId} and parenterId=#{parenterId}  limit 1;")
+    Integer isrelation(RequestDTO request);
 }

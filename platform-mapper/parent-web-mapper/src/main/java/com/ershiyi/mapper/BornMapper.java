@@ -22,7 +22,7 @@ public interface BornMapper {
     @Select("select sum(any_value(usetime)) as sumNumber,any_value(studenterId) as studenterId,subjectid,subjectName  from study_length where  month(starttime)=#{month} and year(starttime)=#{year} and courseId in (select id from common_course where subjectid =#{subjectId}) group by  studenterId")
     List<questionSituationDTO> studyDuration(LocationRequestDTO localtionrequest);
 
-    @Select("select sum(any_value(usetime)) as sumNumber,any_value(startTime) as startTime,any_value(studenterId) from  study_length where  month(starttime)=#{month} and year(starttime)=#{year} and courseId in (select id from common_course where subjectid =#{subjectId}) group by to_days(starttime),studenterId")
+    @Select("select sum(any_value(usetime)) as sumNumber,any_value(startTime) as startTime,any_value(studenterId) from  study_length where  month(starttime)=#{month} and year(starttime)=#{year} and courseId in (select id from common_course where subjectid =#{subjectId}) and studenterId =#{studenterId} group by to_days(starttime),studenterId")
     List<questionSituationDTO> SMaxandMix(LocationRequestDTO localtionrequest);
 
     @Select("select avg(any_value(usetime)) as sumNumber,any_value(startTime) as startTime,any_value(studenterId),any_value(courseId) from  study_length where   month(starttime)=#{month} and year(starttime)=#{year}  and courseId in (select id from common_course where subjectid =#{subjectId})  group by to_days(starttime)")
@@ -44,7 +44,7 @@ public interface BornMapper {
     @Select("select * from common_comprehensive_score  where studenterId= #{studenterId} and  subjectId=#{subjectId} and TO_DAYS(createdt) = To_days(now())")
     List<ScoreDTO> Sscore(LocationRequestDTO localtionrequest);
 
-    @Select("select *  from common_comprehensive_score as a where createdt = (select max(createdt) from common_comprehensive_score where a.subjectId=subjectId )")
+    @Select("select *  from common_comprehensive_score as a where createdt = (select max(createdt) from common_comprehensive_score where a.subjectId=subjectId ) and studenterId=#{studenterId}")
     List<ScoreDTO> yesscore(LocationRequestDTO local);
 
 //    @Select("select * from common_comprehensive_score where studenterId=#{studenterId} and To_days(now())- TO_DAYS(createdt) =1")

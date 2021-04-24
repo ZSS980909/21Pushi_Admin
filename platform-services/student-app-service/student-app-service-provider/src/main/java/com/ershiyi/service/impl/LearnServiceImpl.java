@@ -331,7 +331,7 @@ public class LearnServiceImpl<T> implements LearnService {
      */
     @Override
     public int submitQuestion(List<Correct> request) {
-        List<Correct> result = new ArrayList<>();
+       // List<Correct> result = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (Correct correct : request) {
             try {
@@ -484,27 +484,31 @@ public class LearnServiceImpl<T> implements LearnService {
             // 算出学生做题时间
             correct.setUseTime(DateUtils.getUseTime(correct));
             // 判断是否有疑问
-            if (correct.getUseTime() < 3) {
-                // 当前题目不属于认真答题，不记录
-                correct.setIsQuery(0);
-            } else if (correct.getUseTime() > 3 && correct.getUseTime() < 120) {
-                // 当前题目属于正常答题
-                correct.setIsQuery(1);
-                result.add(correct);
-            } else if (correct.getUseTime() > 120 && correct.getUseTime() < 600) {
-                // 学生学习时间过长，有疑问就将当前题目插入难题表和推送提醒表
-                correct.setIsQuery(2);
-                result.add(correct);
-                // 插入难题库
-                mapper.insertDifficultyQuestion(correct);
-            } else {
-                // 其余属于不认真答题，不记录
-                correct.setIsQuery(3);
-            }
+//            if (correct.getUseTime() < 3) {
+////                // 当前题目不属于认真答题，不记录
+////                correct.setIsQuery(0);
+////            } else if (correct.getUseTime() > 3 && correct.getUseTime() < 120) {
+////                // 当前题目属于正常答题
+////                correct.setIsQuery(1);
+////                result.add(correct);
+////            } else
+//            if (correct.getUseTime() > 120 && correct.getUseTime() < 600) {
+//                // 学生学习时间过长，有疑问就将当前题目插入难题表和推送提醒表
+//                correct.setIsQuery(2);
+//                result.add(correct);
+//                // 插入难题库
+//                mapper.insertDifficultyQuestion(correct);
+//            }
+// else {
+////                // 其余属于不认真答题，不记录
+////                correct.setIsQuery(3);
+////            }
         }
-        if (result.isEmpty()) {
-            return 1;
-        }
-        return mapper.submitQuestion(result);
+//        if (result.isEmpty()) {
+//            return 1;
+//        }
+        //return mapper.submitQuestion(result);
+        return mapper.submitQuestion(request);
+
     }
 }
