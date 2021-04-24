@@ -216,6 +216,8 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
             student_wrongChoice_Question
         where
             questionId = #{questionId}
+        and
+            studenterId = #{studentId}
         order by
             id desc
             limit 1;

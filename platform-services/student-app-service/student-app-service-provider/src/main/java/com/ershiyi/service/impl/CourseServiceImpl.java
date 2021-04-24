@@ -545,12 +545,13 @@ public class CourseServiceImpl implements CourseService {
         // 开启分页
         PageHelper.startPage(request.getPageNumber(),request.getPageSize());
         List<Integer> ids = mapper.getWrongQuestionId(request);
+        String studentId = request.getStudenterId();
         List<ResultWrongQuestion> results = new ArrayList<>();
         if(ids.isEmpty()){
             return new PageInfo<>(new ArrayList<>());
         }
         for (Integer id : ids) {
-            results.add(SwitchQuestionUtils.switchWrongQuestion(mapper.queryChoiceQuestion(id)));
+            results.add(SwitchQuestionUtils.switchWrongQuestion(mapper.queryChoiceQuestion(id,studentId)));
         }
         return new PageInfo<>(results);
     }
