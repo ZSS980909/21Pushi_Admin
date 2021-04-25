@@ -36,6 +36,9 @@ public class Student_User {
     @Column(name = "CREATEDT")
     @ApiModelProperty(value="创建时间")
     private String createdt;
+
+    private String devicePassword;
+
     /**
      * 绑定账户关系表guid
      */
@@ -62,10 +65,11 @@ public class Student_User {
     private Integer userType;
     private String schoolName = "";
 
-    public Student_User(String id, String studenterId, String createdt, String studentUserId, String schoolId, String classid, String uniqueCode, Integer userType, String schoolName) {
+    public Student_User(String id, String studenterId, String createdt, String devicePassword, String studentUserId, String schoolId, String classid, String uniqueCode, Integer userType, String schoolName) {
         this.id = id;
         this.studenterId = studenterId;
         this.createdt = createdt;
+        this.devicePassword = devicePassword;
         this.studentUserId = studentUserId;
         this.schoolId = schoolId;
         this.classid = classid;

@@ -230,4 +230,12 @@ public interface CourseMapper extends AbstractMapper<JHZCourseDTO> {
     List knowledgeStudyMessage(LZMDType lzmdtype);
    // @Select("SELECT  *  from  common_knowledge_question where courseId=#{courseId} and  knowledgeId =#{knowledgeId} AND  questionType=1 and  isRandom=0 and  isDelete = 0 limit 2")
     List toquestion(@Param("courseId")String courseId, @Param("knowledgeId")String knowledgeId);
+
+    @Select(" select id from common_collect_course where studenterId = #{studenterId} and courseId = #{courseId} ")
+    List<Integer> getCollectId(@Param("studenterId") String studenterId,@Param("courseId") Integer courseId);
+
+    int delCollect(List<Integer> subList);
+
+    @Update("update common_collect_course set deleted = 0,createdt = now() where id = #{id}")
+    int updateCollectStatus(Integer id);
 }

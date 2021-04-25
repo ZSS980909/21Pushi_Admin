@@ -2,6 +2,7 @@ package com.ershiyi.mapper;
 
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.entity.*;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
@@ -297,6 +298,18 @@ public interface ParentMapper {
      */
     @Select("select startTime from study_length where studenterId = #{studenterId} GROUP BY day(starttime)")
     List<String> getStudyDays(RequestDTO request);
-    @Select("select 1 from parent_relation_student where studenterId=#{studenterId} and parenterId=#{parenterId}  limit 1;")
-    Integer isrelation(RequestDTO request);
+
+    @Select("select id from parent_relation_student where parenterId = #{parentId} and studenterId = #{studentId} and deleted = 0")
+    List<Integer> isRelation(@Param("studentId")String studentId,@Param("parentId") String parentId);
+
+    @Select("select id from common_collect_course where courseId = #{courseId} and studenterId = #{parenterId}")
+    List<Integer> courseIsCollect(RequestDTO request);
+
+    int delCollectId(List<Integer> subList);
+
+    @Update("update common_collect_course set deleted = 0,createdt = now() where id = #{id}")
+    int updateCollect(Integer id);
+
+    @Update("update sys_user set devicePassword = #{password} where loginId = #{loginId}")
+    int resetPass(@Param("loginId") String loginId,@Param("password") String password);
 }

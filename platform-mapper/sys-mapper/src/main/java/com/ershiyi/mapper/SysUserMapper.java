@@ -174,5 +174,6 @@ public interface SysUserMapper extends AbstractMapper<SysUser>
 
 	Integer UpdateCodebyfather(@Param("loginId")String loginId, @Param("uniquecode")String uniquecode);
 
-
+	@Select("select devicePassword from sys_user where guid = #{guid}")
+    String getDevicePassword(String guid);
 }
