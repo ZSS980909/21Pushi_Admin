@@ -259,7 +259,7 @@ public class CourseServiceImpl implements CourseService {
                             String baifenbi="";//接收百分比值
                             double studytime =Integer.parseInt(searchtwo.get(j).getKnowIdNumber())*1.0;
                             double counttime =Integer.parseInt(searchone.get(i).getKnowIdNumber())*1.0;
-                            double fen = studytime / counttime;
+                            double fen = studytime / counttime*100;
                             DecimalFormat df1 = new DecimalFormat("0.##");
                             baifenbi = df1.format(fen);
                             lzmd.setPercentage(baifenbi);
@@ -278,7 +278,7 @@ public class CourseServiceImpl implements CourseService {
                                 String baifenbi="";//接收百分比值
                                 double studytime =0*1.0;
                                 double counttime =Integer.parseInt(searchone.get(i).getKnowIdNumber())*1.0;
-                                double fen = studytime / counttime;
+                                double fen = studytime / counttime*100;
                                 DecimalFormat df1 = new DecimalFormat("0.##");
                                 baifenbi = df1.format(fen);
                                 lzmd.setPercentage(baifenbi);

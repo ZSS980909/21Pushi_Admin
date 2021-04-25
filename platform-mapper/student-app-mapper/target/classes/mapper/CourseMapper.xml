@@ -185,61 +185,6 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
           #{knowId},#{questionType},#{questionId},#{createdt},#{studenterId}
           )
     </insert>
-    <select id="getWrongQuestionId" resultType="com.ershiyi.domain.entity.QuestionType">
-        select
-            DISTINCT questionId,questionType
-        from
-            common_course_wrongquestions
-        where
-            deleted = 0
-        and
-            studenterId = #{studenterId}
-        <if test="subjectId!=0">
-            and courseId in (select id from common_course where subjectId = #{subjectId})
-        </if>
-        order by
-            createdt desc
-    </select>
-    <select id="queryChoiceQuestion" resultType="com.ershiyi.domain.entity.WrongQuestionChoice">
-        select
-            *
-        from
-            student_wrongChoice_Question
-        where
-            questionId in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-        order by
-             id desc
-    </select>
-    <select id="queryMultipleQuestion" resultType="com.ershiyi.domain.entity.WrongQuestionChoice">
-        select
-            *
-        from
-            student_wrongMulti_Question
-        where
-            questionId in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-        order by
-            id desc
-    </select>
-    <select id="queryJudgeQuestion" resultType="com.ershiyi.domain.entity.WrongQuestionJudge">
-        select
-            *
-        from
-            student_wrongJudge_Question
-        where
-            questionId in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-        order by
-            id desc
-    </select>
-
     <select id="knowledgeMessage" resultType="java.lang.String" parameterType="java.lang.String">
         select id from common_course_knowledge where courseId=#{courseId} and isdelete=0
     </select>
@@ -248,5 +193,33 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
     </select>
     <select id="toquestion" resultType="java.lang.String" parameterType="java.lang.String">
        SELECT  questionId  from  common_knowledge_question where courseId=#{courseId} and  knowledgeId =#{knowledgeId} AND  questionType=1 and  isDelete = 0  order by  isRandom  limit 2
+    </select>
+    <select id="getWrongQuestionId" resultType="java.lang.Integer">
+        select
+        DISTINCT questionId
+        from
+        common_course_wrongquestions
+        where
+        deleted = 0
+        and
+        studenterId = #{studenterId}
+        <if test="subjectId!=0">
+            and courseId in (select id from common_course where subjectId = #{subjectId})
+        </if>
+        order by
+        createdt desc
+    </select>
+    <select id="queryChoiceQuestion" resultType="com.ershiyi.domain.entity.WrongQuestionChoice">
+        select
+            *
+        from
+            student_wrongChoice_Question
+        where
+            questionId = #{questionId}
+        and
+            studenterId = #{studentId}
+        order by
+            id desc
+            limit 1;
     </select>
 </mapper>
