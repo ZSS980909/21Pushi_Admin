@@ -28,7 +28,7 @@ public class  CoursePojo {
     private Integer creatorId = 0;  // 作者id
     private Integer subjectId = 0;  // 科目id
     private String subjectName;  // 科目名称
-    private Integer chapterNumber = 0 ;  // 章节数量
+    private Integer knowNumber = 0 ;  // 章节数量
     private Integer isPay = 0;  // 是否购买
     private Integer isCollect = 0;  // 是否收藏 0为未收藏，1为已收藏
     private List courseTime = new ArrayList<>(); // 上课时间
