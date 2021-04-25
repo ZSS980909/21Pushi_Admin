@@ -5,10 +5,13 @@ import com.ershiyi.dist.RespEnum;
 import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.service.ParentService;
 import com.ershiyi.utils.RedisUtils;
+import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @Description: 家长端前端控制器
@@ -46,31 +49,25 @@ public class ParentController {
     @RequestMapping("/relationStudent")
     public AbstractBaseResult relationStudent(@RequestBody RequestDTO request){
         try{
-            if(request.getCaptcha()==null||request.getValidataCode()==""){
+            if(request.getCaptcha().length()<1){
                 // 没有验证码
                 return RespEnum.CHECK_FAILED.result("请输入学生验证码来完成绑定！");
             }
-            String captcha = null;
-            if(request.getType()==1){
-                // 短信验证
-                captcha = RedisUtils.get(request.getLoginId());
-            }else{
-                // 推送验证
-                captcha = RedisUtils.get(request.getStudenterId());
-            }
-            if(captcha==null||captcha.isEmpty()){
+            if(!RedisUtils.hasKey((request.getLoginId()))){
                 return RespEnum.CHECK_FAILED.result("请重新发送验证码！");
             }
+            String captcha = RedisUtils.get(request.getLoginId());;
             if(!captcha.equals(request.getCaptcha())){
                 return RespEnum.CHECK_FAILED.result("验证码错误！");
             }
             // 验证通过，清空验证码
-            if(request.getType()==1){
-                RedisUtils.del(request.getLoginId());
+            RedisUtils.del(request.getLoginId());
+            int status = service.relationStudent(request);
+            if(status==-1){
+                return RespEnum.CHECK_FAILED.result("请勿重复绑定");
             }else{
-                RedisUtils.del(request.getStudenterId());
+                return RespEnum.OK.result("成功");
             }
-            return  RespEnum.OK.result(service.relationStudent(request));
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙,请稍后再试！");
@@ -323,6 +320,32 @@ public class ParentController {
     public AbstractBaseResult getCourseInfo(@RequestBody RequestDTO request){
         try{
             return RespEnum.OK.result(service.getCourseInfo(request));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("系统繁忙,请稍后再试！");
+        }
+    }
+
+    /**
+     * 家长设置学生平板安全退出密码
+     * @param request
+     * @return
+     */
+    @RequestMapping("/resetPass")
+    public AbstractBaseResult resetPass(@RequestBody RequestDTO request){
+        try{
+            if(request.getLoginId().isEmpty()){
+                return RespEnum.CHECK_FAILED.result("学生手机号不能为空");
+            }
+            if(request.getPassword().length()<6){
+                return RespEnum.CHECK_FAILED.result("密码需要六位");
+            }
+            // 先查询关联关系
+            if(service.isRelation(request)){
+                return RespEnum.OK.result(service.resetPass(request.getLoginId(),request.getPassword()));
+            }else{
+                return RespEnum.CHECK_FAILED.result("您不是该学生的监护人，无权设置密码");
+            }
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙,请稍后再试！");

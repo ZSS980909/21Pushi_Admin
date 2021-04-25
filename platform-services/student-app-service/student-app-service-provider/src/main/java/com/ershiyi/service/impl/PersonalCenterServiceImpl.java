@@ -93,9 +93,7 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
     public PageInfo<CoursePojo> getCollectCourse(String studenterId, int pageNumber, int sizeNumber) {
         // 开启分页
         PageHelper.startPage(pageNumber,sizeNumber);
-        // 根据学生编号获取到学生所有收藏的课程
-        List<CoursePojo> results = mapper.findCollectCourse(studenterId);
-        return new PageInfo(results);
+        return new PageInfo(mapper.getCollectCourse(studenterId));
     }
 
     /**
@@ -354,6 +352,11 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
             return url;
         }
         return images;
+    }
+
+    @Override
+    public String getPassword(RequestDTO request) {
+        return mapper.getPassword(request);
     }
 
     /**

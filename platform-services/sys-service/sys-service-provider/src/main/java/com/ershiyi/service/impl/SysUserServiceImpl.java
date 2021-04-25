@@ -267,13 +267,16 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser, SysUserMapper> 
 
     @Override
     public Student_User getUserKey(String guid,int type) {
+        Student_User user = new Student_User();
         if(type==1){
             // 用户为学生
-            return mapper.findByStudenterId(guid);
+            user = mapper.findByStudenterId(guid);
         }else{
             // 用户为家长
-            return mapper.findByParent(guid);
+            user = mapper.findByParent(guid);
         }
+        user.setDevicePassword(mapper.getDevicePassword(guid));
+        return user;
     }
 
 

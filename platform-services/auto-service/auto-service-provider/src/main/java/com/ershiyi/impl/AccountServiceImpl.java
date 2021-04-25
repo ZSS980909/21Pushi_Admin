@@ -75,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
         }
         Student_User user = sysUserFeign.getUserKey(sysUser.getGuid(),userType);
         sysUserFeign.Logs(accountAuthDTO.getLoginId(), accountAuthDTO.getUniqueCode(), accountAuthDTO.getLoginCode(),userType,loginType);
-        return createToken(user.getStudenterId(), "目前暂不使用", "Unknown",user.getSchoolId());
+        return createToken(user.getStudenterId(), "目前暂不使用",user.getDevicePassword(), "Unknown",user.getSchoolId());
     }
 
     /**
@@ -102,7 +102,7 @@ public class AccountServiceImpl implements AccountService {
             String sys = TokenUtils.getStr(token, TokenUtils.SYSTEM_KEY);
             String device = TokenUtils.getStr(token, TokenUtils.DEVICE_KEY);
             TokenUtils.clear(token);
-            return createToken(userKey, sys, device,null);
+            return createToken(userKey, sys, "",device,null);
         }
         throw RespEnum.AUTH.throwException();
     }

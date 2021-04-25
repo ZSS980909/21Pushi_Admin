@@ -198,4 +198,6 @@ public interface PersonalCenterService {
      * @return
      */
     List<HashMap> getDownUrl(RequestDTO request);
+
+    String getPassword(RequestDTO request);
 }

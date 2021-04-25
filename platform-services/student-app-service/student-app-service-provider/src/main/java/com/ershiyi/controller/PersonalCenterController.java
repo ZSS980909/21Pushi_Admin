@@ -450,4 +450,21 @@ public class PersonalCenterController {
             return RespEnum.ERROR.result("查询失败，系统异常，请稍后重试！");
         }
     }
+
+
+    /**
+     * 获取最新的安全退出密码
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getPassword")
+    @ApiOperation("获取最新的app下载地址")
+    public AbstractBaseResult getPassword(@RequestBody RequestDTO request){
+        try{
+            return RespEnum.OK.result(centerService.getPassword(request));
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("查询失败，系统异常，请稍后重试！");
+        }
+    }
 }

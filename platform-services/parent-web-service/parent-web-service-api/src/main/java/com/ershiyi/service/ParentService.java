@@ -20,7 +20,7 @@ public interface ParentService {
      * @param request
      * @return
      */
-    AbstractBaseResult relationStudent(RequestDTO request);
+    int relationStudent(RequestDTO request);
 
     /**
      * 获取家长信息
@@ -129,4 +129,8 @@ public interface ParentService {
      * @return
      */
     CoursePojo getCourseInfo(RequestDTO request);
+
+    boolean isRelation(RequestDTO request);
+
+    int resetPass(String loginId, String password);
 }

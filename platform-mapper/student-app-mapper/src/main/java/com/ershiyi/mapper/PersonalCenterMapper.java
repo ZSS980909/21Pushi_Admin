@@ -64,7 +64,7 @@ public interface PersonalCenterMapper {
      * @return
      */
     @Select("select * from collect_course_info where studenterId = #{studentId} order by id desc")
-    public List<CoursePojo> findCollectCourse(@Param("studentId")String studentId);
+    List<CoursePojo> getCollectCourse(@Param("studentId")String studentId);
 
 
     /**
@@ -253,4 +253,15 @@ public interface PersonalCenterMapper {
     List<ApplicationVersion> getDownUrl();
 
     List<CoursePojo> getCourseInfo(@Param("list") List<Integer> courseId,@Param("studenterId") String studenterId);
+
+    /**
+     * 获取用户收藏的课程id
+     * @param studenterId
+     * @return
+     */
+    @Select("select distinct courseId from common_collect_course where deleted = 0 and studenterId = #{studenterId} order by id desc")
+    List<Integer> getCollectId(String studenterId);
+
+    @Select("select devicePassword from sys_user where loginId = #{loginId}")
+    String getPassword(RequestDTO request);
 }

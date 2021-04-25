@@ -16,6 +16,12 @@ public class TokenVO implements Serializable {
      * 身份唯一标识
      **/
     private String userKey;
+
+    /**
+     * 用户安全退出密码
+     */
+    private String devicePassword;
+
     /**
      * 令牌
      **/
@@ -53,8 +59,9 @@ public class TokenVO implements Serializable {
 
     }
 
-    public TokenVO(String userKey, String token, String sys, String device, long exp, long refresh, String schoolId) {
+    public TokenVO(String userKey, String devicePassword, String token, String sys, String device, long exp, long refresh, String schoolId) {
         this.userKey = userKey;
+        this.devicePassword = devicePassword;
         this.token = token;
         this.sys = sys;
         this.device = device;

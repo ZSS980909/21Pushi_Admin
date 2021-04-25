@@ -5,7 +5,7 @@ import com.ershiyi.vo.TokenVO;
 
 public interface LoginService {
 
-    default TokenVO createToken(String userKey, String system, String device,String schoolId) {
+    default TokenVO createToken(String userKey, String system,String pass, String device,String schoolId) {
         String token = TokenUtils.createToken(userKey, system, device,schoolId);
         TokenUtils.syncResponseToken(token);
         TokenUtils.syncRedis(token);
@@ -13,6 +13,7 @@ public interface LoginService {
                 .userKey(userKey)
                 .token(token)
                 .sys(system)
+                .devicePassword(pass)
                 .device(device)
                 .schoolId(schoolId)
                 .exp(TokenUtils.getDate(token, TokenUtils.EXP_KEY).getTime())
