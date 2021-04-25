@@ -132,4 +132,12 @@
             id = #{id}
         limit 1
     </select>
+    <delete id="delCollectId">
+        delete from
+            common_collect_course
+        where id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

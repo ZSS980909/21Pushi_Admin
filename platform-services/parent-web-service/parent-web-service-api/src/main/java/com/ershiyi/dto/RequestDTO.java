@@ -17,13 +17,14 @@ public class RequestDTO {
     private String parenterId;  // 家长编号
     private String studenterId;  // 学生编号
     private String name;
+    private String password = "";
     private int courseId;
     private String knowId;
-    private String loginId;
+    private String loginId = "";
     private String month = new SimpleDateFormat("MM").format(new Date());
     private String year = new SimpleDateFormat("yyyy").format(new Date());
     private String validataCode;  // 短信验证码
-    private String captcha;  // 绑定验证码
+    private String captcha = "";  // 绑定验证码
     private int pageNumber = 1;  // 页码
     private int pageSize = 10;  // 每页展示的数量
     private int type = 2;

@@ -199,5 +199,7 @@ public interface PersonalCenterService {
      */
     List<HashMap> getDownUrl(RequestDTO request);
 
+    String getPassword(RequestDTO request);
+
     List<Function_setting> getFunctionSetting();
 }

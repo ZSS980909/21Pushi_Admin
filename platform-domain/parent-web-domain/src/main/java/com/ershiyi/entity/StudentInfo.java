@@ -17,4 +17,5 @@ public class StudentInfo {
     private String schoolName = "";  // 学校名称
     private String loginId = ""; // 手机号
     private String levelLabel ="学霸"; // 学生等级标签
+    private int isRelation = 0;  // 是否已经跟该家长绑定
 }

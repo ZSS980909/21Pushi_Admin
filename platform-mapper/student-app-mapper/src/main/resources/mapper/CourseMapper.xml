@@ -222,4 +222,12 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
             id desc
             limit 1;
     </select>
+    <delete id="delCollect">
+        delete from
+        common_collect_course
+        where id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

@@ -12,6 +12,7 @@ import com.ershiyi.service.CourseService;
 import com.ershiyi.utils.TimeCompute;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.models.auth.In;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +149,18 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Integer courseByCollect(String studenterId, Integer courseId) {
-        return mapper.courseByCollect(studenterId, courseId);
+        // 查询当前课程是否已经有收藏记录
+        List<Integer> ids = mapper.getCollectId(studenterId,courseId);
+        if(ids.isEmpty()){
+            // 没有则收藏当前课程
+            return mapper.courseByCollect(studenterId, courseId);
+        }else{
+            if(ids.size()>1){
+                // 记录大于一条
+                mapper.delCollect(ids.subList(0,ids.size()-1));
+            }
+            return mapper.updateCollectStatus(ids.get(ids.size()-1));
+        }
     }
 
     @Override
@@ -420,7 +432,6 @@ public class CourseServiceImpl implements CourseService {
     public PageInfo<CoursePojo> courseForSubject(String studentId,Integer subjectId, Integer pageNumber, Integer pageSize) {
         // 开启分页
         PageHelper.startPage(pageNumber,pageSize);
-
         // 查询学生当前科目下所有未购买的课程
         List<Integer> courseIds =null;
         if(subjectId==0){

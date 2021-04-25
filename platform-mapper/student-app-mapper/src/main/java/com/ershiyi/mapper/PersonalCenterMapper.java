@@ -64,7 +64,7 @@ public interface PersonalCenterMapper {
      * @return
      */
     @Select("select * from collect_course_info where studenterId = #{studentId} order by id desc")
-    public List<CoursePojo> findCollectCourse(@Param("studentId")String studentId);
+    List<CoursePojo> getCollectCourse(@Param("studentId")String studentId);
 
 
     /**
@@ -254,6 +254,10 @@ public interface PersonalCenterMapper {
 
     List<CoursePojo> getCourseInfo(@Param("list") List<Integer> courseId,@Param("studenterId") String studenterId);
 
+
     @Select("select * from sys_setting where deleted=0 and isUse=1")
     List<Function_setting> getFunctionSetting();
+
+    @Select("select devicePassword from sys_user where loginId = #{loginId}")
+    String getPassword(RequestDTO request);
 }

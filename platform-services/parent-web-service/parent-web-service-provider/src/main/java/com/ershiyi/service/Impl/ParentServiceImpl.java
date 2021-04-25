@@ -38,8 +38,10 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public List<StudentInfo> searchStudent(RequestDTO request) {
-        List<StudentInfo> student = mapper.searchStudent(request);
-        return student;
+        List<StudentInfo> students = mapper.searchStudent(request);
+        String parentId = request.getParenterId();
+        students.forEach(student -> student.setIsRelation(mapper.isRelation(student.getStudenterId(),parentId).isEmpty() ? 0:1));
+        return students;
     }
 
     /**
@@ -48,15 +50,16 @@ public class ParentServiceImpl implements ParentService {
      * @return
      */
     @Override
-    public AbstractBaseResult relationStudent(RequestDTO request) {
+    public int relationStudent(RequestDTO request) {
         /**
          * 先查询是否该家长已经绑定该学生
          */
-        Integer isrelation = mapper.isrelation(request);
-        if(isrelation==1){
-            return RespEnum.SYS_ERROR.result("请勿重复绑定");
+        if(mapper.isRelation(request.getStudenterId(),request.getParenterId()).isEmpty()){
+            // 没有绑定
+            return mapper.relationStudent(request);
+        }else{
+            return -1;
         }
-        return RespEnum.OK.result(mapper.relationStudent(request));
     }
 
     /**
@@ -225,7 +228,17 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public int collectCourse(RequestDTO request) {
-        return mapper.collectCourse(request);
+        // 先查询当前课程是否已经有记录
+        List<Integer> ids = mapper.courseIsCollect(request);
+        if(ids.isEmpty()){
+            return mapper.collectCourse(request);
+        }else{
+            if(ids.size()>1){
+                // 如果记录大于一条，则保留最后一条 删除之前的
+                mapper.delCollectId(ids.subList(0,ids.size()-1));
+            }
+            return mapper.updateCollect(ids.get(ids.size()-1));
+        }
     }
 
     /**
@@ -309,6 +322,16 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public List<BannerInfo> banner(RequestDTO request) {
         return mapper.getBanner(request);
+    }
+
+    @Override
+    public int resetPass(String loginId, String password) {
+        return mapper.resetPass(loginId,password);
+    }
+
+    @Override
+    public boolean isRelation(RequestDTO request) {
+        return !mapper.isRelation(request.getStudenterId(),request.getParenterId()).isEmpty();
     }
 
     /**
