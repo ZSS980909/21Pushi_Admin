@@ -253,4 +253,7 @@ public interface PersonalCenterMapper {
     List<ApplicationVersion> getDownUrl();
 
     List<CoursePojo> getCourseInfo(@Param("list") List<Integer> courseId,@Param("studenterId") String studenterId);
+
+    @Select("select * from sys_setting where deleted=0 and isUse=1")
+    List<Function_setting> getFunctionSetting();
 }

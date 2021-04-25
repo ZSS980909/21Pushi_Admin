@@ -98,7 +98,6 @@ public interface SysUserService extends BaseService<SysUser> {
      */
     int deleteSysUserByIds(String ids);
 
-
     /**
      * 获取当前单位所有的角色
      *
@@ -112,7 +111,6 @@ public interface SysUserService extends BaseService<SysUser> {
      */
     List<String> getRolesByUserId(SysUser sysUser);
 
-
     /**
      * 保存用户角色
      */
@@ -122,11 +120,9 @@ public interface SysUserService extends BaseService<SysUser> {
     SysUserVo findUserMsgById(String id);
 
 
-    Student_User findByStudenterId(String guid);
-
     Integer Logs(String loginId,String uniquecode,String logincode,int usertypeid,int logintype);
 
-    String findParenterId(String guid);
+    Student_User getUserKey(String guid,int type);
 
 //    Integer InsertLogsByUser(Map map);
 }

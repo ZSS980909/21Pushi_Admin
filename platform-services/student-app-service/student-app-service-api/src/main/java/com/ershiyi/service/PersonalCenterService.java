@@ -198,4 +198,6 @@ public interface PersonalCenterService {
      * @return
      */
     List<HashMap> getDownUrl(RequestDTO request);
+
+    List<Function_setting> getFunctionSetting();
 }

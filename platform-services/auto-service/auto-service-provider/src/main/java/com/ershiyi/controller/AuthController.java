@@ -38,11 +38,11 @@ public class AuthController {
     @ApiOperation(value = "用户登录", notes = "只需要传用户帐号loginid,密码pwd")
     public AbstractBaseResult accountLogin(@RequestBody AccountAuthDTO accountAuthDTO) {
         try {
-            TokenVO tokenVO = accountService.accountLogin(accountAuthDTO);
-            if(accountAuthDTO.getLoginId()==null||accountAuthDTO.getLoginId().isEmpty()){
+            if(accountAuthDTO.getLoginId().length()<1){
                 // 没有手机号
                 return RespEnum.CHECK_FAILED.result("手机号不能为空");
             }
+            TokenVO tokenVO = accountService.accountLogin(accountAuthDTO);
             if("错误信息".equals(tokenVO.getUserKey())){
                 // 代表错误信息
                 return  RespEnum.CHECK_FAILED.result(tokenVO.getToken());

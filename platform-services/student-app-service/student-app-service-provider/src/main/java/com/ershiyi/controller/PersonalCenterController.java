@@ -450,4 +450,19 @@ public class PersonalCenterController {
             return RespEnum.ERROR.result("查询失败，系统异常，请稍后重试！");
         }
     }
+
+    /**
+     * 查询系统功能
+     * @return
+     */
+    @RequestMapping("/getFunctionSetting")
+    @ApiOperation("查询系统功能")
+    public AbstractBaseResult getFunctionSetting(){
+        try{
+            return RespEnum.OK.result(centerService.getFunctionSetting());
+        }catch (Exception e){
+            e.printStackTrace();
+            return RespEnum.ERROR.result("查询失败，系统异常，请稍后重试！");
+        }
+    }
 }

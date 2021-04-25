@@ -241,19 +241,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser, SysUserMapper> 
     }
 
     @Override
-    public Student_User findByStudenterId(String guid) {
-        int typeId = mapper.getUserType(guid);
-        if(typeId==1){
-            // 用户为学生
-            return mapper.findByStudenterId(guid);
-        }else if(typeId==3){
-            // 用户为家长
-            return mapper.findByParent(guid);
-        }
-        return null;
-    }
-
-    @Override
     public Integer Logs(String loginId,String uniquecode,String logincode,int usertypeid,int logintype) {
         Integer a=0;
         if(logintype==1){
@@ -279,8 +266,14 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser, SysUserMapper> 
     }
 
     @Override
-    public String findParenterId(String guid) {
-        return mapper.findParenterId(guid);
+    public Student_User getUserKey(String guid,int type) {
+        if(type==1){
+            // 用户为学生
+            return mapper.findByStudenterId(guid);
+        }else{
+            // 用户为家长
+            return mapper.findByParent(guid);
+        }
     }
 
 

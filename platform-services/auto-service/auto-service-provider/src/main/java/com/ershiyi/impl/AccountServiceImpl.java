@@ -35,34 +35,34 @@ public class AccountServiceImpl implements AccountService {
         error.setUserKey("错误信息");
         // 获取当前手机用户的相信信息
         SysUser sysUser = sysUserFeign.findByLoginId(accountAuthDTO.getLoginId());
-        //根据usertypeId判断是否是正确端口  家长端/学生端  对比一下usertypeid
-       // System.out.println(sysUser);
-        if(sysUser==null){
+        if(sysUser.getLoginId().length()<1){
             error.setToken("账号不存在！");
             return error;
         }
-        if (sysUser.getUserTypeId()==accountAuthDTO.getUserTypeId()){
-
-        }else{
+        if (sysUser.getIfuse() == 0) {
+            error.setToken("账号已停用");
+            return error;
+        }
+        if(sysUser.getUserTypeId()!=accountAuthDTO.getUserTypeId()){
             error.setToken("账户用户或密码不对(友情提示:账户类型,密码大小写是否输入错误)！");
             return error;
         }
-//        if(!sysUser.getUserTypeId().equals(accountAuthDTO.getUserTypeId())){
-//            error.setToken("账号不存在！");
-//            return error;
-//        }
-        String device="";
-        String sys="";
-        String parenterId="";
-        Student_User bystudenterId = null;
-        if(accountAuthDTO.getLoginType()==2){
+        int loginType = accountAuthDTO.getLoginType();
+        int userType=accountAuthDTO.getUserTypeId();
+        if(loginType==1){
+            // 密码登录
+            String pass = SecureUtil.md5(accountAuthDTO.getPassWord());
+            if (!StringUtils.endsWithIgnoreCase(pass, sysUser.getPwd())) {
+                error.setToken("用户名密码不正确");
+                return error;
+            }
+        }else{
             // 登录方式为验证码登录。验证验证码的正确性
-            if(accountAuthDTO.getValidataCode()==null||accountAuthDTO.getValidataCode().isEmpty()){
+            if(accountAuthDTO.getValidataCode().length()<1){
                 error.setToken("验证码不能为空！");
                 return error;
             }
-            boolean b = RedisUtils.hasKey(accountAuthDTO.getLoginId());
-            if(!b){
+            if(!RedisUtils.hasKey(accountAuthDTO.getLoginId())){
                 error.setToken("请重新发送验证码！");
                 return error;
             }
@@ -72,43 +72,10 @@ public class AccountServiceImpl implements AccountService {
             }
             // 验证码无误，销毁验证码
             RedisUtils.del(accountAuthDTO.getLoginId());
-        }else if(accountAuthDTO.getLoginType()==1){
-            if (sysUser == null) {
-                error.setToken("网络阻塞,请稍后重试");
-                return error;
-            }
-            if (sysUser.getIfuse() == -1) {
-                error.setToken("用户不存在");
-                return error;
-            }
-            if (sysUser.getIfuse() == 0) {
-                error.setToken("账号已停用");
-                return error;
-            }
-            String pass = SecureUtil.md5(accountAuthDTO.getPassWord());
-            if (!StringUtils.endsWithIgnoreCase(pass, sysUser.getPwd())) {
-                error.setToken("用户名密码不正确");
-                return error;
-            }
-        }else{
-            return error;
         }
-        if (accountAuthDTO.getUserTypeId()==3){
-            parenterId = sysUserFeign.findParenterId(sysUser.getGuid());
-            sys = "目前暂不使用";
-            device = UserAgentUtil.parse(WebUtils.getUa()).getPlatform().getName();
-            int loginType=3;
-            sysUserFeign.Logs(accountAuthDTO.getLoginId(), accountAuthDTO.getUniqueCode(), accountAuthDTO.getLoginCode(),accountAuthDTO.getUserTypeId(),loginType);
-            return createToken(parenterId, sys, device, "");
-        }else if(accountAuthDTO.getUserTypeId()==1){
-            bystudenterId = sysUserFeign.findByStudenterId(sysUser.getGuid());
-            sys = "目前暂不使用";
-            int loginType=1;
-            device = UserAgentUtil.parse(WebUtils.getUa()).getPlatform().getName();
-            sysUserFeign.Logs(accountAuthDTO.getLoginId(), accountAuthDTO.getUniqueCode(), accountAuthDTO.getLoginCode(),accountAuthDTO.getUserTypeId(),loginType);
-            return createToken(bystudenterId.getStudenterId(), sys, device, bystudenterId.getSchoolId());
-        }
-        return null;
+        Student_User user = sysUserFeign.getUserKey(sysUser.getGuid(),userType);
+        sysUserFeign.Logs(accountAuthDTO.getLoginId(), accountAuthDTO.getUniqueCode(), accountAuthDTO.getLoginCode(),userType,loginType);
+        return createToken(user.getStudenterId(), "目前暂不使用", "Unknown",user.getSchoolId());
     }
 
     /**
