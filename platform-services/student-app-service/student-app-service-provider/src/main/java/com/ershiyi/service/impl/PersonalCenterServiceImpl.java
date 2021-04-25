@@ -382,4 +382,9 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
         return results;
     }
 
+    @Override
+    public List<Function_setting> getFunctionSetting() {
+        return mapper.getFunctionSetting();
+    }
+
 }

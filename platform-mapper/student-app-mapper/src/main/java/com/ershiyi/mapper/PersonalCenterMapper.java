@@ -254,13 +254,9 @@ public interface PersonalCenterMapper {
 
     List<CoursePojo> getCourseInfo(@Param("list") List<Integer> courseId,@Param("studenterId") String studenterId);
 
-    /**
-     * 获取用户收藏的课程id
-     * @param studenterId
-     * @return
-     */
-    @Select("select distinct courseId from common_collect_course where deleted = 0 and studenterId = #{studenterId} order by id desc")
-    List<Integer> getCollectId(String studenterId);
+
+    @Select("select * from sys_setting where deleted=0 and isUse=1")
+    List<Function_setting> getFunctionSetting();
 
     @Select("select devicePassword from sys_user where loginId = #{loginId}")
     String getPassword(RequestDTO request);

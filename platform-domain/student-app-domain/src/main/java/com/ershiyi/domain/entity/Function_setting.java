@@ -5,14 +5,12 @@ package com.ershiyi.domain.entity;
  */
 public class Function_setting {
     private Integer id;
-    private String keyword;
+    private String key_word;
     private String functionName;
-    private String isUse;
+    private String setSize;
     private String deleted;
-    private String createdt;
-    private String  image;
-    private Integer  sort;
-    private String subtitle;
+    private String isUse;
+    private String  createdt;
 
     public Integer getId() {
         return id;
@@ -22,12 +20,12 @@ public class Function_setting {
         this.id = id;
     }
 
-    public String getKeyword() {
-        return keyword;
+    public String getKey_word() {
+        return key_word;
     }
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setKey_word(String key_word) {
+        this.key_word = key_word;
     }
 
     public String getFunctionName() {
@@ -38,12 +36,12 @@ public class Function_setting {
         this.functionName = functionName;
     }
 
-    public String getIsUse() {
-        return isUse;
+    public String getSetSize() {
+        return setSize;
     }
 
-    public void setIsUse(String isUse) {
-        this.isUse = isUse;
+    public void setSetSize(String setSize) {
+        this.setSize = setSize;
     }
 
     public String getDeleted() {
@@ -54,35 +52,19 @@ public class Function_setting {
         this.deleted = deleted;
     }
 
+    public String getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(String isUse) {
+        this.isUse = isUse;
+    }
+
     public String getCreatedt() {
         return createdt;
     }
 
     public void setCreatedt(String createdt) {
         this.createdt = createdt;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Integer getSort() {
-        return sort;
-    }
-
-    public void setSort(Integer sort) {
-        this.sort = sort;
-    }
-
-    public String getSubtitle() {
-        return subtitle;
-    }
-
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
     }
 }

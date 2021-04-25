@@ -44,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
             return error;
         }
         if(sysUser.getUserTypeId()!=accountAuthDTO.getUserTypeId()){
-            error.setToken("账号不存在！");
+            error.setToken("账户用户或密码不对(友情提示:账户类型,密码大小写是否输入错误)！");
             return error;
         }
         int loginType = accountAuthDTO.getLoginType();

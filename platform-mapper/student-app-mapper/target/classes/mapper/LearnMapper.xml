@@ -12,45 +12,112 @@
             left_value as leftValue,
             right_value as rightValue
         from
-            21db_test.common_course_knowledge a
+            common_course_knowledge a
         where
             courseId = #{courseId}
           and
             level = 2
     </select>
+    <select id="noteList" resultType="com.ershiyi.domain.entity.NoteInfo">
+        select
+            id,
+            content,
+            likeNumber,
+            courseId,
+            knowledgeId,
+            DATE_FORMAT(createTime,'%Y-%m-%d %H:%i:%s') as sendTime,
+            sendName,
+            sendImg,
+            studenterId
+        from
+            common_course_note
+        where
+            knowledgeId = #{knowId}
+          and
+            deleted = 0
+        order by
+            likeNumber desc
+            limit #{page},#{size}
+    </select>
+    <insert id="insertNote" useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
+        insert  into
+            common_course_note(
+            content,
+            courseId,
+            knowledgeId,
+            studenterId,
+            sendImg,
+            sendName
+        )
+        values(
+                  #{content},
+                  #{courseId},
+                  #{knowledgeId},
+                  #{studenterId},
+                  #{sendImg},
+                  #{sendName}
+              )
+    </insert>
+    <select id="getQuestionInfo" resultType="com.ershiyi.domain.entity.QuestionChoice">
+        select
+        id as questionId,
+        optionA,
+        optionB,
+        optionC,
+        optionD,
+        answer as correctOption,
+        resolving,
+        question,
+        #{knowId} as knowId,
+        #{knowName} as knowName,
+        type
+        from
+        common_course_choice
+        where
+        deleted = 0
+        and
+        id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+    <update id="updateQuestion">
+        update common_course_choice set difficulty = #{level} where id = #{id};
+        update common_knowledge_question set difficulty = #{level} where questionId = #{id};
+    </update>
     <insert id="submitQuestion">
-            insert into
-                common_course_knowledge_record
-                (
-                   questionId,
-                   studenterId,
-                   correct,
-                   knowledgeId,
-                   questionType,
-                   startTime,
-                   endTime,
-                   useTime,
-                   courseId,
-                   isQuery,
-                   answer,
-                 questionTypeByfunction
-                )
-            values
-            <foreach collection="list" item="item" index="index" separator=",">
-                    (
-                    #{item.questionId},
-                    #{item.studenterId},
-                    #{item.correct},
-                    #{item.knowId},
-                    #{item.questionType},
-                    #{item.startdt},
-                    #{item.enddt},
-                    #{item.useTime},
-                    #{item.courseId},
-                    #{item.isQuery},
-                    #{item.answer},
-                    2)
-            </foreach>
+        insert into
+            common_course_knowledge_record
+        (
+        questionId,
+        studenterId,
+        correct,
+        knowledgeId,
+        questionType,
+        startTime,
+        endTime,
+        useTime,
+        courseId,
+        isQuery,
+        answer,
+        questionTypeByfunction
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.questionId},
+            #{item.studenterId},
+            #{item.correct},
+            #{item.knowId},
+            #{item.questionType},
+            #{item.startdt},
+            #{item.enddt},
+            #{item.useTime},
+            #{item.courseId},
+            #{item.isQuery},
+            #{item.answer},
+            2)
+        </foreach>
     </insert>
     <select id="choiceSQuestion" resultType="com.ershiyi.domain.entity.QuestionChoice">
         select
@@ -66,10 +133,10 @@
             #{knowName} as knowName,
             #{questionType} as type
         from
-            21db_test.common_course_choice
+            common_course_choice
         where
             id = #{questionId}
-        and
+          and
             deleted = 0
     </select>
     <select id="choiceMQuestion" resultType="com.ershiyi.domain.entity.QuestionChoice">
@@ -86,10 +153,10 @@
             #{knowName} as knowName,
             #{questionType} as type
         from
-            21db_test.common_course_multi
+            common_course_multi
         where
             id = #{questionId}
-        and
+          and
             deleted = 0
     </select>
     <select id="judgeQuestion" resultType="com.ershiyi.domain.entity.QuestionJudge">
@@ -102,63 +169,82 @@
             #{knowName} as knowName,
             #{questionType} as type
         from
-            21db_test.common_course_judge
+            common_course_judge
         where
             id = #{questionId}
-        and
+          and
             deleted = 0
     </select>
-    <select id="getRandom" resultType="com.ershiyi.domain.entity.QuestionType">
+    <select id="getRandom" resultType="java.lang.Integer">
         SELECT
-            distinct questionId,
-                     knowledgeId as knowId,
-                     knowledgeName as knowName,
-                     questionType
+            distinct questionId
         FROM
-            21db_test.common_knowledge_question
+            common_knowledge_question
         WHERE
             knowledgeId = #{knowId}
           and
             isRandom = 1
+        ORDER BY
+            RAND()
+            LIMIT #{number}
+    </select>
+    <select id="getRuleQuestionId" resultType="java.lang.Integer">
+        SELECT
+            distinct questionId
+        FROM
+            common_knowledge_question
+        WHERE
+            knowledgeId = #{knowId}
+          and
+            isRandom = 0
+          and
+            difficulty = 0
         ORDER BY RAND()
             LIMIT #{number}
     </select>
-    <select id="getQuestionId" resultType="com.ershiyi.domain.entity.QuestionType">
+    <select id="getQuestionId" resultType="java.lang.Integer">
         SELECT
-            distinct questionId,
-                     knowledgeId as knowId,
-                     knowledgeName as knowName,
-                     questionType
+            distinct questionId
         FROM
-             21db_test.common_knowledge_question
+            common_knowledge_question
         WHERE
-              knowledgeId = #{knowId}
-        and
-              isRandom = 0
+            knowledgeId = #{knowId}
+          and
+            isRandom = 0
         ORDER BY RAND()
-        LIMIT #{number}
+            LIMIT #{number}
     </select>
     <insert id="insertStudyRecord">
         insert into
-            21db_test.common_study_record(
-                                courseId,
-                                knowledgeId,
-                                studenterId,
-                                left_value,
-                                right_value,
-                                useTime,
-                                isFirst,
-                                level
+            common_study_record(
+            courseId,
+            knowledgeId,
+            studenterId,
+            left_value,
+            right_value,
+            useTime,
+            isFirst,
+            level
         )
-                        values(
-                                #{courseId},
-                                #{knowId},
-                                #{studenterId},
-                                #{leftValue},
-                                #{rightValue},
-                                #{useTime},
-                                #{flag},
-                               (select level from 21db_test.common_course_knowledge where id = #{knowId})
-        )
+        values(
+                  #{courseId},
+                  #{knowId},
+                  #{studenterId},
+                  #{leftValue},
+                  #{rightValue},
+                  #{useTime},
+                  #{flag},
+                  (select level from common_course_knowledge where id = #{knowId})
+              )
     </insert>
+    <insert id="insertLikeNote">
+        insert into common_course_note_record(noteId,studenterId) values(#{id},#{studenterId})
+    </insert>
+    <update id="addLike">
+        update common_course_note set likeNumber = likeNumber+1 where id = #{id}
+    </update>
+    <update id="cancelNoteLike">
+        update common_course_note set likeNumber = likeNumber-1 where id = #{id};
+        update common_course_note_record set deleted = 0 where noteId = #{id};
+    </update>
 </mapper>
