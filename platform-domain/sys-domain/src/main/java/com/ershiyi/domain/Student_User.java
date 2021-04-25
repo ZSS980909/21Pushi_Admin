@@ -47,22 +47,35 @@ public class Student_User {
      */
     @Column(name = "schoolId")
     @ApiModelProperty(value="学校ID")
-    private String schoolId = "";
+    private String schoolId = " ";
     /**
      * 班级id
      */
     @Column(name = "CLASSID")
     @ApiModelProperty(value="班级id")
     private String classid;
-
     // 手机唯一标识
     @Column(name = "uniqueCode")
     @ApiModelProperty(value = "手机唯一标识")
     private String uniqueCode;
-
     // 账号类型
     private Integer userType;
     private String schoolName = "";
+
+    public Student_User(String id, String studenterId, String createdt, String studentUserId, String schoolId, String classid, String uniqueCode, Integer userType, String schoolName) {
+        this.id = id;
+        this.studenterId = studenterId;
+        this.createdt = createdt;
+        this.studentUserId = studentUserId;
+        this.schoolId = schoolId;
+        this.classid = classid;
+        this.uniqueCode = uniqueCode;
+        this.userType = userType;
+        this.schoolName = schoolName;
+    }
+
+    public Student_User() {
+    }
 
     public String getId() {
         return id;

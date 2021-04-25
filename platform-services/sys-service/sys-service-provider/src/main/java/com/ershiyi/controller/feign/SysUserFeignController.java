@@ -2,20 +2,16 @@ package com.ershiyi.controller.feign;
 
 import com.ershiyi.domain.Student_User;
 import com.ershiyi.domain.SysUser;
-import com.ershiyi.domain.SysUser_Code;
-import com.ershiyi.dto.AccountAuthDTO;
 import com.ershiyi.feign.SysUserFeign;
 import com.ershiyi.service.SysUserService;
 import com.ershiyi.vo.SysUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.Map;
 
 @ApiIgnore
 @RestController
@@ -48,10 +44,6 @@ public class SysUserFeignController implements SysUserFeign {
         return sysUserService.findUserMsgById(id);
     }
 
-    @Override
-    public Student_User findByStudenterId(@PathVariable("id") String guid) {
-        return sysUserService.findByStudenterId(guid);
-    }
 
     @Override
     public Integer Logs(@PathVariable("loginId") String loginId,@RequestParam("uniquecode") String uniquecode, @RequestParam(value="logincode", required = false) String logincode,@RequestParam(value="usertypeid", required = false) int usertypeid,@RequestParam(value="logintype", required = false) int logintype) {
@@ -59,15 +51,9 @@ public class SysUserFeignController implements SysUserFeign {
     }
 
     @Override
-    public String findParenterId(String guid) {
-        return sysUserService.findParenterId(guid);
+    public Student_User getUserKey(String guid,int type) {
+        return sysUserService.getUserKey(guid,type);
     }
-
-//    @Override
-//    public Integer Logs(@RequestBody AccountAuthDTO accountAuthDTO) {
-//        System.out.println("进入成功");
-//        return null;
-//    }
 
 
 }
