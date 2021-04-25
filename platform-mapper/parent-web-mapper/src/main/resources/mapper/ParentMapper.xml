@@ -69,10 +69,10 @@
         (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
         (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
         (select count(*) from common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
-        (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status =
-        1 limit 1) as isPay,
-        (select count(*) from common_collect_course where courseId=a.id and studenterId = #{parenterId} and deleted = 0
-        limit 1) as isCollection
+        (select if(count(*)>1,1,0) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status =
+        1) as isPay,
+        (select if(count(*)>1,1,0) from common_collect_course where courseId=a.id and studenterId = #{parenterId} and deleted = 0
+        ) as isCollection
         from
         common_course a
         where
@@ -97,8 +97,8 @@
         (select subjectName from common_course_subject where id = a.subjectId) as subjectName,
         (select count(*) from common_student_browsing_history where courseid = a.id) as pageViews,
         (select count(*) from common_course_knowledge where courseId = a.id and isLast = 1) as knowNumber,
-        (select count(*) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1 limit 1) as isPay,
-        (select count(*) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0 limit 1) as isCollection
+        (select if(count(*)>1,1,0) from common_course_purchase where courseid = a.id and studenterId = #{studenterId} and status = 1) as isPay,
+        (select if(count(*)>1,1,0) from common_collect_course where courseId=a.id and studenterId =  #{parenterId} and deleted = 0) as isCollection
         from
         common_course a
         where
