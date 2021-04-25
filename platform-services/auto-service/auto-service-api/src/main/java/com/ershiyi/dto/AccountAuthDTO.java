@@ -15,7 +15,7 @@ import lombok.Data;
 public class AccountAuthDTO extends AbstractAuthDTO {
 
     @ApiModelProperty(value = "登录名")
-    private String loginId;
+    private String loginId = "";
 
     @ApiModelProperty(value = "密码")
     private String passWord;
@@ -30,10 +30,10 @@ public class AccountAuthDTO extends AbstractAuthDTO {
     private Integer loginType = 1;
 
     @ApiModelProperty("验证码")
-    private String validataCode;
+    private String validataCode = "";
 
     @ApiModelProperty("账号类型")
-    private int userTypeId;
+    private int userTypeId = 1;
 
     public Integer getLoginType() {
         return loginType;

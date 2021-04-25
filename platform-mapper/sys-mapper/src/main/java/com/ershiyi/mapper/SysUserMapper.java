@@ -142,7 +142,7 @@ public interface SysUserMapper extends AbstractMapper<SysUser>
 	 * @return
 	 */
 	@Select("select studenterId,schoolid from common_student_user where  studentuserid = #{guid} and deleted = 0 ")
-	public Student_User findByStudenterId(@Param("guid")String guid);
+	Student_User findByStudenterId(@Param("guid")String guid);
 
 	/**
 	 * 根据id查询账户
@@ -163,17 +163,6 @@ public interface SysUserMapper extends AbstractMapper<SysUser>
 	Integer Logsbyfather(@Param("loginId")String loginId,@Param("uniquecode")String uniquecode,@Param("logincode")String logincode);
 
 	Integer UpdateCode(@Param("loginId")String loginId, @Param("uniquecode")String uniquecode);
-
-	@Select("select parenterId from common_parent_user where parentUserId = #{guid}")
-    String findParenterId(@Param("guid") String guid);
-
-	/**
-	 * 根据用户id获取账户类型
-	 * @param guid
-	 * @return
-	 */
-	@Select("select userTypeId from sys_user where guid = #{guid}")
-	int getUserType(@Param("guid") String guid);
 
 	/**
 	 * 获取家长编号
