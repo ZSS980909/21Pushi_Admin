@@ -212,7 +212,6 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public List<CoursePojo> allCourse(RequestDTO request) {
-        // 开启分页
         PageHelper.startPage(request.getPageNumber(),request.getPageSize());
         if(request.getIsHot()!=0){
             // 按热度排序

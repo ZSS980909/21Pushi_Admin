@@ -194,8 +194,6 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-//    @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime)")
-//    List<Know> nowStudyKnow(RequestDTO request);
     @Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and To_Days(now())=To_Days(createTime) and courseId = #{courseId}")
     List<Know> nowStudyKnow(RequestDTO request);
     /**
@@ -259,7 +257,6 @@ public interface ParentMapper {
      * @param request
      * @return
      */
-    //@Select("select DISTINCT knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId}")
     @Select("select knowledgeId as knowId,(select knowledgeName as knowName from common_course_knowledge where id = a.knowledgeId ) as knowName from common_study_record a where studenterId = #{studenterId} and isFirst = 1 and courseId = #{courseId}")
     List<Know> allStudyKnow(RequestDTO request);
 

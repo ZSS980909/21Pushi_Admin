@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershiyi.mapper.BestQuestionMapper">
+    <select id="getQualifiedKnowId" resultType="java.lang.Integer">
+        select
+            knowledgeId
+        from
+            common_knowledge_question
+        where
+            difficulty>0
+        GROUP BY
+            knowledgeId
+        HAVING
+            count(best) &lt; 20
+    </select>
+    <select id="getBestStudent" resultType="java.lang.String">
+        select
+            a.studenterId,
+            ifnull((select count(*) from common_course_knowledge_record where studenterid = a.studenterId and correct = 1)/count(*),0) as Accuracy
+        from
+            common_course_knowledge_record a
+        GROUP BY
+            studenterId
+        HAVING
+            Accuracy &gt;= 0.85
+    </select>
+    <select id="getQuestionIdByStudent" resultType="java.lang.Integer">
+        select
+            distinct questionId
+        from
+            common_course_knowledge_record
+        where
+            questionId not in (select questionId from common_knowledge_question where best =1 )
+        and
+            studenterId in
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+    <update id="updateQuestion">
+        <foreach collection="list" item="item" separator=";">
+            update common_knowledge_question set best = 1 where questionId = #{item}
+        </foreach>
+    </update>
+</mapper>
