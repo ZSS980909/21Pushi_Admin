@@ -109,7 +109,13 @@ public class DecimalUtils {
         return b.divide(one, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
-
+    /**
+     *
+     * @param v1 被除数
+     * @param v2 除数
+     * @param scale 小数点位数
+     * @return
+     */
     public static double div(int v1,int v2,int scale){
         if(v1==0||v2==0){
             return 0;
@@ -117,6 +123,10 @@ public class DecimalUtils {
         BigDecimal b1 = new BigDecimal(Integer.toString(v1));
         BigDecimal b2 = new BigDecimal(Integer.toString(v2));
         return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(div(2,1,2));
     }
 
     /**

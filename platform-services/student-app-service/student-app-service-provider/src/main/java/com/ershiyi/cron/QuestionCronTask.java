@@ -1,5 +1,7 @@
 package com.ershiyi.cron;
 
+import com.ershiyi.Utils.DecimalUtils;
+import com.ershiyi.domain.entity.FractionRecord;
 import com.ershiyi.mapper.BestQuestionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,5 +57,72 @@ public class QuestionCronTask {
                 mapper.updateQuestion(result);
         }
         log.info("完成最优题目优选");
+    }
+
+    /**
+     * 计算学生的天才程度
+     */
+    @Scheduled(cron = "0 56 15 * * ?") // 每日凌晨一点执行一次
+    public void calculateIQ(){
+        log.info("开始计算学生的得分");
+        // 获取所有的学生列表
+        List<String> students = mapper.getAllStudent();
+        log.info("共拿到"+students.size()+"名用户");
+        for (String student : students) {
+            log.info("开始为"+student+"学生计算");
+            // 获取当前做过的所有的知识点
+            List<Integer> knows = mapper.getStudyKnowledge(student);
+            for (Integer know : knows) {
+                // 获取当前知识点的次数和时长
+                List<Integer> lengths = mapper.getKnowledgeLength(student,know);
+                if(lengths.isEmpty()||lengths.size()==1){
+                    log.info("当前知识点不足以计算，跳过");
+                    continue;
+                }
+                List<Double> records = mapper.isAddRecord(student,know);
+                // 当前已经计算了多少次 只计算后面的
+                for (int i = records.size(); i < 7; i++) {
+                    if(lengths.size()>i+1){
+                        double count = DecimalUtils.div(lengths.get(i)-lengths.get(i+1),lengths.get(i),2);
+                        count = count*i*10;
+                        if(i==6){
+                            for (Double record : records) {
+                                count += record;
+                            }
+                            mapper.insertRecord(DecimalUtils.div(count,6,2), student, 1,know);
+                        }else {
+                            mapper.insertRecord(count, student, 0,know);
+                        }
+                    }else{
+                        break;
+                    }
+                }
+            }
+            double finalFraction = mapper.getFinalFraction(student);
+            if(finalFraction==0){
+                log.info("目前该学生没有成绩可以计算，跳过");
+                continue;
+            }
+            log.info("计算完成,最终得分为："+finalFraction);
+            // 获取当前平均分和人数
+            FractionRecord record = mapper.getAvgFraction();
+            if(record.getNumber()==0){
+                finalFraction = 100 + DecimalUtils.div(finalFraction-100,10,2);
+                log.info("当前没有平均值");
+            }else{
+                log.info("目前的平均分为:"+record.getFraction());
+                finalFraction = 100 + DecimalUtils.div((finalFraction-record.getFraction()),record.getNumber(),2);
+                log.info(student+"学生IQ为:"+finalFraction);
+            }
+            // 查询数据库是否有该学生记录
+            List<Integer> fraction = mapper.getStudentFraction(student);
+            if(fraction.isEmpty()){
+                mapper.insertFraction(student,finalFraction);
+            }else{
+                mapper.updateFraction(fraction.get(0),finalFraction);
+            }
+            log.info(student+"该学生操作完成，继续下一个学生");
+        }
+
     }
 }
