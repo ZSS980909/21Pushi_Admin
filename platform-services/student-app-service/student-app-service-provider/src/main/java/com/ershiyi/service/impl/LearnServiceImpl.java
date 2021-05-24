@@ -354,7 +354,6 @@ public class LearnServiceImpl<T> implements LearnService {
                 // 判断题目是否正确
                 correct.setCorrect(correct.getFillAnswer().equals(correct.getAnswer()) ? 1 : 0);
             }
-            //  if(correct.getSendType()==""||correct.getSendType()==null) {  //学习课堂基本提交
             if (correct.getCorrect() == 0) {
                 // 题目错误插入错题库
                 mapper.insertWrongQuestion(correct);
