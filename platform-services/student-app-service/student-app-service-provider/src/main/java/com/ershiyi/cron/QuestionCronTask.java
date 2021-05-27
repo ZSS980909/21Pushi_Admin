@@ -62,7 +62,7 @@ public class QuestionCronTask {
     /**
      * 计算学生的天才程度
      */
-    @Scheduled(cron = "0 56 15 * * ?") // 每日凌晨一点执行一次
+    @Scheduled(cron = "0 00 2 * * ?") // 每日凌晨两点点执行一次
     public void calculateIQ(){
         log.info("开始计算学生的得分");
         // 获取所有的学生列表
@@ -80,6 +80,10 @@ public class QuestionCronTask {
                     continue;
                 }
                 List<Double> records = mapper.isAddRecord(student,know);
+                if(records.isEmpty()){
+                    log.info("当前知识点没有学习记录");
+                    continue;
+                }
                 // 当前已经计算了多少次 只计算后面的
                 for (int i = records.size(); i < 7; i++) {
                     if(lengths.size()>i+1){
@@ -123,6 +127,22 @@ public class QuestionCronTask {
             }
             log.info(student+"该学生操作完成，继续下一个学生");
         }
+    }
 
+
+    @Scheduled(cron = "0 0 3 * * ?") // 每日凌晨三点执行一次
+    public void calculateNext(){
+        // 标准值
+        List<Double> fraction  = mapper.getAvgLastFraction();
+        double all = fraction.stream().mapToDouble(f -> f).sum();
+        double b = DecimalUtils.div(all,fraction.size());
+        log.info("当前的学生标准值为："+b);
+        double s = 0;
+        for (Double r : fraction) {
+            s += (r-b)*(r-b);
+        }
+        s = Math.sqrt(s/fraction.size());
+        log.info("标砖差："+s);
+        mapper.insertTeamAvg(b,s);
     }
 }

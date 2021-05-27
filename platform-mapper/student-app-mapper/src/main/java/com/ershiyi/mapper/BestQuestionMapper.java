@@ -53,4 +53,10 @@ public interface BestQuestionMapper {
 
     @Update("update common_student_calculate set fraction = #{fraction} where id = #{id}")
     void updateFraction(@Param("id") Integer id,@Param("fraction") double finalFraction);
+
+    @Select("select fraction from common_student_calculate")
+    List<Double> getAvgLastFraction();
+
+    @Insert("insert into common_team_avg(avgTeam,standardDeviation) values(#{avg} ,#{std})")
+    void insertTeamAvg(@Param("avg") double avg,@Param("std") double std);
 }
