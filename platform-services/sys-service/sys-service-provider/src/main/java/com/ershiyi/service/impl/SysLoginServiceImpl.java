@@ -28,50 +28,43 @@ import java.util.*;
 public class SysLoginServiceImpl extends BaseServiceImpl<SysUser, SysLoginMapper>  implements SysLoginService {
     @Override
     public ValidataCode getVerificationCode(ValidataCode validatacode) {
-//        boolean b = RedisUtils.hasKey(validatacode.getMobilePhone());
-//        long expire = RedisUtils.getExpire(validatacode.getMobilePhone());
-//        //验证redis
-//        if(expire>60){
-//            return null;
-//        }else{
-            String randomcode = RandomCode.randomcode();//验证码
-            Date dd=new Date();
-            //格式化
-            SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String time=sim.format(dd);
-            if (validatacode.getType() == 1) {
-                /**
-                 * 1为注册功能
-                 */
-                LoginUtils.sendSms(validatacode.getMobilePhone(), LoginUtils.REGISTER, randomcode);
-            } else if (validatacode.getType() == 2) {
-                /**
-                 * 2为修改密码功能
-                 */
-                LoginUtils.sendSms(validatacode.getMobilePhone(), LoginUtils.UPDATE_PW, randomcode);
-            }else if(validatacode.getType() == 3) {
-                // 为登录功能
-                LoginUtils.sendSms(validatacode.getMobilePhone(), LoginUtils.PHONE_LOGIN,randomcode);
-            }else if(validatacode.getType()==4){
-                // 绑定功能
-                LoginUtils.sendSms(validatacode.getMobilePhone(),LoginUtils.BINDING,randomcode,mapper.getName(validatacode.getParenterId()));
-            }else if(validatacode.getType()==5){
-                // 修改信息
-                LoginUtils.sendSms(validatacode.getMobilePhone(),LoginUtils.MODIFY_PHONE,randomcode);
-            }
+        String randomcode = RandomCode.randomcode();//验证码
+        Date dd=new Date();
+        //格式化
+        SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time=sim.format(dd);
+        if (validatacode.getType() == 1) {
             /**
-             * 存入redis ,设置有效时间 有效时间5分钟
+             * 1为注册功能
              */
-            validatacode.setValidataCode(randomcode);
-            validatacode.setCreateTime(time);
-            boolean set = RedisUtils.set(validatacode.getMobilePhone(), validatacode.getValidataCode(), 300);
-            if(set){
-                System.out.println("验证码存入redis成功"+validatacode.getValidataCode());
-            }else{
-                System.out.println("验证码存入redis失败");
-            }
-            return validatacode;
-      //  }
+            LoginUtils.sendSms(validatacode.getMobilePhone(), LoginUtils.REGISTER, randomcode);
+        } else if (validatacode.getType() == 2) {
+            /**
+             * 2为修改密码功能
+             */
+            LoginUtils.sendSms(validatacode.getMobilePhone(), LoginUtils.UPDATE_PW, randomcode);
+        }else if(validatacode.getType() == 3) {
+            // 为登录功能
+            LoginUtils.sendSms(validatacode.getMobilePhone(), LoginUtils.PHONE_LOGIN,randomcode);
+        }else if(validatacode.getType()==4){
+            // 绑定功能
+            LoginUtils.sendSms(validatacode.getMobilePhone(),LoginUtils.BINDING,randomcode,mapper.getName(validatacode.getParenterId()));
+        }else if(validatacode.getType()==5){
+            // 修改信息
+            LoginUtils.sendSms(validatacode.getMobilePhone(),LoginUtils.MODIFY_PHONE,randomcode);
+        }
+        /**
+         * 存入redis ,设置有效时间 有效时间5分钟
+         */
+        validatacode.setValidataCode(randomcode);
+        validatacode.setCreateTime(time);
+        boolean set = RedisUtils.set(validatacode.getMobilePhone(), validatacode.getValidataCode(), 300);
+        if(set){
+            System.out.println("验证码存入redis成功"+validatacode.getValidataCode());
+        }else{
+            System.out.println("验证码存入redis失败");
+        }
+        return validatacode;
     }
 
     @Override
