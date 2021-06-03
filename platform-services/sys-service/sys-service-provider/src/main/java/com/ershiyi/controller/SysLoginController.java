@@ -48,10 +48,7 @@ public class SysLoginController{
         if (validatacode == null || StringUtils.isEmpty(validatacode.getType().toString())) {
             return RespEnum.ERROR.result("验证类型为空");
         }
-        ValidataCode result = loginService.getVerificationCode(validatacode);
-//        if(result==null){
-//            return RespEnum.ERROR.result("请勿频繁发送验证码！");
-//        }
+        loginService.getVerificationCode(validatacode);
         return RespEnum.OK.result("成功");
 
     }

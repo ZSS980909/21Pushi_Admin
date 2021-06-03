@@ -17,7 +17,7 @@ public interface SysLoginService extends BaseService<SysUser> {
      * @param validatacode
      * @return
      */
-    public ValidataCode getVerificationCode(ValidataCode validatacode);
+    ValidataCode getVerificationCode(ValidataCode validatacode);
 
     /**
      * 用户登录
