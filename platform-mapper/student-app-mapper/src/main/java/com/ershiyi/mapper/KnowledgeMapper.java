@@ -33,7 +33,7 @@ public interface KnowledgeMapper {
      * @param request
      * @return
      */
-    @Select("select id as questionId,optionA,optionB,1 as type,optionC,optionD, answer as correctOption,question,resolving " +
+    @Select("select id as questionId,optionA,optionB,type,optionC,optionD, answer as correctOption,question,resolving " +
             " from common_course_choice where deleted = 0 and isRelevanceFinish = 0 and " +
             " subjectId = #{subjectId} and grade = #{grade} and id not in (select DISTINCT questionId from common_course_question where studenterId = #{studenterId}) ORDER BY id desc limit 1")
     QuestionChoice getChoiceQuestion(RequestDTO request);

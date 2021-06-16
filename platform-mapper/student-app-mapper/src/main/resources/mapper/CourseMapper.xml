@@ -4,16 +4,12 @@
 
     <resultMap type="com.ershiyi.dto.JHZCourseDTO" id="JHZCouseResult">
         <result property="courseId"    column="COURSEID"/>
-        <result property="studentId"    column="studenterId"/>
-        <result property="isclaim"    column="ISCLAIM"/>
         <result property="plandt"    column="PLANDT"/>
         <result property="splandt"    column="SPLANDT"/>
         <result property="courseName" column="curriculum"/>
-        <result property="subjectname"    column="SUBJECTNAME"/>
         <result property="isremind"    column="ISREMIND"/>
     </resultMap>
     <resultMap type="com.ershiyi.domain.Common_Choice" id="Choice">
-        <result property="id"    column="ID"/>
         <result property="knowId"    column="KNOWLEDGEID"/>
         <result property="optionA"    column="CHOICEA"/>
         <result property="optionB"    column="CHOICEB"/>
@@ -21,34 +17,13 @@
         <result property="optionD"    column="CHOICED"/>
         <result property="correctOption"    column="RIGHTAWS"/>
         <result property="resolving"    column="RESOLVING"/>
-        <result property="title"    column="TITLE"/>
         <result property="isgb"    column="ISGB"/>
         <result property="schoolId"    column="schoolId"/>
         <result property="subjectId"    column="SUBJECTID"/>
     </resultMap>
 
-
-    <select id="queryCourse" parameterType="com.ershiyi.dto.RequestDTO" resultType="com.ershiyi.dto.JHZCourseDTO">
-        select courseid,studenterId from common_course_timetable where
-        studenterId = #{studenterId} and deleted = 0 and courseWeek = #{courseWeek}
-        union
-        select courseid,studenterId from common_course_plan where
-        studenterId = #{studenterId} and planType = 0
-    </select>
-    <select id="planCourse" parameterType="com.ershiyi.dto.JHZCourseDTO" resultType="com.ershiyi.domain.entity.CoursePlan">
-        call common_jhz_course(#{studenterId},#{courseId},#{plandt})
-    </select>
-    <select id="courseChapter" parameterType="java.lang.String" resultType="java.lang.Integer">
-      select count(id) from  common_course_chapter  where courseId =#{courseid}
-    </select>
-
     <select id="Obscure"  resultType="java.lang.Integer">
         select id from  common_course where  curriculum like #{courseName} and deleted =0 order by createdt desc
-    </select>
-
-
-    <select id="title"  resultType="com.ershiyi.domain.entity.subjectInfo">
-        select id as subjectId,subjectName,deleted,ifuser from  common_course_subject where  deleted=0 and ifuser=1
     </select>
 
     <select id="billboardbillboardByHOT"   resultType="int">
@@ -77,20 +52,7 @@ select courseid,curriculum,author,synopsis,picture,browse,upvote,discussid,bill,
     <select id="courseById" resultType="com.ershiyi.domain.entity.CoursePojo" parameterType="int">
          call student_collect_course(#{courseId})
     </select>
-    <select id="courseByAppraise" resultType="com.ershiyi.domain.Discuss">
---         select a.discuss,a.studenterId,a.createdt,b.curriculum,a.courseid,(select count(*) FROM common_course_discuss_thumbs where discussid =a.id) as thumbs,
---         (select nickname  from  sys_user  where  guid =(select studentuserid from common_student_user where studenterId =a.studenterId and deleted=0 limit  1)
---         and ifuse=1 order by createdt limit 1)
---         as nickname  from common_course_discuss a left join  common_course b on a.courseid=b.id where  a.courseid=#{id}
 
-       select a.discuss,a.id,a.studenterId,a.createdt,b.curriculum,a.courseid,(select count(*) FROM common_course_discuss_thumbs where discussid =a.id and deleted=0) as thumbs,
-        (select nickname  from  sys_user  where  guid =(select studentuserid from common_student_user where studenterId =a.studenterId and deleted=0 limit  1)
-        and ifuse=1 order by createdt limit 1)
-        as nickname  from common_course_discuss a left join  common_course b on a.courseid=b.id where  a.courseid=#{id}
-    </select>
-    <!--<update id="appraiseBydiscuss">-->
-        <!--update common_course_discuss set thumbs =thumbs+1 where id =#{id}-->
-    <!--</update>-->
     <insert id="appraiseByDiscuss" useGeneratedKeys="true"  keyProperty="id" parameterType="com.ershiyi.domain.Thumbs">
         INSERT  INTO  common_course_discuss_thumbs
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -114,9 +76,6 @@ select courseid,curriculum,author,synopsis,picture,browse,upvote,discussid,bill,
           select noticecontent,noticetypename,createdt  from common_course_notice where  courseid =#{courseId} and  deleted=0
     </select>
 
-   <!--   <select id="courseByKnowledgeContent" parameterType="com.ershiyi.domain.Knowledge" resultType="com.ershiyi.domain.KnowledgeContent">
-              select a.id as knowContentId,a.knowledgetext as content,a.prologue,a.studytime,b.editionname as editionName,a.knowledgeid as knowId from know_cont where a.knowContentId=#{knowId} and  a.deleted=0
-      </select>-->
     <select id="courseByKnowledgeAll" resultType="com.ershiyi.domain.Knowledge" parameterType="java.lang.String">
               select id as knowId,knowledgecontent as content from common_course_knowledge where id=#{id}
     </select>
@@ -125,10 +84,6 @@ select courseid,curriculum,author,synopsis,picture,browse,upvote,discussid,bill,
     </select>
     <select id="searchCourse" resultType="com.ershiyi.domain.entity.CoursePojo" parameterType="int">
            call student_collect_course (#{courseId})
-    </select>
-
-    <select id="selectDiscussByCourseid" parameterType="java.lang.Integer" resultType="java.lang.String">
-              select count(id) from  common_course_discuss where  courseid =#{id}  and deleted =0
     </select>
 
     <select id="LZMDKnowledge" parameterType="com.ershiyi.domain.Common_Search"  resultType="com.ershiyi.domain.Common_Return">
@@ -143,47 +98,9 @@ select courseid,curriculum,author,synopsis,picture,browse,upvote,discussid,bill,
     </select>
 
 
-
-    <select id="SelectQuestionType" resultType="java.lang.String">
-           select questiontype from common_course_questiontype where  deleted=0
-    </select>
-    <select id="JudgeQuestion" parameterType="com.ershiyi.domain.Common_Judge" resultType="com.ershiyi.domain.Common_Judge">
-        <foreach collection="list" index="index" item="item" separator="UNION ALL">
-
-            select * from (select t1.id as questionId,t1.knowledgeid as knowId,t1.title as question,t1.resolving,t1.rightaws as correctOption,t1.isgb,t1.schoolId,t1.subjectid from common_course_judge AS t1 JOIN (
-            select *from common_course_judge where knowledgeid in (select knowledgeContentId from common_course_knowledge WHERE  id=#{item.knowId}) order by  rand() limit  1) AS t2
-            WHERE t1.id >= t2.id
-            ORDER BY  t1.id LIMIT 1) as a1
-        </foreach>
-
-    </select>
-    <select id="MultiQuestion" parameterType="com.ershiyi.domain.Common_Multi" resultType="com.ershiyi.domain.Common_Multi">
-        <foreach collection="list" index="index" item="item" separator="UNION ALL">
-
-            select * from (select t1.id as questionId,t1.knowledgeid as knowId,t1.choicea as optionA,t1.choiceb as optionB,t1.choicec as optionC,t1.choiced optionD,t1.rightaws as correctOption,t1.resolving,t1.title as question,t1.isgb,t1.schoolId,t1.subjectid from common_course_multi AS t1 JOIN
-            (select * from common_course_multi where knowledgeid in (select knowledgeContentId from common_course_knowledge WHERE  id=#{item.knowId}) order by rand() limit 1) AS t2
-            WHERE t1.id >= t2.id
-            ORDER BY t1.id LIMIT 1) as a1
-        </foreach>
-    </select>
-
-    <select id="ChoiceQuestion"  parameterType="com.ershiyi.domain.Common_Choice" resultType="com.ershiyi.domain.Common_Choice">
-        <foreach  collection="list" index="index" item="item" separator="UNION ALL"  >
-            select * from (select t1.id as questionId,t1.knowledgeid as knowId,t1.choicea as optionA,t1.choiceb as optionB,t1.choicec as optionC,t1.choiced as optionD,t1.rightaws as correctOption,t1.resolving,
-            t1.title as question,t1.isgb,t1.schoolId,t1.subjectid from common_course_choice AS t1 JOIN (select * from common_course_choice where knowledgeid in (select knowledgeContentId from common_course_knowledge WHERE  id=#{item.knowId}) order by rand() limit 1) AS t2
-            WHERE t1.id >= t2.id
-            ORDER BY t1.id LIMIT 1) as a1
-        </foreach>
-    </select>
-
     <insert id="ZSubmit" parameterType="com.ershiyi.domain.Common_StudyrateBy" >
         insert into common_lzmd_studyrate(knowledgeid, startdt, enddt, userdt, createdt, answer, fillAnswer, questiontype, courseid, studenterId, knowledgeidiscompleted, questionId, isright)
 values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{questionType},#{courseId},#{studenterId},#{knowledgeidiscompleted},#{questionId},#{isright})
-    </insert>
-    <insert id="common_studyrateBIES" parameterType="com.ershiyi.domain.Common_StudyrateBy" >
-          insert into  common_course_difficult (KNOWLEDGEID, QUESTIONTYPE, questionId, CREATEDT, studenterId) value(
-          #{knowId},#{questionType},#{questionId},#{createdt},#{studenterId}
-          )
     </insert>
     <select id="knowledgeMessage" resultType="java.lang.String" parameterType="java.lang.String">
         select id from common_course_knowledge where courseId=#{courseId} and isdelete=0
