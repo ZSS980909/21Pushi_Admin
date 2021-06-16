@@ -25,8 +25,8 @@ public interface KnowledgeMapper {
      * 获取课程信息列表
      * @return
      */
-    @Select("select id as courseId,curriculum as courseName,subjectId,picture from common_course where deleted = 0")
-    List<CoursePojo> courseList();
+    @Select("select id as courseId,curriculum as courseName,subjectId,picture from common_course where deleted = 0 and grade = #{grade}")
+    List<CoursePojo> courseList(RequestDTO request);
 
     /**
      * 获取一条当前科目最近的题目
@@ -34,8 +34,8 @@ public interface KnowledgeMapper {
      * @return
      */
     @Select("select id as questionId,optionA,optionB,1 as type,optionC,optionD, answer as correctOption,question,resolving " +
-            " from 21db_test.common_course_choice where deleted = 0 and isRelevanceFinish = 0 and " +
-            " subjectId = #{subjectId} and id not in (select DISTINCT questionId from common_course_question where studenterId = #{studenterId}) ORDER BY id desc limit 1")
+            " from common_course_choice where deleted = 0 and isRelevanceFinish = 0 and " +
+            " subjectId = #{subjectId} and grade = #{grade} and id not in (select DISTINCT questionId from common_course_question where studenterId = #{studenterId}) ORDER BY id desc limit 1")
     QuestionChoice getChoiceQuestion(RequestDTO request);
 
     /**

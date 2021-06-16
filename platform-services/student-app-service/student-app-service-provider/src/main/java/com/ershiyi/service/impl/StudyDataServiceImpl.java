@@ -68,10 +68,10 @@ public class StudyDataServiceImpl implements StudyDataService {
     }
 
     /**
-     * @Description: 查询学生当天的答题情况 
-     * @Param: studenterId 学生编号 
-     * @return:  学生各科目答题情况集合
-     * @Date: 2020/7/28 
+     * @Description: 查询学生当天的答题情况
+     * @Param: studenterId 学生编号
+     * @return: 学生各科目答题情况集合
+     * @Date: 2020/7/28
      *
      */
     @Override
@@ -87,10 +87,10 @@ public class StudyDataServiceImpl implements StudyDataService {
     }
 
     /**
-     * @Description: 查询学生7天内的答题情况 
-     * @Param:  studenterId 学生编号
-     * @return:  学生各科目答题情况集合
-     * @Date: 2020/7/28 
+     * @Description: 查询学生7天内的答题情况
+     * @Param: studenterId 学生编号
+     * @return: 学生各科目答题情况集合
+     * @Date: 2020/7/28
      *
      */
     @Override
@@ -106,10 +106,10 @@ public class StudyDataServiceImpl implements StudyDataService {
     }
 
     /**
-     * @Description: 查询学生30天内的答题情况 
-     * @Param:  studenterId 学生编号
-     * @return:  学生各科目答题情况集合
-     * @Date: 2020/7/28 
+     * @Description: 查询学生30天内的答题情况
+     * @Param: studenterId 学生编号
+     * @return: 学生各科目答题情况集合
+     * @Date: 2020/7/28
      *
      */
     @Override

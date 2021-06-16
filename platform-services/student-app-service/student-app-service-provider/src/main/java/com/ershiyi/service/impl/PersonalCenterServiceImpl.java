@@ -33,10 +33,10 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
     private StudyDataMapper studyDataMapper;
 
     /**
-     * @Description: 根据学生当前的编号查询学生个人中心详细信息 
-     * @Param:  studenterId 学生编号
-     * @return:  学生信息实体类
-     * @Date: 2020/7/28 
+     * @Description: 根据学生当前的编号查询学生个人中心详细信息
+     * @Param: studenterId 学生编号
+     * @return: 学生信息实体类
+     * @Date: 2020/7/28
      *
      */
     @Override
@@ -44,11 +44,11 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
         return mapper.findByStudenterId(studenterId);
     }
     /**
-     * @Description: 修改用户头像 
-     * @Param:  guid 学生编号
+     * @Description: 修改用户头像
+     * @Param: guid 学生编号
      * @Param： url 图片链接
-     * @return:  修改结果 0为失败，其余为成功
-     * @Date: 2020/7/28 
+     * @return: 修改结果 0为失败，其余为成功
+     * @Date: 2020/7/28
      *
      */
     @Override
@@ -57,13 +57,13 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
     }
 
     /**
-     * @Description: 修改个人信息 
-     * @Param:  guid 学生id
-     * @Param:  name 修改后的昵称
-     * @Param:  sex 修改后的性别
-     * @Param:  birthday 修改后的生日
-     * @return:  修改结果 0为失败，其余为成功
-     * @Date: 2020/7/28 
+     * @Description: 修改个人信息
+     * @Param: guid 学生id
+     * @Param: name 修改后的昵称
+     * @Param: sex 修改后的性别
+     * @Param: birthday 修改后的生日
+     * @return: 修改结果 0为失败，其余为成功
+     * @Date: 2020/7/28
      *
      */
     @Override
@@ -76,24 +76,24 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
      * @return
      */
     @Override
-    public int queryCourseNumber(String studenterId) {
-        return mapper.queryCourseNumber(studenterId);
+    public int queryCourseNumber(String studenterId,int grade) {
+        return mapper.queryCourseNumber(studenterId,grade);
     }
 
     /**
-     * @Description: 查询学生所有收藏的课程信息 
-     * @Param: studenterId 学生编号 
+     * @Description: 查询学生所有收藏的课程信息
+     * @Param: studenterId 学生编号
      * @Param: pageNumber 当前的页码
      * @Param: sizeNumber 每页展示的数量
-     * @return: 课程详细信息集合 
-     * @Date: 2020/7/29 
+     * @return: 课程详细信息集合
+     * @Date: 2020/7/29
      *
      */
     @Override
-    public PageInfo<CoursePojo> getCollectCourse(String studenterId, int pageNumber, int sizeNumber) {
+    public PageInfo<CoursePojo> getCollectCourse(String studenterId, int pageNumber, int sizeNumber,int grade) {
         // 开启分页
         PageHelper.startPage(pageNumber,sizeNumber);
-        return new PageInfo(mapper.getCollectCourse(studenterId));
+        return new PageInfo(mapper.getCollectCourse(studenterId,grade));
     }
 
     /**
@@ -102,10 +102,9 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
      */
     @Override
     public List<subjectInfo> getAllSubject() {
-        List<subjectInfo> subjects = new ArrayList<>();
-        subjects.add(new subjectInfo(0,"全部"));
-        subjects.addAll(studyDataMapper.findAllSubject());
-        return subjects;
+        List<subjectInfo> result = Arrays.asList(new subjectInfo(0, "全部"));
+        result.addAll(studyDataMapper.findAllSubject());
+        return result;
     }
     /**
      * 根据学生编号和学科编号查询到所有的知识点
@@ -178,11 +177,11 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
     }
 
     @Override
-    public PageInfo<CoursePojo> findHistoryCourse(String studenterId, int pageNumber, int pageSize) {
+    public PageInfo<CoursePojo> findHistoryCourse(String studenterId, int pageNumber, int pageSize,int grade) {
         // 开启分页
         PageHelper.startPage(pageNumber,pageSize);
         // 根据学生编号获取到学生所有浏览过的课程
-        List<Integer> courseId = mapper.findHistoryCourse(studenterId);
+        List<Integer> courseId = mapper.findHistoryCourse(studenterId,grade);
         if(courseId.isEmpty()){
             return new PageInfo<>(new ArrayList<>());
         }

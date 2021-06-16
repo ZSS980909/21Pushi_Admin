@@ -53,7 +53,7 @@ public class CourseController {
     @ApiOperation(value = "根据科目id查询分类下的课程信息",notes = "根据科目id查询分类下的课程信息")
     public AbstractBaseResult courseForSubject(@RequestBody RequestDTO request){
         try{
-            return RespEnum.OK.result(courseseservice.courseForSubject(request.getStudenterId(),request.getSubjectId(),request.getPageNumber(),request.getPageSize()));
+            return RespEnum.OK.result(courseseservice.courseForSubject(request.getStudenterId(),request.getSubjectId(),request.getPageNumber(),request.getPageSize(),request.getGrade()));
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙");

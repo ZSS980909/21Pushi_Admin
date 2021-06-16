@@ -26,8 +26,8 @@ public interface LearnMapper{
      * @param studenterId 学生编号
      * @return
      */
-    @Select("select * from purchase_course_info where studenterid = #{studenterId}  order by id desc ")
-    public List<CoursePojo> findAllCourse(@Param("studenterId") String studenterId);
+    @Select("select * from purchase_course_info where studenterid = #{studenterId} and grade = #{grade} order by id desc ")
+    List<CoursePojo> findAllCourse(@Param("studenterId") String studenterId,@Param("grade")int grade);
 
     /**
      * 根据课程id查询出课程信息和评论者id
@@ -70,28 +70,6 @@ public interface LearnMapper{
      */
     @Insert("insert into common_course_discuss(discuss,courseId,guid) values(#{message},#{courseId},#{guid})")
     public int publishComment(@Param("message") String message, @Param("guid") String guid, @Param("courseId") Integer courseId);
-
-    /**
-     * 单选题
-     * @param question  题目id
-     * @return
-     */
-    public QuestionChoice choiceSQuestion(QuestionType question);
-
-    /**
-     * 多选题
-     * @param question  题目id
-     * @return
-     */
-    public QuestionChoice choiceMQuestion(QuestionType question);
-
-    /**
-     * 判断题
-     * @param question  题目id
-     * @return
-     */
-    public QuestionJudge judgeQuestion(QuestionType question);
-
 
     /**
      * 收藏当前知识点
@@ -138,33 +116,17 @@ public interface LearnMapper{
     @Insert("insert into common_course_wrongquestions(knowledgeId,questionType,studenterId,courseId,doQuestionType,questionId,fillAnswer) values(#{knowId},#{questionType},#{studenterId},#{courseId},1,#{questionId},#{fillAnswer})")
     int insertWrongQuestion(Correct correct);
 
-    /**
-     * 将当前题目插入难题库
-     * @param correct
-     * @return
-     */
-    @Insert("insert into common_course_difficult(knowledgeId,questionType,questionId,studenterId,difficultType) values(#{knowId},#{questionType},#{questionId},#{studenterId},0)")
-    Integer insertDifficultyQuestion(Correct correct);
-
 
 
     @Update("update common_Ipush_record set static =2 where id =#{plushId}")
     Integer updatepushstatic(Correct correct);
 
     /**
-     * 查詢是否有这条知识点内容推送存在
-     * @param correct
-     */
-//    @Select("select count(id) from common_Ipush_record where plushContentId =#{knowContentId} and pushType=#{sendType} and static =0")
-//    int selectplush(Correct correct);
-    /**
      * 查詢是否有这条知识点内容推送存
      */
-    //@Select("select count(id) from common_Ipush_record where plushContentId =#{knowContentId} and static =0")
     @Select("select count(id) from  common_Ipush_record where plushContentId=#{knowContentId} and static =0 and studenterId=#{studenterId}")
     int selectplush(@Param("knowContentId") String knowContentId,@Param("studenterId") String studenterId );
 
-    //@Select("select  count(id) from  common_course_knowledge_content where  id=#{knowContentId}  and deleted=0")
     @Select("select count(*) from  common_knowledge_question where questionId =#{questionId}  and isRandom =0")
     int selectpushquestionby(Correct correct);
 
@@ -179,8 +141,6 @@ public interface LearnMapper{
      * @param planTime 计划时间
      * @return
      */
-//    @Insert("insert into common_Ipush_record(courseId,chapterId,studenterId,thisPushDt,nextPushDt,static,plushContentId,plushFrequency,pushType,questionType) " +
-//            "values(#{courseId},#{chapterId},#{studenterId},now(),#{planTime},0,#{knowContentId},#{plushFrequency},6,#{questionType})")
     @Insert("insert into common_Ipush_record(courseId,studenterId,thisPushDt,nextPushDt,static,plushContentId,plushFrequency,pushType,questionType) " +
             "values(#{courseId},#{studenterId},now(),#{planTime},0,#{knowId},#{plushFrequency},6,#{questionType})")
     Integer insertPushQuestion(@Param("courseId")String courseId,

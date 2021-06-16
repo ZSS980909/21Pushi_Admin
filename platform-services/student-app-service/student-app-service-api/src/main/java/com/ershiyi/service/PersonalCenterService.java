@@ -15,33 +15,33 @@ import java.util.List;
  */
 public interface PersonalCenterService {
     /**
-     * @Description: 根据学生当前的编号查询学生个人中心详细信息 
-     * @Param:  studenterId 学生编号
-     * @return:  学生信息实体类
-     * @Date: 2020/7/28 
+     * @Description: 根据学生当前的编号查询学生个人中心详细信息
+     * @Param: studenterId 学生编号
+     * @return: 学生信息实体类
+     * @Date: 2020/7/28
      *
      */
     public StudentInformation findByStudenterId(String studenterId);
 
 
      /**
-      * @Description: 修改用户头像 
-      * @Param:  guid 学生id
+      * @Description: 修改用户头像
+      * @Param: guid 学生id
       * @Param： url 图片链接
-      * @return:  修改结果 0为失败，其余为成功
-      * @Date: 2020/7/28 
+      * @return: 修改结果 0为失败，其余为成功
+      * @Date: 2020/7/28
       *
       */
      public int UpdateImage(String guid,String url);
 
      /**
-      * @Description: 修改个人信息 
-      * @Param:  guid 学生id
-      * @Param:  name 修改后的昵称
-      * @Param:  sex 修改后的性别
-      * @Param:  birthday 修改后的生日
-      * @return:  修改结果 0为失败，其余为成功
-      * @Date: 2020/7/28 
+      * @Description: 修改个人信息
+      * @Param: guid 学生id
+      * @Param: name 修改后的昵称
+      * @Param: sex 修改后的性别
+      * @Param: birthday 修改后的生日
+      * @return: 修改结果 0为失败，其余为成功
+      * @Date: 2020/7/28
       *
       */
      public int UpdateInfo(String guid, String name, String sex, String birthday);
@@ -51,18 +51,18 @@ public interface PersonalCenterService {
      * @param studenterId
      * @return
      */
-     public int queryCourseNumber(String studenterId);
+     public int queryCourseNumber(String studenterId,int grade);
 
      /**
-      * @Description: 查询学生所有收藏的课程信息 
-      * @Param: studenterId 学生编号 
+      * @Description: 查询学生所有收藏的课程信息
+      * @Param: studenterId 学生编号
       * @Param: pageNumber 当前的页码
       * @Param: sizeNumber 每页展示的数量
-      * @return: 课程详细信息集合 
-      * @Date: 2020/7/29 
+      * @return: 课程详细信息集合
+      * @Date: 2020/7/29
       *
       */
-     public PageInfo<CoursePojo> getCollectCourse(String studenterId, int pageNumber, int sizeNumber);
+     public PageInfo<CoursePojo> getCollectCourse(String studenterId, int pageNumber, int sizeNumber,int grade);
 
     /**
      * 获取所有的课程编号
@@ -108,14 +108,14 @@ public interface PersonalCenterService {
      */
      public int deleteIdea(List<Integer> ids);
     /**
-     * @Description: 查询学生所有浏览过的课程信息 
-     * @Param: studenterId 学生编号 
+     * @Description: 查询学生所有浏览过的课程信息
+     * @Param: studenterId 学生编号
      * @Param: pageNumber 当前的页码
      * @Param: sizeNumber 每页展示的数量
-     * @return: 课程详细信息集合 
-     * @Date: 2020/7/29 
+     * @return: 课程详细信息集合
+     * @Date: 2020/7/29
      */
-    public PageInfo<CoursePojo> findHistoryCourse(String studenterId, int pageSize, int sizeNumber);
+    public PageInfo<CoursePojo> findHistoryCourse(String studenterId, int pageSize, int sizeNumber,int grade);
 
     /**
      *  根据id删除历史的课程记录

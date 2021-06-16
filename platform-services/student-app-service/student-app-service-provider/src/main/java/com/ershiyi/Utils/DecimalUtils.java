@@ -125,10 +125,6 @@ public class DecimalUtils {
         return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
-    public static void main(String[] args) {
-        System.out.println(div(2,1,2));
-    }
-
     /**
      * 计算题目难度
      * @param count 做题数量

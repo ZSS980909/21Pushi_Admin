@@ -57,7 +57,7 @@ public interface CourseService {
 
     public Object LZMDQuestionBySubmit(Map<String, List<Common_StudyrateBy>> list);
 
-    PageInfo<CoursePojo> courseForSubject(String studenterId, Integer subjectId, Integer pageNumber, Integer pageSize);
+    PageInfo<CoursePojo> courseForSubject(String studenterId, Integer subjectId, Integer pageNumber, Integer pageSize,int grade);
 
     PageInfo<CoursePojo> authorAbout(Integer creatorId, Integer courseId, Integer pageNumber, Integer pageSize);
 

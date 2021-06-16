@@ -25,7 +25,7 @@ public interface LearnService {
      * @param pageSize 每页展示的数量
      * @return
      */
-    PageInfo<CoursePojo> courseList(String studentId, Integer pageNumber, Integer pageSize);
+    PageInfo<CoursePojo> courseList(String studentId, Integer pageNumber, Integer pageSize,int grade);
 
 
     /**

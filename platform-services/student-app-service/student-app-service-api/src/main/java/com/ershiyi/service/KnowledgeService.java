@@ -2,6 +2,7 @@ package com.ershiyi.service;
 
 import com.ershiyi.domain.entity.*;
 import com.ershiyi.dto.RequestDTO;
+import org.bouncycastle.cert.ocsp.Req;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface KnowledgeService {
      * 课程信息列表
      * @return
      */
-    public List<CoursePojo> courseList();
+    public List<CoursePojo> courseList(RequestDTO request);
 
     /**
      * 给当前学生分配一条当前节目下的题目

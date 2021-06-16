@@ -42,7 +42,7 @@ public class LearnController {
     @ApiOperation(value = "根据学生编号查询学生可学的所有课程",notes = "根据学生编号查询学生可学的所有课程")
     public AbstractBaseResult courseList(@RequestBody RequestDTO request){
         try{
-            return RespEnum.OK.result(service.courseList(request.getStudenterId(),request.getPageNumber(),request.getPageSize()));
+            return RespEnum.OK.result(service.courseList(request.getStudenterId(),request.getPageNumber(),request.getPageSize(),request.getGrade()));
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙，请稍后再试");

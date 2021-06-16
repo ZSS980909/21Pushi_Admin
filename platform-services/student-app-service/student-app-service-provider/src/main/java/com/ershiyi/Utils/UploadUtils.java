@@ -40,7 +40,4 @@ public class UploadUtils {
         stb.append(System.currentTimeMillis());
         return stb.toString();
     }
-    public static void main(String[] args) {
-        System.out.println(getFileName("mp3"));
-    }
 }

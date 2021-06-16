@@ -8,6 +8,7 @@ import com.ershiyi.dto.RequestDTO;
 import com.ershiyi.mapper.KnowledgeMapper;
 import com.ershiyi.service.KnowledgeService;
 import io.swagger.models.auth.In;
+import org.bouncycastle.cert.ocsp.Req;
 import org.bouncycastle.pqc.crypto.gmss.Treehash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      * @return
      */
     @Override
-    public List<CoursePojo> courseList() {
-        return mapper.courseList();
+    public List<CoursePojo> courseList(RequestDTO request) {
+        return mapper.courseList(request);
     }
 
 

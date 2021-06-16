@@ -8,6 +8,7 @@ import lombok.Data;
  * @date: 2020-08-05 13:59
  * @version: 1.0
  */
+@Data
 public class RequestDTO {
     private Integer id;  // 表id
     private String studenterId;    // 学生编号
@@ -40,6 +41,7 @@ public class RequestDTO {
     private String loginId;  // 登录手机号
     private Float correct;  // 做题正确率
     private Double version;  // 应用版本信息
+    private int grade = 1; // 阶段信息 0小学 1初中 2高中
 
     public String getKnowContentId() {
         return knowContentId;

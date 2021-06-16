@@ -202,7 +202,9 @@ values (#{knowId},#{startdt},#{enddt},#{userdt},now(),#{answer},#{fillAnswer},#{
         where
         deleted = 0
         and
-        studenterId = #{studenterId}
+            studenterId = #{studenterId}
+        and
+            courseId in (select id from common_course where grade = #{grade})
         <if test="subjectId!=0">
             and courseId in (select id from common_course where subjectId = #{subjectId})
         </if>

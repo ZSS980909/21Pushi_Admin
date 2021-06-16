@@ -49,11 +49,11 @@ public class LearnServiceImpl<T> implements LearnService {
      * @return
      */
     @Override
-    public PageInfo<CoursePojo> courseList(String studenterId, Integer pageNumber, Integer pageSize) {
+    public PageInfo<CoursePojo> courseList(String studenterId, Integer pageNumber, Integer pageSize,int grade) {
         // 开启分页
         PageHelper.startPage(pageNumber, pageSize);
         // 根据学生编号查询出学生所有的课程id集合
-        List<CoursePojo> results = mapper.findAllCourse(studenterId);
+        List<CoursePojo> results = mapper.findAllCourse(studenterId,grade);
         return new PageInfo<>(results);
     }
 

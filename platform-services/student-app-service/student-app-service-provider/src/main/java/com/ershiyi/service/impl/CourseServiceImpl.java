@@ -429,13 +429,13 @@ public class CourseServiceImpl implements CourseService {
      * @return
      */
     @Override
-    public PageInfo<CoursePojo> courseForSubject(String studentId,Integer subjectId, Integer pageNumber, Integer pageSize) {
+    public PageInfo<CoursePojo> courseForSubject(String studentId,Integer subjectId, Integer pageNumber, Integer pageSize,int grade) {
         // 开启分页
         PageHelper.startPage(pageNumber,pageSize);
         // 查询学生当前科目下所有未购买的课程
         List<Integer> courseIds =null;
         if(subjectId==0){
-            courseIds = mapper.courseForSubjectone(studentId);
+            courseIds = mapper.courseForSubjectone(studentId,grade);
         }else{
              courseIds = mapper.courseForSubject(studentId,subjectId);
         }

@@ -102,7 +102,7 @@ public class DateUtils {
         }
         // 当前星期在下周
         do{
-            // 向后推一天，直到星期数与所给星期数相同
+            //向后推一天，直到星期数与所给星期数相同
             cal.add(Calendar.DAY_OF_MONTH,1);
         }while (index!=cal.get(Calendar.DAY_OF_WEEK));
         return sdf.format(cal.getTime());

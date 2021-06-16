@@ -168,7 +168,7 @@ public class PersonalCenterController {
     @ApiOperation(value = "根据学生编号查询到学生所有购买的课程数量", notes = "根据学生编号查询到学生所有购买的课程数量")
     public AbstractBaseResult findPayCourseNumber(@RequestBody RequestDTO request) {
         try {
-            return RespEnum.OK.result(centerService.queryCourseNumber(request.getStudenterId()));
+            return RespEnum.OK.result(centerService.queryCourseNumber(request.getStudenterId(),request.getGrade()));
         } catch (Exception e) {
             e.printStackTrace();
             return RespEnum.ERROR.result("服务器异常，请检查日志文件，稍后重试");
@@ -184,7 +184,7 @@ public class PersonalCenterController {
     @ApiOperation(value = "根据学生编号查询到学生所有收藏的课程", notes = "根据学生编号查询到学生所有收藏的课程")
     public AbstractBaseResult findAllCourse(@RequestBody RequestDTO request) {
         try {
-            return RespEnum.OK.result(centerService.getCollectCourse(request.getStudenterId(), request.getPageNumber(), request.getPageSize()));
+            return RespEnum.OK.result(centerService.getCollectCourse(request.getStudenterId(), request.getPageNumber(), request.getPageSize(),request.getGrade()));
         } catch (Exception e) {
             e.printStackTrace();
             return RespEnum.ERROR.result("服务器异常，请检查日志文件，稍后重试");
@@ -310,7 +310,7 @@ public class PersonalCenterController {
     @ApiOperation(value = "根据学生编号查询到学生所有浏览过的课程", notes = "根据学生编号查询到学生所有浏览过的课程")
     public AbstractBaseResult courseHistory(@RequestBody RequestDTO request) {
         try {
-            return RespEnum.OK.result(centerService.findHistoryCourse(request.getStudenterId(), request.getPageNumber(), request.getPageSize()));
+            return RespEnum.OK.result(centerService.findHistoryCourse(request.getStudenterId(), request.getPageNumber(), request.getPageSize(),request.getGrade()));
         } catch (Exception e) {
             e.printStackTrace();
             return RespEnum.ERROR.result("服务器异常，请检查日志文件，稍后重试");
