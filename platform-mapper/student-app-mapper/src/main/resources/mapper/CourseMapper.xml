@@ -89,7 +89,7 @@ select courseid,curriculum,author,synopsis,picture,browse,upvote,discussid,bill,
     <select id="LZMDKnowledge" parameterType="com.ershiyi.domain.Common_Search"  resultType="com.ershiyi.domain.Common_Return">
         select count(courseId) as knowIdNumber,courseId,courseName,subjectId,picture from (select id as knowId,courseId,(select curriculum  from common_course where id =courseId) as courseName,(select subjectid from common_course where id =courseId) as subjectId,
         (select picture from common_course where id =courseId) as picture   from common_course_knowledge  where courseId in
-        (select courseid from common_course_purchase where studenterid=#{studenterId} and status=1))  as ko group by courseName
+        (select courseid from purchase_course_info where studenterid=#{studenterId} and grade = #{grade}))  as ko group by courseName
 </select>
 
     <select id="CountKnowledge" parameterType="com.ershiyi.domain.Common_Search"  resultType="com.ershiyi.domain.Common_Return">

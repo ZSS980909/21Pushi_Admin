@@ -102,7 +102,8 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
      */
     @Override
     public List<subjectInfo> getAllSubject() {
-        List<subjectInfo> result = Arrays.asList(new subjectInfo(0, "全部"));
+        List<subjectInfo> result = new ArrayList<>();
+        result.add(new subjectInfo(0, "全部"));
         result.addAll(studyDataMapper.findAllSubject());
         return result;
     }
