@@ -25,8 +25,8 @@ public interface KnowledgeMapper {
      * 获取课程信息列表
      * @return
      */
-    @Select("select id as courseId,curriculum as courseName,subjectId,picture from common_course where deleted = 0 and grade = #{grade}")
-    List<CoursePojo> courseList(RequestDTO request);
+    @Select("select id as courseId,curriculum as courseName,subjectId,picture from common_course where deleted = 0 and grade = 1")
+    List<CoursePojo> courseList();
 
     /**
      * 获取一条当前科目最近的题目

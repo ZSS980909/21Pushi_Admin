@@ -30,9 +30,9 @@ public class KnowledgeController {
 
     @PostMapping("/courseList")
     @ApiOperation(value = "返回课程列表")
-    public AbstractBaseResult courseList(@RequestBody RequestDTO request){
+    public AbstractBaseResult courseList(){
         try {
-            return RespEnum.OK.result(service.courseList(request));
+            return RespEnum.OK.result(service.courseList());
         }catch (Exception e){
             e.printStackTrace();
             return RespEnum.ERROR.result("系统繁忙！");

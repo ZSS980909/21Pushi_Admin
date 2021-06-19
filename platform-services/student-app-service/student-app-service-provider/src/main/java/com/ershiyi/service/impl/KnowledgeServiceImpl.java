@@ -31,8 +31,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
      * @return
      */
     @Override
-    public List<CoursePojo> courseList(RequestDTO request) {
-        return mapper.courseList(request);
+    public List<CoursePojo> courseList() {
+        return mapper.courseList();
     }
 
 
